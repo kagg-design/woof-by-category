@@ -1,0 +1,29 @@
+.wbc-col {
+    float: left;
+}
+
+.wbc-col.left {
+    width: 70%;
+}
+
+.wbc-col.right {
+    width: 30%;
+}
+
+.wbc-col.right form input[name="submit"] {
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+@media screen and (max-width: 782px) {
+    #wbc-options .form-table td select {
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .wbc-col.left, .wbc-col.right {
+        width: 100%;
+    }
+}

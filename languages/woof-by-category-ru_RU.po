@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WOOF by Category 1.0\n"
+"POT-Creation-Date: 2018-02-11 20:00+0200\n"
+"PO-Revision-Date: 2018-02-11 20:01+0200\n"
+"Last-Translator: \n"
+"Language-Team: KAGG Design\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-KeywordsList: __;esc_html__;esc_attr__\n"
+"X-Poedit-Flags-xgettext: --add-comments\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: woof-by-category.php:276 woof-by-category.php:277
+msgid "WOOF by Category"
+msgstr "WOOF по категориям"
+
+#. Admin panel title.
+#: woof-by-category.php:295
+msgid "WOOF by Category Plugin Options"
+msgstr "Опции плагина WOOF по категориям"
+
+#: woof-by-category.php:310
+msgid "Donate"
+msgstr "Пожертвовать"
+
+#: woof-by-category.php:313
+msgid "Would you like to support the advancement of this plugin?"
+msgstr "Хотите поддержать развитие этого плагина?"
+
+#: woof-by-category.php:325
+msgid "Your appreciation"
+msgstr "Ваша оценка"
+
+#: woof-by-category.php:329
+msgid "Leave a ★★★★★ plugin review on WordPress.org"
+msgstr "Оставьте ★★★★★ обзор плагина на WordPress.org"
+
+#: woof-by-category.php:343
+msgid "--Select Category--"
+msgstr "--Выберите категорию--"
+
+#: woof-by-category.php:344
+msgid "-Shop Page-"
+msgstr "-Страница магазина-"
+
+#: woof-by-category.php:351
+msgid "--Select Filters--"
+msgstr "--Выберите фильтры--"
+
+#: woof-by-category.php:390
+msgid "Product Category"
+msgstr "Категория товара"
+
+#: woof-by-category.php:402
+msgid "Filters"
+msgstr "Фильтры"
+
+#: woof-by-category.php:412
+msgid "Categories and Filters"
+msgstr "Категории и фильтры"
+
+#: woof-by-category.php:574
+msgid ""
+"WOOF by Category plugin requires the following plugins installed and "
+"activated: "
+msgstr ""
+"Плагин WOOF по категориям требует, чтобы следующие плагины были установлены "
+"и активированы: "
+
+#: woof-by-category.php:606
+msgid "WOOF by Category plugin has been deactivated."
+msgstr "Плагин WOOF по категориям был деактивирован."
+
+#: woof-by-category.php:764
+msgid "View WOOF by Category settings"
+msgstr "Посмотреть настройки для WOOF по категориям"
+
+#: woof-by-category.php:764
+msgid "Settings"
+msgstr "Настройки"
