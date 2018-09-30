@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.5]
+### Fixed
+* Attributes disappear in the WOOF widget
+
 ## [1.6.4]
 ### Fixed
 * php warning / notice upon first activation on array_values().

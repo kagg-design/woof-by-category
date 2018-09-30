@@ -55,6 +55,8 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 == Changelog ==
 
+= 1.6.5 =
+* Fixed - Attributes disappear in the WOOF widget
 
 = 1.6.4 =
 * Fixed php warning / notice upon first activation on array_values().

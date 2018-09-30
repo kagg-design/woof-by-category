@@ -4,7 +4,7 @@
  * Plugin URI: https://wordpress.org/plugins/woof-by-category/
  * Description: WooCommerce Product Filter (WOOF) extension to display set of filters depending on current product category page.
  * Author: KAGG Design
- * Version: 1.6.4
+ * Version: 1.6.5
  * Author URI: https://kagg.eu/en/
  * Requires at least: 4.4
  * Tested up to: 5.0
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Woof_By_Category class.
  *
  * @class Woof_By_Category
- * @version 1.6.4
+ * @version 1.6.5
  */
 class Woof_By_Category {
 	/**
@@ -104,19 +104,21 @@ class Woof_By_Category {
 
 		add_filter( 'option_woof_settings', array( $this, 'wbc_option_woof_settings' ) );
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array(
-			$this,
-			'add_settings_link',
-		), 10, 2 );
+		add_filter(
+			'plugin_action_links_' . plugin_basename( $this->file ),
+			array( $this, 'add_settings_link' ),
+			10,
+			2
+		);
 		add_action( 'admin_init', array( $this, 'setup_fields' ) );
 		add_action( 'plugins_loaded', array( $this, 'wbc_load_textdomain' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_filter( 'request', array( $this, 'wbc_request_filter' ) );
 		add_filter( 'woof_get_request_data', array( $this, 'wbc_get_request_data' ), 10, 1 );
-		add_filter( 'woof_print_content_before_search_form', array(
-			$this,
-			'woof_print_content_before_search_form_filter',
-		) );
+		add_filter(
+			'woof_print_content_before_search_form',
+			array( $this, 'woof_print_content_before_search_form_filter' )
+		);
 	}
 
 	/**
@@ -187,6 +189,11 @@ class Woof_By_Category {
 		if ( null === $query_vars ) {
 			if ( isset( $wp_query->query_vars['product_cat'] ) ) {
 				$product_cat = $wp_query->query_vars['product_cat'];
+			}
+			if ( wp_doing_ajax() ) {
+				$product_cat     = untrailingslashit( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ) );
+				$product_cat_arr = explode( '/', $product_cat );
+				$product_cat     = array_pop( $product_cat_arr );
 			}
 		} else {
 			if ( isset( $query_vars['product_cat'] ) ) {
@@ -312,9 +319,7 @@ class Woof_By_Category {
 	 * Load plugin text domain.
 	 */
 	public function wbc_load_textdomain() {
-		load_plugin_textdomain( 'woof-by-category', false,
-			dirname( plugin_basename( $this->file ) ) . '/languages/'
-		);
+		load_plugin_textdomain( 'woof-by-category', false, dirname( plugin_basename( $this->file ) ) . '/languages/' );
 	}
 
 	/**
@@ -462,17 +467,24 @@ class Woof_By_Category {
 					'default'      => '',
 				),
 			);
-			add_settings_section( 'first_section', __( 'Categories and Filters', 'woof-by-category' ), '',
+			add_settings_section(
+				'first_section',
+				__( 'Categories and Filters', 'woof-by-category' ),
+				'',
 				'woof-by-category'
 			);
 			foreach ( $fields as $field ) {
 				register_setting( 'woof_by_category_group', 'woof_by_category_settings' );
-				add_settings_field( $field['uid'] . $i, $field['label'], array(
-					$this,
-					'field_callback',
-				), 'woof-by-category', $field['section'], $field );
+				add_settings_field(
+					$field['uid'] . $i,
+					$field['label'],
+					array( $this, 'field_callback' ),
+					'woof-by-category',
+					$field['section'],
+					$field
+				);
 			}
-		} // End for().
+		}
 	}
 
 	/**
@@ -518,15 +530,19 @@ class Woof_By_Category {
 				if ( ! empty( $arguments['options'] ) && is_array( $arguments['options'] ) ) {
 					$options_markup = '';
 					foreach ( $arguments['options'] as $key => $label ) {
-						$options_markup .= sprintf( '<option value="%s" %s>%s</option>', $key,
-							selected( $value, $key, false ), $label
+						$options_markup .= sprintf(
+							'<option value="%s" %s>%s</option>',
+							$key,
+							selected( $value, $key, false ),
+							$label
 						);
 					}
 					printf(
 						'<select name="woof_by_category_settings[%1$s][%2$s]">%3$s</select>',
 						esc_html( $arguments['group'] ),
 						esc_html( $arguments['uid'] ),
-						wp_kses( $options_markup,
+						wp_kses(
+							$options_markup,
 							array(
 								'option' => array(
 									'value'    => array(),
@@ -547,15 +563,19 @@ class Woof_By_Category {
 								$selected = selected( $key, $key, false );
 							}
 						}
-						$options_markup .= sprintf( '<option value="%s" %s>%s</option>', $key,
-							$selected, $label
+						$options_markup .= sprintf(
+							'<option value="%s" %s>%s</option>',
+							$key,
+							$selected,
+							$label
 						);
 					}
 					printf(
 						'<select multiple="multiple" name="woof_by_category_settings[%1$s][%2$s][]">%3$s</select>',
 						esc_html( $arguments['group'] ),
 						esc_html( $arguments['uid'] ),
-						wp_kses( $options_markup,
+						wp_kses(
+							$options_markup,
 							array(
 								'option' => array(
 									'value'    => array(),
@@ -566,7 +586,7 @@ class Woof_By_Category {
 					);
 				}
 				break;
-		} // End switch().
+		}
 
 		// If there is help text.
 		$helper = $arguments['helper'];
@@ -832,4 +852,4 @@ class Woof_By_Category {
 	}
 }
 
-new Woof_By_Category( __FILE__, '1.6.4' );
+new Woof_By_Category( __FILE__, '1.6.5' );
