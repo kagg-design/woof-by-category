@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
 Tested up to: 5.0
-Stable tag: 1.6.5
+Stable tag: 1.6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,6 +54,9 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 3. Plugins filters (Size and Weight) on a "Quisquam" category page.
 
 == Changelog ==
+
+= 1.6.7 =
+* Fixed - Attribute archive pages redirect to homepage
 
 = 1.6.5 =
 * Fixed - Attributes disappear in the WOOF widget

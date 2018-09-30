@@ -4,7 +4,7 @@
  * Plugin URI: https://wordpress.org/plugins/woof-by-category/
  * Description: WooCommerce Product Filter (WOOF) extension to display set of filters depending on current product category page.
  * Author: KAGG Design
- * Version: 1.6.5
+ * Version: 1.6.7
  * Author URI: https://kagg.eu/en/
  * Requires at least: 4.4
  * Tested up to: 5.0
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Woof_By_Category class.
  *
  * @class Woof_By_Category
- * @version 1.6.5
+ * @version 1.6.7
  */
 class Woof_By_Category {
 	/**
@@ -148,8 +148,6 @@ class Woof_By_Category {
 	 * @return array Modified request data.
 	 */
 	public function wbc_get_request_data( $data ) {
-		global $wp_taxonomies;
-
 		if ( ! taxonomy_exists( 'product_cat' ) ) {
 			return $data; // If too early.
 		}
@@ -186,14 +184,18 @@ class Woof_By_Category {
 	private function get_allowed_filters( $query_vars = null ) {
 		global $wp_query;
 
+		$product_cat = null;
 		if ( null === $query_vars ) {
 			if ( isset( $wp_query->query_vars['product_cat'] ) ) {
 				$product_cat = $wp_query->query_vars['product_cat'];
 			}
 			if ( wp_doing_ajax() ) {
-				$product_cat     = untrailingslashit( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ) );
-				$product_cat_arr = explode( '/', $product_cat );
-				$product_cat     = array_pop( $product_cat_arr );
+				$permalinks = wc_get_permalink_structure();
+				$path       = untrailingslashit( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ) );
+				if ( false !== mb_strpos( $path, $permalinks['category_base'] ) ) {
+					$product_cat_arr = explode( '/', $path );
+					$product_cat     = array_pop( $product_cat_arr );
+				}
 			}
 		} else {
 			if ( isset( $query_vars['product_cat'] ) ) {
@@ -297,6 +299,10 @@ class Woof_By_Category {
 	 */
 	public function wbc_request_filter( $query_vars ) {
 		if ( is_admin() ) {
+			return $query_vars;
+		}
+
+		if ( ! $query_vars || ! isset( $query_vars['product_cat'] ) ) {
 			return $query_vars;
 		}
 
@@ -852,4 +858,4 @@ class Woof_By_Category {
 	}
 }
 
-new Woof_By_Category( __FILE__, '1.6.5' );
+new Woof_By_Category( __FILE__, '1.6.7' );
