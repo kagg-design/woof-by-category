@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.8]
+### Tested
+* Tested with WooCommerce 3.5
+
 ## [1.6.7]
 ### Fixed
 * Attribute archive pages redirect to homepage
