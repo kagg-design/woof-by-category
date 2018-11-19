@@ -109,6 +109,10 @@ class Woof_By_Category {
 	public function wbc_option_woof_settings( $value ) {
 		$allowed_filters = $this->get_allowed_filters();
 
+		if ( ! isset( $value['tax'] ) ) {
+			return $value;
+		}
+
 		foreach ( $value['tax'] as $filter => $filter_value ) {
 			if ( ! in_array( $filter, $allowed_filters, true ) ) {
 				unset( $value['tax'][ $filter ] );
