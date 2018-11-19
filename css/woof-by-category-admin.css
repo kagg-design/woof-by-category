@@ -16,6 +16,14 @@
     margin: 0;
 }
 
+#wbc-options select {
+    min-width: 210px;
+}
+
+#wbc-options select[multiple="multiple"] {
+    min-height: 6em;
+}
+
 @media screen and (max-width: 782px) {
     #wbc-options .form-table td select {
         height: auto;
