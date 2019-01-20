@@ -3,8 +3,8 @@ Contributors: kaggdesign
 Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
-Tested up to: 5.0
-Stable tag: 2.0.0
+Tested up to: 5.1
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,18 +55,23 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 == Changelog ==
 
+= 2.0.1 =
+* Fixed - Bug when plugin was installed after WPML.
+* Tested up to 5.1
+* Performance optimized.
+
 = 2.0.0 =
-* Compatibility with WPML
-* Fixed php warning when no settings are in WOOF
+* Compatibility with WPML.
+* Fixed php warning when no settings are in WOOF.
 
 = 1.6.8 =
 * Tested with WooCommerce 3.5
 
 = 1.6.7 =
-* Fixed - Attribute archive pages redirect to homepage
+* Fixed - Attribute archive pages redirect to homepage.
 
 = 1.6.5 =
-* Fixed - Attributes disappear in the WOOF widget
+* Fixed - Attributes disappear in the WOOF widget.
 
 = 1.6.4 =
 * Fixed php warning / notice upon first activation on array_values().
