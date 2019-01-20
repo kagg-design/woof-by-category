@@ -4,13 +4,18 @@
  * Woof_By_Category class.
  *
  * @class Woof_By_Category
- * @version 2.0.0
+ * @version 2.0.1
  */
 class Woof_By_Category {
 	/**
 	 * @var string Plugin base option name.
 	 */
 	const OPTION_NAME = 'woof_by_category_settings';
+
+	/**
+	 * @var string Admin screen id.
+	 */
+	const SCREEN_ID = 'toplevel_page_woof-by-category';
 
 	/**
 	 * @var array Required plugins.
@@ -63,22 +68,7 @@ class Woof_By_Category {
 		add_filter( 'option_woof_settings', array( $this, 'wbc_option_woof_settings' ) );
 
 		if ( class_exists( 'Sitepress' ) ) {
-			add_filter(
-				'option_' . self::OPTION_NAME,
-				array(
-					$this,
-					'wbc_option_woof_by_category_settings',
-				)
-			);
-			add_filter(
-				'pre_update_option_' . self::OPTION_NAME,
-				array(
-					$this,
-					'wbc_pre_update_option_woof_by_category_settings',
-				),
-				10,
-				2
-			);
+			$this->add_option_filters();
 		}
 
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
@@ -88,7 +78,7 @@ class Woof_By_Category {
 			10,
 			2
 		);
-		add_action( 'admin_init', array( $this, 'setup_fields' ) );
+		add_action( 'current_screen', array( $this, 'setup_fields' ) );
 		add_action( 'plugins_loaded', array( $this, 'wbc_load_textdomain' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_filter( 'request', array( $this, 'wbc_request_filter' ) );
@@ -123,6 +113,75 @@ class Woof_By_Category {
 	}
 
 	/**
+	 * Add pre_option filter for plugin options.
+	 */
+	private function add_pre_option_filter() {
+		add_filter(
+			'pre_option_' . self::OPTION_NAME,
+			array(
+				$this,
+				'wbc_pre_option_woof_by_category_settings',
+			)
+		);
+	}
+
+	/**
+	 * Add pre_update_option filter for plugin options.
+	 */
+	private function add_pre_update_option_filter() {
+		add_filter(
+			'pre_update_option_' . self::OPTION_NAME,
+			array(
+				$this,
+				'wbc_pre_update_option_woof_by_category_settings',
+			),
+			10,
+			2
+		);
+	}
+
+	/**
+	 * Add filters to get and update plugin options.
+	 */
+	private function add_option_filters() {
+		$this->add_pre_option_filter();
+		$this->add_pre_update_option_filter();
+	}
+
+	/**
+	 * Remove pre_option filter for plugin options.
+	 */
+	private function remove_pre_option_filter() {
+		remove_filter(
+			'pre_option_' . self::OPTION_NAME,
+			array(
+				$this,
+				'wbc_pre_option_woof_by_category_settings',
+			)
+		);
+	}
+
+	/**
+	 * Remove pre_update_option filter for plugin options.
+	 */
+	private function remove_pre_update_option_filter() {
+		remove_filter(
+			'pre_update_option_' . self::OPTION_NAME,
+			array(
+				$this,
+				'wbc_pre_update_option_woof_by_category_settings',
+			)
+		);
+	}
+	/**
+	 * Remove filters to get and update plugin options.
+	 */
+	private function remove_option_filters() {
+		$this->remove_pre_option_filter();
+		$this->remove_pre_update_option_filter();
+	}
+
+	/**
 	 * Filter get_option() of plugin settings to get value for current WPML language.
 	 * Pass through if WPML is not active.
 	 *
@@ -130,12 +189,16 @@ class Woof_By_Category {
 	 *
 	 * @return mixed Settings for current WPML language.
 	 */
-	public function wbc_option_woof_by_category_settings( $value ) {
+	public function wbc_pre_option_woof_by_category_settings( $value ) {
 		global $sitepress;
 
 		$lang       = $sitepress->get_current_language();
 		$lang_value = get_option( self::OPTION_NAME . '_' . $lang );
 		if ( ! $lang_value ) {
+			$this->remove_pre_option_filter();
+			$value = get_option( self::OPTION_NAME );
+			$this->add_pre_option_filter();
+
 			$lang_value = $this->translate_options( $value );
 			update_option( self::OPTION_NAME . '_' . $lang, $lang_value );
 		}
@@ -157,6 +220,12 @@ class Woof_By_Category {
 
 		$lang = $sitepress->get_current_language();
 		update_option( self::OPTION_NAME . '_' . $lang, $value );
+
+		if ( $sitepress->get_default_language() === $lang ) {
+			$this->remove_option_filters();
+			update_option( self::OPTION_NAME, $value );
+			$this->add_option_filters();
+		}
 
 		return $old_value;
 	}
@@ -452,9 +521,23 @@ class Woof_By_Category {
 	}
 
 	/**
+	 * Is current admin screen the plugin options screen.
+	 *
+	 * @return bool
+	 */
+	private function is_wbc_options_screen() {
+		$current_screen = get_current_screen();
+		return $current_screen && ( 'options' === $current_screen->id || self::SCREEN_ID === $current_screen->id );
+	}
+
+	/**
 	 * Setup options fields.
 	 */
 	public function setup_fields() {
+		if ( ! $this->is_wbc_options_screen() ) {
+			return;
+		}
+
 		$product_categories      = array_merge(
 			array(
 				''  => __( '--Select Category--', 'woof-by-category' ),
