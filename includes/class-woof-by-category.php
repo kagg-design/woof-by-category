@@ -1,34 +1,48 @@
 <?php
+/**
+ * Woof_By_Category class file.
+ *
+ * @package woof-by-category
+ */
 
 /**
  * Woof_By_Category class.
  *
  * @class Woof_By_Category
- * @version 2.0.1
  */
 class Woof_By_Category {
 	/**
-	 * @var string Plugin base option name.
+	 * Plugin base option name.
+	 *
+	 * @var string
 	 */
 	const OPTION_NAME = 'woof_by_category_settings';
 
 	/**
-	 * @var string Admin screen id.
+	 * Admin screen id.
+	 *
+	 * @var string
 	 */
 	const SCREEN_ID = 'toplevel_page_woof-by-category';
 
 	/**
-	 * @var array Required plugins.
+	 * Required plugins.
+	 *
+	 * @var array
 	 */
 	protected $required_plugins = array();
 
 	/**
-	 * @var array Plugin options.
+	 * Plugin options.
+	 *
+	 * @var array
 	 */
 	private $options;
 
 	/**
-	 * @var array Order of product categories.
+	 * Order of product categories.
+	 *
+	 * @var array
 	 */
 	private $product_cat_order;
 
@@ -56,6 +70,9 @@ class Woof_By_Category {
 		$this->init_hooks();
 	}
 
+	/**
+	 * Init hooks.
+	 */
 	public function init_hooks() {
 		add_action( 'admin_init', array( $this, 'check_requirements' ) );
 
@@ -173,6 +190,7 @@ class Woof_By_Category {
 			)
 		);
 	}
+
 	/**
 	 * Remove filters to get and update plugin options.
 	 */
@@ -210,7 +228,7 @@ class Woof_By_Category {
 	 * Filter update_option() of plugin settings to store value for current WPML language.
 	 * Pass through if WPML is not active.
 	 *
-	 * @param mixed $value The new, unserialized option value.
+	 * @param mixed $value     The new, unserialized option value.
 	 * @param mixed $old_value The old option value.
 	 *
 	 * @return mixed Settings for current WPML language.
@@ -233,7 +251,7 @@ class Woof_By_Category {
 	/**
 	 * Translate options for a new language.
 	 *
-	 * @param $options
+	 * @param array $options Plugin options.
 	 *
 	 * @return array
 	 */
@@ -311,7 +329,7 @@ class Woof_By_Category {
 			}
 			if ( wp_doing_ajax() ) {
 				$permalinks = wc_get_permalink_structure();
-				$path       = untrailingslashit( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ) );
+				$path       = untrailingslashit( wp_parse_url( wp_get_referer(), PHP_URL_PATH ) );
 				if ( false !== mb_strpos( $path, $permalinks['category_base'] ) ) {
 					$product_cat_arr = explode( '/', $path );
 					$product_cat     = array_pop( $product_cat_arr );
@@ -480,7 +498,7 @@ class Woof_By_Category {
 			</h2>
 
 			<div class="wbc-col left">
-				<form id="wbc-options" action="options.php" method="POST">
+				<form id="wbc-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="POST">
 					<?php
 					settings_fields( 'woof_by_category_group' ); // Hidden protection fields.
 					do_settings_sections( 'woof-by-category' ); // Sections with options.
@@ -527,6 +545,7 @@ class Woof_By_Category {
 	 */
 	private function is_wbc_options_screen() {
 		$current_screen = get_current_screen();
+
 		return $current_screen && ( 'options' === $current_screen->id || self::SCREEN_ID === $current_screen->id );
 	}
 
@@ -830,7 +849,8 @@ class Woof_By_Category {
 	 * Show admin notice.
 	 *
 	 * @param string $message Message to show.
-	 * @param string $class Message class: notice notice-success notice-error notice-warning notice-info is-dismissible
+	 * @param string $class   Message class: notice notice-success notice-error notice-warning notice-info
+	 *                        is-dismissible.
 	 */
 	private function admin_notice( $message, $class ) {
 		?>
@@ -927,7 +947,7 @@ class Woof_By_Category {
 	/**
 	 * Find if category slug exists in the array of slugs or their parents.
 	 *
-	 * @param string $cat Category slug to find.
+	 * @param string      $cat  Category slug to find.
 	 * @param array|mixed $cats Array of category slugs or null.
 	 *
 	 * @return int Distance to parent in levels or -1 if parent is not found.
@@ -969,8 +989,8 @@ class Woof_By_Category {
 	/**
 	 * Add link to plugin setting page on plugins page.
 	 *
-	 * @param array $links Plugin links
-	 * @param string $file Plugin file basename
+	 * @param array  $links Plugin links.
+	 * @param string $file  Plugin file basename.
 	 *
 	 * @return array|mixed Plugin links
 	 */
