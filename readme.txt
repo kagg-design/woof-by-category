@@ -3,7 +3,7 @@ Contributors: kaggdesign
 Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
-Tested up to: 5.2
+Tested up to: 5.1
 Stable tag: 2.0.2
 Requires PHP: 5.2.4
 License: GPLv2 or later

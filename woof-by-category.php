@@ -7,7 +7,7 @@
  * Version: 2.0.2
  * Author URI: https://kagg.eu/en/
  * Requires at least: 4.4
- * Tested up to: 5.2
+ * Tested up to: 5.1
  * Requires PHP: 5.2.4
  * WC requires at least: 3.0
  * WC tested up to: 3.5
