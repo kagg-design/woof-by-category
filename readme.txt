@@ -23,7 +23,7 @@ It is possible to set up any number of category->filters pairs.
 
 = Minimum Requirements =
 
-* PHP version 5.5 or greater (PHP 5.6 or greater is recommended)
+* PHP version 5.2.4 or greater (PHP 5.6 or greater is recommended)
 * MySQL version 5.0 or greater (MySQL 5.6 or greater is recommended)
 * WooCommerce 3.0 or greater
 * WooCommerce Product Filter (WOOF) plugin
