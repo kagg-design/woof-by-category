@@ -414,15 +414,16 @@ class Woof_By_Category {
 		echo '<script>';
 
 		// @todo - check nonce
-		// @codingStandardsIgnoreStart
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		foreach ( $_GET as $key => $value ) {
+			$key = filter_var( $key, FILTER_SANITIZE_STRING );
 			if ( false !== strpos( $key, 'pa_' ) ) {
 				if ( ! in_array( $key, $allowed_filters, true ) ) {
 					echo 'delete woof_current_values["' . esc_html( $key ) . '"]; ';
 				}
 			}
 		}
-		// @codingStandardsIgnoreEnd
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		echo 'jQuery(document).ready(function($){ woof_get_submit_link(); })';
 		echo '</script>';
@@ -749,6 +750,8 @@ class Woof_By_Category {
 						)
 					);
 				}
+				break;
+			default:
 				break;
 		}
 

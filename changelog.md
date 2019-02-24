@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.0.2]
 ### Tested
-* Tested with WordPress 5.2
+* Tested with WordPress 5.1
 
 ## [2.0.1]
 ### Fixed

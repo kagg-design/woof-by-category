@@ -57,7 +57,7 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 == Changelog ==
 
 = 2.0.2 =
-* Tested with WordPress 5.2
+* Tested with WordPress 5.1
 
 = 2.0.1 =
 * Fixed - Bug when plugin was installed after WPML.
