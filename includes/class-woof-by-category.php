@@ -909,28 +909,6 @@ class Woof_By_Category {
 	}
 
 	/**
-	 * Get hierarchy level of the product category.
-	 *
-	 * @param int $cat_id Product category id.
-	 *
-	 * @return int
-	 */
-	private function get_product_cat_level( $cat_id ) {
-		$level = 0;
-		$cat   = get_term_by( 'id', $cat_id, 'product_cat' );
-		if ( ! $cat ) {
-			return $level;
-		}
-
-		while ( 0 !== $cat->parent ) {
-			$level ++;
-			$cat = get_term_by( 'id', $cat->parent, 'product_cat' );
-		}
-
-		return $level;
-	}
-
-	/**
 	 * Get names and counts of a term and all its parents.
 	 *
 	 * @param int $term_id Product category id.
