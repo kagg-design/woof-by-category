@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
 Tested up to: 5.1
-Stable tag: 2.0.2
+Stable tag: 2.1
 Requires PHP: 5.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -55,6 +55,9 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 3. Plugins filters (Size and Weight) on a "Quisquam" category page.
 
 == Changelog ==
+
+= 2.1 =
+* Added breadcrumbs for categories.
 
 = 2.0.2 =
 * Tested with WordPress 5.1

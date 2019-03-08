@@ -5,7 +5,7 @@
  * Description: WooCommerce Product Filter (WOOF) extension to display set of filters depending on current product.
  * category page.
  * Author: KAGG Design
- * Version: 2.0.2
+ * Version: 2.1
  * Author URI: https://kagg.eu/en/
  * Requires at least: 4.4
  * Tested up to: 5.1
@@ -49,7 +49,7 @@ if ( ! defined( 'WOOF_BY_CATEGORY_VERSION' ) ) {
 	/**
 	 * Plugin version.
 	 */
-	define( 'WOOF_BY_CATEGORY_VERSION', '2.0.2' );
+	define( 'WOOF_BY_CATEGORY_VERSION', '2.1' );
 }
 
 /**

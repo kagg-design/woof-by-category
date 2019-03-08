@@ -1,37 +1,61 @@
 .wbc-col {
-    float: left;
+	float: left;
 }
 
 .wbc-col.left {
-    width: 70%;
+	width: 70%;
 }
 
 .wbc-col.right {
-    width: 30%;
+	width: 30%;
 }
 
 .wbc-col.right form input[name="submit"] {
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
+	cursor: pointer;
+	padding: 0;
+	margin: 0;
+}
+
+#wbc-options table {
+	table-layout: fixed;
+}
+
+#wbc-options table th {
+	width: 120px;
+}
+
+#wbc-options table td {
+	width: calc( 100% - 120px);
 }
 
 #wbc-options select {
-    min-width: 210px;
+	min-width: 210px;
+	max-width: 100%;
 }
 
 #wbc-options select[multiple="multiple"] {
-    min-height: 6em;
+	min-height: 6em;
 }
 
 @media screen and (max-width: 782px) {
-    #wbc-options .form-table td select {
-        height: auto;
-    }
+	#wbc-options table th,
+	#wbc-options table td {
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	#wbc-options .form-table td select {
+		height: auto;
+	}
 }
 
 @media screen and (max-width: 767px) {
-    .wbc-col.left, .wbc-col.right {
-        width: 100%;
-    }
+	#wbc-options table th,
+	#wbc-options table td {
+		box-sizing: unset;
+	}
+
+	.wbc-col.left, .wbc-col.right {
+		width: 100%;
+	}
 }

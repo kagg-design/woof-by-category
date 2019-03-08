@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.1]
+### Added
+* Added breadcrumbs for categories.
+
 ## [2.0.2]
 ### Tested
 * Tested with WordPress 5.1

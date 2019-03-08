@@ -684,7 +684,8 @@ class Woof_By_Category {
 	public function field_callback( $arguments ) {
 		$value = get_option( self::OPTION_NAME ); // Get current settings.
 		if ( $value ) {
-			$value = $value[ $arguments['group'] ] [ $arguments['uid'] ];
+			$value = isset( $value[ $arguments['group'] ] [ $arguments['uid'] ] ) ?
+				$value[ $arguments['group'] ] [ $arguments['uid'] ] : null;
 		} else { // If no value exists.
 			$value = $arguments['default']; // Set to our default.
 		}
@@ -877,10 +878,12 @@ class Woof_By_Category {
 	private function get_product_categories( $cat_id = 0 ) {
 		$cat_list = array();
 
-		if ( 0 === $cat_id ) {
-			$level = 0;
-		} else {
-			$level = $this->get_product_cat_level( $cat_id ) + 1;
+		$crumbs = $this->get_product_term_crumbs( $cat_id );
+		$level  = count( $crumbs );
+
+		$crumbs_string = '';
+		foreach ( $crumbs as $key => $crumb ) {
+			$crumbs_string .= ' < ' . $crumb['name'] . ' (' . $crumb['count'] . ')';
 		}
 
 		$args       = array(
@@ -893,7 +896,7 @@ class Woof_By_Category {
 		);
 		$categories = get_terms( $args );
 		foreach ( $categories as $cat ) {
-			$cat_list[ $cat->slug ] = str_repeat( '&nbsp;', $level * 2 ) . $cat->name . ' (' . $cat->count . ')';
+			$cat_list[ $cat->slug ] = str_repeat( '&nbsp;', $level * 2 ) . $cat->name . ' (' . $cat->count . ')' . $crumbs_string;
 			$child_categories       = $this->get_product_categories( $cat->term_id );
 			if ( ! empty( $child_categories ) ) {
 				foreach ( $child_categories as $key => $value ) {
@@ -925,6 +928,31 @@ class Woof_By_Category {
 		}
 
 		return $level;
+	}
+
+	/**
+	 * Get names and counts of a term and all its parents.
+	 *
+	 * @param int $term_id Product category id.
+	 *
+	 * @return array
+	 */
+	private function get_product_term_crumbs( $term_id ) {
+		$crumbs = array();
+
+		$term = get_term_by( 'id', $term_id, 'product_cat' );
+		if ( ! $term ) {
+			return $crumbs;
+		}
+
+		while ( $term && 0 !== $term->term_id ) {
+			$crumb['name']  = $term->name;
+			$crumb['count'] = $term->count;
+			$crumbs[]       = $crumb;
+			$term           = get_term_by( 'id', $term->parent, 'product_cat' );
+		}
+
+		return $crumbs;
 	}
 
 	/**
