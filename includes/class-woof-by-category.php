@@ -26,6 +26,13 @@ class Woof_By_Category {
 	const SCREEN_ID = 'toplevel_page_woof-by-category';
 
 	/**
+	 * Plugin cache group.
+	 *
+	 * @var string
+	 */
+	const CACHE_GROUP = 'woof_by_category';
+
+	/**
 	 * Required plugins.
 	 *
 	 * @var array
@@ -66,6 +73,8 @@ class Woof_By_Category {
 				'active' => false,
 			),
 		);
+
+		wp_cache_add_non_persistent_groups( array( self::CACHE_GROUP ) );
 
 		$this->init_hooks();
 	}
@@ -320,44 +329,8 @@ class Woof_By_Category {
 	 * @return array
 	 */
 	private function get_allowed_filters( $query_vars = null ) {
-		global $wp_query;
-
-		$product_cat = null;
-		if ( null === $query_vars ) {
-			if ( isset( $wp_query->query_vars['product_cat'] ) ) {
-				$product_cat = $wp_query->query_vars['product_cat'];
-			}
-			if ( wp_doing_ajax() ) {
-				$permalinks = wc_get_permalink_structure();
-				$path       = untrailingslashit( wp_parse_url( wp_get_referer(), PHP_URL_PATH ) );
-				if ( false !== mb_strpos( $path, $permalinks['category_base'] ) ) {
-					$product_cat_arr = explode( '/', $path );
-					$product_cat     = array_pop( $product_cat_arr );
-				}
-			}
-		} else {
-			if ( isset( $query_vars['product_cat'] ) ) {
-				$product_cat     = $query_vars['product_cat'];
-				$product_cat_arr = explode( '/', $product_cat );
-				$product_cat     = array_pop( $product_cat_arr );
-			}
-		}
-
-		// Get current settings.
-		$options = get_option( self::OPTION_NAME );
-
-		$category_filters = array();
-		if ( $options ) {
-			foreach ( $options as $key => $group ) {
-				if ( isset( $group['category'] ) && $group['category'] ) { // Ignore empty groups.
-					if ( isset( $group['filters'] ) ) {
-						$category_filters[ $group['category'] ] = array_values( $group['filters'] );
-					} else {
-						$category_filters[ $group['category'] ] = null;
-					}
-				}
-			}
-		}
+		$product_cat      = $this->get_product_cat( $query_vars );
+		$category_filters = $this->get_category_filters();
 
 		/**
 		 * In theory, there could be a number of product_cat arguments.
@@ -389,6 +362,13 @@ class Woof_By_Category {
 		}
 		// @codingStandardsIgnoreEnd
 
+		$key             = md5( wp_json_encode( array( $category_filters, $cats ) ) );
+		$allowed_filters = wp_cache_get( $key, self::CACHE_GROUP );
+
+		if ( false !== $allowed_filters ) {
+			return $allowed_filters;
+		}
+
 		$allowed_filters        = array();
 		$max_distance_to_parent = PHP_INT_MAX;
 		foreach ( $category_filters as $cat => $filters ) {
@@ -401,8 +381,76 @@ class Woof_By_Category {
 			}
 		}
 		$allowed_filters = array_unique( $allowed_filters );
+		wp_cache_set( $key, $allowed_filters, self::CACHE_GROUP );
 
 		return $allowed_filters;
+	}
+
+	/**
+	 * Get product category.
+	 *
+	 * @param $query_vars
+	 *
+	 * @return mixed|null
+	 */
+	private function get_product_cat( $query_vars ) {
+		global $wp_query;
+
+		$product_cat = null;
+		if ( null === $query_vars ) {
+			if ( isset( $wp_query->query_vars['product_cat'] ) ) {
+				$product_cat = $wp_query->query_vars['product_cat'];
+			}
+			if ( wp_doing_ajax() ) {
+				$permalinks = wc_get_permalink_structure();
+				$path       = untrailingslashit( wp_parse_url( wp_get_referer(), PHP_URL_PATH ) );
+				if ( false !== mb_strpos( $path, $permalinks['category_base'] ) ) {
+					$product_cat_arr = explode( '/', $path );
+					$product_cat     = array_pop( $product_cat_arr );
+				}
+			}
+		} else {
+			if ( isset( $query_vars['product_cat'] ) ) {
+				$product_cat     = $query_vars['product_cat'];
+				$product_cat_arr = explode( '/', $product_cat );
+				$product_cat     = array_pop( $product_cat_arr );
+			}
+		}
+
+		return $product_cat;
+	}
+
+	/**
+	 * Get category filters.
+	 *
+	 * @return array
+	 */
+	private function get_category_filters() {
+		$key              = 'category_filters';
+		$category_filters = wp_cache_get( $key, self::CACHE_GROUP );
+
+		if ( false !== $category_filters ) {
+			return $category_filters;
+		}
+
+		// Get current settings.
+		$options = get_option( self::OPTION_NAME );
+
+		if ( $options ) {
+			foreach ( $options as $key => $group ) {
+				if ( isset( $group['category'] ) && $group['category'] ) { // Ignore empty groups.
+					if ( isset( $group['filters'] ) ) {
+						$category_filters[ $group['category'] ] = array_values( $group['filters'] );
+					} else {
+						$category_filters[ $group['category'] ] = null;
+					}
+				}
+			}
+		}
+
+		wp_cache_set( $key, $category_filters, self::CACHE_GROUP );
+
+		return $category_filters;
 	}
 
 	/**

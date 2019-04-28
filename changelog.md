@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2]
+### Improved
+* Significantly improved performance on sites with a long list of product categories.
+
 ## [2.1]
 ### Added
 * Added breadcrumbs for categories.
