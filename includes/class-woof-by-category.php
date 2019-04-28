@@ -101,8 +101,7 @@ class Woof_By_Category {
 		add_filter(
 			'plugin_action_links_' . plugin_basename( WOOF_BY_CATEGORY_FILE ),
 			array( $this, 'add_settings_link' ),
-			10,
-			2
+			10
 		);
 		add_action( 'current_screen', array( $this, 'setup_fields' ) );
 		add_action( 'plugins_loaded', array( $this, 'wbc_load_textdomain' ) );
@@ -212,11 +211,9 @@ class Woof_By_Category {
 	 * Filter get_option() of plugin settings to get value for current WPML language.
 	 * Pass through if WPML is not active.
 	 *
-	 * @param mixed $value Value of the option.
-	 *
 	 * @return mixed Settings for current WPML language.
 	 */
-	public function wbc_pre_option_woof_by_category_settings( $value ) {
+	public function wbc_pre_option_woof_by_category_settings() {
 		global $sitepress;
 
 		$lang       = $sitepress->get_current_language();
@@ -389,7 +386,7 @@ class Woof_By_Category {
 	/**
 	 * Get product category.
 	 *
-	 * @param $query_vars
+	 * @param null|array $query_vars Query vars.
 	 *
 	 * @return mixed|null
 	 */
@@ -569,7 +566,7 @@ class Woof_By_Category {
 							type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
 							name="submit" alt="PayPal - The safer, easier way to pay online!">
 					<img
-							alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
+							alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
 							height="1">
 				</form>
 
@@ -744,6 +741,11 @@ class Woof_By_Category {
 				if ( ! empty( $arguments['options'] ) && is_array( $arguments['options'] ) ) {
 					$options_markup = '';
 					foreach ( $arguments['options'] as $key => $label ) {
+						/**
+						 * %s is not an attribute
+						 *
+						 * @noinspection HtmlUnknownAttribute
+						 */
 						$options_markup .= sprintf(
 							'<option value="%s" %s>%s</option>',
 							$key,
@@ -777,6 +779,11 @@ class Woof_By_Category {
 								$selected = selected( $key, $key, false );
 							}
 						}
+						/**
+						 * %s is not an attribute
+						 *
+						 * @noinspection HtmlUnknownAttribute
+						 */
 						$options_markup .= sprintf(
 							'<option value="%s" %s>%s</option>',
 							$key,
@@ -1046,12 +1053,11 @@ class Woof_By_Category {
 	/**
 	 * Add link to plugin setting page on plugins page.
 	 *
-	 * @param array  $links Plugin links.
-	 * @param string $file  Plugin file basename.
+	 * @param array $links Plugin links.
 	 *
 	 * @return array|mixed Plugin links
 	 */
-	public function add_settings_link( $links, $file ) {
+	public function add_settings_link( $links ) {
 		$action_links = array(
 			'settings' => '<a href="' . admin_url( 'admin.php?page=woof-by-category' ) . '" aria-label="' . esc_attr__( 'View WOOF by Category settings', 'woof-by-category' ) . '">' . esc_html__( 'Settings', 'woof-by-category' ) . '</a>',
 		);
