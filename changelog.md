@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.2.1]
+### Fixed
+* Fixed php warning in class-woof-by-category.php on line 371
+
 ## [2.2]
 ### Improved
 * Significantly improved performance on sites with a long list of product categories.

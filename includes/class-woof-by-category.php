@@ -430,6 +430,8 @@ class Woof_By_Category {
 			return $category_filters;
 		}
 
+		$category_filters = array();
+
 		// Get current settings.
 		$options = get_option( self::OPTION_NAME );
 
