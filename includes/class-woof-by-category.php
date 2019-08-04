@@ -93,7 +93,7 @@ class Woof_By_Category {
 
 		add_filter( 'option_woof_settings', array( $this, 'wbc_option_woof_settings' ) );
 
-		if ( class_exists( 'Sitepress' ) ) {
+		if ( class_exists( 'SitePress' ) || class_exists( 'Polylang' ) ) {
 			$this->add_option_filters();
 		}
 
@@ -214,9 +214,7 @@ class Woof_By_Category {
 	 * @return mixed Settings for current WPML language.
 	 */
 	public function wbc_pre_option_woof_by_category_settings() {
-		global $sitepress;
-
-		$lang       = $sitepress->get_current_language();
+		$lang       = $this->get_current_language();
 		$lang_value = get_option( self::OPTION_NAME . '_' . $lang );
 		if ( ! $lang_value ) {
 			$this->remove_pre_option_filter();
@@ -240,18 +238,52 @@ class Woof_By_Category {
 	 * @return mixed Settings for current WPML language.
 	 */
 	public function wbc_pre_update_option_woof_by_category_settings( $value, $old_value ) {
-		global $sitepress;
-
-		$lang = $sitepress->get_current_language();
+		$lang = $this->get_current_language();
 		update_option( self::OPTION_NAME . '_' . $lang, $value );
 
-		if ( $sitepress->get_default_language() === $lang ) {
+		if ( $this->get_default_language() === $lang ) {
 			$this->remove_option_filters();
 			update_option( self::OPTION_NAME, $value );
 			$this->add_option_filters();
 		}
 
 		return $old_value;
+	}
+
+	/**
+	 * Get default language.
+	 *
+	 * @return bool|mixed|string|null
+	 */
+	private function get_default_language() {
+		if ( class_exists( 'SitePress' ) ) {
+			global $sitepress;
+
+			return $sitepress->get_default_language();
+		}
+		if ( class_exists( 'Polylang' ) ) {
+			return 'pll_' . pll_default_language();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get current language.
+	 *
+	 * @return bool|mixed|string|null
+	 */
+	private function get_current_language() {
+		if ( class_exists( 'SitePress' ) ) {
+			global $sitepress;
+
+			return $sitepress->get_current_language();
+		}
+		if ( class_exists( 'Polylang' ) ) {
+			return 'pll_' . pll_current_language();
+		}
+
+		return null;
 	}
 
 	/**
@@ -376,6 +408,9 @@ class Woof_By_Category {
 					$allowed_filters        = $filters;
 				}
 			}
+		}
+		if ( ! $allowed_filters ) {
+			$allowed_filters = array();
 		}
 		$allowed_filters = array_unique( $allowed_filters );
 		wp_cache_set( $key, $allowed_filters, self::CACHE_GROUP );
