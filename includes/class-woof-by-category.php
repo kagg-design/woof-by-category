@@ -122,9 +122,12 @@ class Woof_By_Category {
 	 * @return mixed Modified 'woof_settings'.
 	 */
 	public function wbc_option_woof_settings( $value ) {
-		$allowed_filters = $this->get_allowed_filters();
-
 		if ( ! isset( $value['tax'] ) ) {
+			return $value;
+		}
+
+		$allowed_filters = $this->get_allowed_filters();
+		if ( null === $allowed_filters ) {
 			return $value;
 		}
 
@@ -336,6 +339,9 @@ class Woof_By_Category {
 		// @codingStandardsIgnoreEnd
 
 		$allowed_filters = $this->get_allowed_filters();
+		if ( null === $allowed_filters ) {
+			return $data;
+		}
 
 		$new_data = array();
 		foreach ( $data as $key => $value ) {
@@ -355,7 +361,7 @@ class Woof_By_Category {
 	 *
 	 * @param array $query_vars Query vars.
 	 *
-	 * @return array
+	 * @return array|null
 	 */
 	private function get_allowed_filters( $query_vars = null ) {
 		$product_cat      = $this->get_product_cat( $query_vars );
@@ -390,6 +396,11 @@ class Woof_By_Category {
 			$cats = null;
 		}
 		// @codingStandardsIgnoreEnd
+
+		if ( null === $cats ) {
+			// Return null to indicate that we should not change WOOF filters.
+			return null;
+		}
 
 		$key             = md5( wp_json_encode( array( $category_filters, $cats ) ) );
 		$allowed_filters = wp_cache_get( $key, self::CACHE_GROUP );
@@ -434,22 +445,35 @@ class Woof_By_Category {
 				$product_cat = $wp_query->query_vars['product_cat'];
 			}
 			if ( wp_doing_ajax() ) {
-				$permalinks = wc_get_permalink_structure();
-				$path       = untrailingslashit( wp_parse_url( wp_get_referer(), PHP_URL_PATH ) );
-				if ( false !== mb_strpos( $path, $permalinks['category_base'] ) ) {
-					$product_cat_arr = explode( '/', $path );
-					$product_cat     = array_pop( $product_cat_arr );
-				}
+				$product_cat = $this->get_last_category_in_path(
+					untrailingslashit( wp_parse_url( wp_get_referer(), PHP_URL_PATH ) )
+				);
 			}
 		} else {
 			if ( isset( $query_vars['product_cat'] ) ) {
-				$product_cat     = $query_vars['product_cat'];
-				$product_cat_arr = explode( '/', $product_cat );
-				$product_cat     = array_pop( $product_cat_arr );
+				$product_cat = $this->get_last_category_in_path( $query_vars['product_cat'] );
 			}
 		}
 
 		return $product_cat;
+	}
+
+	/**
+	 * Get last category in path.
+	 *
+	 * @param string $path Path of categories. May include parents or category base.
+	 *
+	 * @return string|null
+	 */
+	private function get_last_category_in_path( $path ) {
+		$path = trim( $path, '/' );
+		if ( false !== strpos( $path, '/' ) ) {
+			$product_cat_arr = explode( '/', $path );
+
+			$path = array_pop( $product_cat_arr );
+		}
+
+		return $path;
 	}
 
 	/**
@@ -492,6 +516,9 @@ class Woof_By_Category {
 	 */
 	public function woof_print_content_before_search_form_filter() {
 		$allowed_filters = $this->get_allowed_filters();
+		if ( null === $allowed_filters ) {
+			return;
+		}
 
 		echo '<script>';
 
@@ -528,6 +555,9 @@ class Woof_By_Category {
 		}
 
 		$allowed_filters = $this->get_allowed_filters( $query_vars );
+		if ( null === $allowed_filters ) {
+			return $query_vars;
+		}
 
 		$new_query_vars = array();
 		foreach ( $query_vars as $key => $value ) {
