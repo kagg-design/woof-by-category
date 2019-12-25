@@ -18,7 +18,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function test_constructor() {
 		$classname = 'Woof_By_Category';
-		$mock = \Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
+		$mock      = \Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
@@ -130,15 +130,16 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
+	 * @dataProvider dp_test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated
 	 * @throws ReflectionException
 	 */
-	public function test_init_hooks_when_required_plugins_and_WPML_are_activated() {
+	public function test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated( $mulitilingual_plugin ) {
 		$basename = 'woof-by-category/woof-by-category.php';
 		\WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
 
 		\Mockery::mock( 'WooCommerce' );
 		\Mockery::mock( 'WOOF' );
-		\Mockery::mock( 'Sitepress' );
+		\Mockery::mock( $mulitilingual_plugin );
 
 		$subject = new Woof_By_Category();
 
@@ -174,5 +175,17 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$method = $this->set_method_accessibility( $subject, 'init_hooks' );
 		$method->invoke( $subject );
+	}
+
+	/**
+	 * Data provider for dp_test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated
+	 *
+	 * @return array
+	 */
+	public function dp_test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated() {
+		return [
+			'Sitepress' => [ 'Sitepress' ],
+			'Polylang'  => [ 'Polylang' ],
+		];
 	}
 }
