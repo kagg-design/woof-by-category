@@ -37,7 +37,7 @@ class Woof_By_Category {
 	 *
 	 * @var array
 	 */
-	protected $required_plugins = array();
+	protected $required_plugins = [];
 
 	/**
 	 * Plugin options.
@@ -57,33 +57,39 @@ class Woof_By_Category {
 	 * Woof_By_Category constructor.
 	 */
 	public function __construct() {
-		$this->required_plugins = array(
-			array(
+		$this->required_plugins = [
+			[
 				'plugin' => 'woocommerce/woocommerce.php',
 				'name'   => 'WooCommerce',
 				'slug'   => 'woocommerce',
 				'class'  => 'WooCommerce',
 				'active' => false,
-			),
-			array(
+			],
+			[
 				'plugin' => 'woocommerce-products-filter/index.php',
 				'name'   => 'WooCommerce Product Filter',
 				'slug'   => 'woocommerce-products-filter',
 				'class'  => 'WOOF',
 				'active' => false,
-			),
-		);
+			],
+		];
 
-		wp_cache_add_non_persistent_groups( array( self::CACHE_GROUP ) );
-
+		$this->init();
 		$this->init_hooks();
+	}
+
+	/**
+	 * Init plugin.
+	 */
+	protected function init() {
+		wp_cache_add_non_persistent_groups( [ self::CACHE_GROUP ] );
 	}
 
 	/**
 	 * Init hooks.
 	 */
-	public function init_hooks() {
-		add_action( 'admin_init', array( $this, 'check_requirements' ) );
+	protected function init_hooks() {
+		add_action( 'admin_init', [ $this, 'check_requirements' ] );
 
 		foreach ( $this->required_plugins as $required_plugin ) {
 			if ( ! class_exists( $required_plugin['class'] ) ) {
@@ -91,27 +97,26 @@ class Woof_By_Category {
 			}
 		}
 
-		add_filter( 'option_woof_settings', array( $this, 'wbc_option_woof_settings' ) );
+		add_filter( 'option_woof_settings', [ $this, 'wbc_option_woof_settings' ] );
 
 		if ( class_exists( 'SitePress' ) || class_exists( 'Polylang' ) ) {
 			$this->add_option_filters();
 		}
 
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
+		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_filter(
 			'plugin_action_links_' . plugin_basename( WOOF_BY_CATEGORY_FILE ),
-			array( $this, 'add_settings_link' ),
-			10
+			[ $this, 'add_settings_link' ]
 		);
-		add_action( 'current_screen', array( $this, 'setup_fields' ) );
-		add_action( 'plugins_loaded', array( $this, 'wbc_load_textdomain' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-		add_filter( 'request', array( $this, 'wbc_request_filter' ) );
-		add_filter( 'woof_get_request_data', array( $this, 'wbc_get_request_data' ), 10, 1 );
-		add_filter(
-			'woof_print_content_before_search_form',
-			array( $this, 'woof_print_content_before_search_form_filter' )
-		);
+		add_action( 'current_screen', [ $this, 'setup_fields' ] );
+		add_action( 'plugins_loaded', [ $this, 'wbc_load_textdomain' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+		add_filter( 'request', [ $this, 'wbc_request_filter' ] );
+		add_filter( 'woof_get_request_data', [ $this, 'wbc_get_request_data' ], 10, 1 );
+		add_filter( 'woof_print_content_before_search_form', [
+			$this,
+			'woof_print_content_before_search_form_filter',
+		] );
 	}
 
 	/**
@@ -144,28 +149,17 @@ class Woof_By_Category {
 	 * Add pre_option filter for plugin options.
 	 */
 	private function add_pre_option_filter() {
-		add_filter(
-			'pre_option_' . self::OPTION_NAME,
-			array(
-				$this,
-				'wbc_pre_option_woof_by_category_settings',
-			)
-		);
+		add_filter( 'pre_option_' . self::OPTION_NAME, [ $this, 'wbc_pre_option_woof_by_category_settings' ] );
 	}
 
 	/**
 	 * Add pre_update_option filter for plugin options.
 	 */
 	private function add_pre_update_option_filter() {
-		add_filter(
-			'pre_update_option_' . self::OPTION_NAME,
-			array(
-				$this,
-				'wbc_pre_update_option_woof_by_category_settings',
-			),
-			10,
-			2
-		);
+		add_filter( 'pre_update_option_' . self::OPTION_NAME, [
+			$this,
+			'wbc_pre_update_option_woof_by_category_settings',
+		], 10, 2 );
 	}
 
 	/**
@@ -180,26 +174,17 @@ class Woof_By_Category {
 	 * Remove pre_option filter for plugin options.
 	 */
 	private function remove_pre_option_filter() {
-		remove_filter(
-			'pre_option_' . self::OPTION_NAME,
-			array(
-				$this,
-				'wbc_pre_option_woof_by_category_settings',
-			)
-		);
+		remove_filter( 'pre_option_' . self::OPTION_NAME, [ $this, 'wbc_pre_option_woof_by_category_settings' ] );
 	}
 
 	/**
 	 * Remove pre_update_option filter for plugin options.
 	 */
 	private function remove_pre_update_option_filter() {
-		remove_filter(
-			'pre_update_option_' . self::OPTION_NAME,
-			array(
-				$this,
-				'wbc_pre_update_option_woof_by_category_settings',
-			)
-		);
+		remove_filter( 'pre_update_option_' . self::OPTION_NAME, [
+			$this,
+			'wbc_pre_update_option_woof_by_category_settings',
+		] );
 	}
 
 	/**
@@ -301,7 +286,7 @@ class Woof_By_Category {
 			return $options;
 		}
 
-		$translated_options = array();
+		$translated_options = [];
 		foreach ( $options as $key => $group ) {
 			if ( isset( $group['category'] ) && $group['category'] ) {
 				if ( '/' === $group['category'] ) {
@@ -332,18 +317,16 @@ class Woof_By_Category {
 		}
 
 		// Cannot check nonce here, as WOOF does not use it.
-		// @codingStandardsIgnoreStart
 		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
 			return $data;
 		}
-		// @codingStandardsIgnoreEnd
 
 		$allowed_filters = $this->get_allowed_filters();
 		if ( null === $allowed_filters ) {
 			return $data;
 		}
 
-		$new_data = array();
+		$new_data = [];
 		foreach ( $data as $key => $value ) {
 			if ( false !== strpos( $key, 'pa_' ) ) {
 				if ( ! in_array( $key, $allowed_filters, true ) ) {
@@ -377,39 +360,37 @@ class Woof_By_Category {
 		 * Conclusion: WooCommerce can show only one product category on the category page.
 		 */
 		// @todo - check nonce
-		// @codingStandardsIgnoreStart
 		if ( isset( $product_cat ) ) {
 			$cats = explode( ',', $product_cat );
 		} elseif ( isset( $_GET['product_cat'] ) ) {
-			// Works for ajaxifyed shop
-			$cats = array( $_GET['product_cat'] );
+			// Works for ajaxifyed shop.
+			$cats = [ $_GET['product_cat'] ];
 		} elseif ( isset( $_GET['really_curr_tax'] ) ) {
-			// Works for widget and subcategory
+			// Works for widget and subcategory.
 			$really_curr_tax = explode( '-', $_GET['really_curr_tax'] );
 			$term            = get_term( $really_curr_tax[0], $really_curr_tax[1] );
 			if ( ! is_wp_error( $term ) ) {
-				$cats = array( $term->slug );
+				$cats = [ $term->slug ];
 			} else {
 				$cats = null;
 			}
 		} else {
 			$cats = null;
 		}
-		// @codingStandardsIgnoreEnd
 
 		if ( null === $cats ) {
 			// Return null to indicate that we should not change WOOF filters.
 			return null;
 		}
 
-		$key             = md5( wp_json_encode( array( $category_filters, $cats ) ) );
+		$key             = md5( wp_json_encode( [ $category_filters, $cats ] ) );
 		$allowed_filters = wp_cache_get( $key, self::CACHE_GROUP );
 
 		if ( false !== $allowed_filters ) {
 			return $allowed_filters;
 		}
 
-		$allowed_filters        = array();
+		$allowed_filters        = [];
 		$max_distance_to_parent = PHP_INT_MAX;
 		foreach ( $category_filters as $cat => $filters ) {
 			$distance_to_parent = $this->has_parent( $cat, $cats );
@@ -421,7 +402,7 @@ class Woof_By_Category {
 			}
 		}
 		if ( ! $allowed_filters ) {
-			$allowed_filters = array();
+			$allowed_filters = [];
 		}
 		$allowed_filters = array_unique( $allowed_filters );
 		wp_cache_set( $key, $allowed_filters, self::CACHE_GROUP );
@@ -489,7 +470,7 @@ class Woof_By_Category {
 			return $category_filters;
 		}
 
-		$category_filters = array();
+		$category_filters = [];
 
 		// Get current settings.
 		$options = get_option( self::OPTION_NAME );
@@ -559,7 +540,7 @@ class Woof_By_Category {
 			return $query_vars;
 		}
 
-		$new_query_vars = array();
+		$new_query_vars = [];
 		foreach ( $query_vars as $key => $value ) {
 			if ( false !== strpos( $key, 'pa_' ) ) {
 				if ( ! in_array( $key, $allowed_filters, true ) ) {
@@ -591,7 +572,7 @@ class Woof_By_Category {
 		$menu_title = __( 'WOOF by Category', 'woof-by-category' );
 		$capability = 'manage_options';
 		$slug       = 'woof-by-category';
-		$callback   = array( $this, 'woof_by_category_settings_page' );
+		$callback   = [ $this, 'woof_by_category_settings_page' ];
 		$icon       = 'dashicons-filter';
 		$position   = null;
 		add_menu_page( $page_title, $menu_title, $capability, $slug, $callback, $icon );
@@ -630,19 +611,19 @@ class Woof_By_Category {
 					<input type="hidden" name="cmd" value="_s-xclick">
 					<input type="hidden" name="hosted_button_id" value="S9UXRBU2ZKK68">
 					<input
-							type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
-							name="submit" alt="PayPal - The safer, easier way to pay online!">
+						type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
+						name="submit" alt="PayPal - The safer, easier way to pay online!">
 					<img
-							alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
-							height="1">
+						alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
+						height="1">
 				</form>
 
 				<h2 id="appreciation">
 					<?php echo esc_html( __( 'Your appreciation', 'woof-by-category' ) ); ?>
 				</h2>
 				<a
-						target="_blank"
-						href="https://wordpress.org/support/view/plugin-reviews/woof-by-category?rate=5#postform">
+					target="_blank"
+					href="https://wordpress.org/support/view/plugin-reviews/woof-by-category?rate=5#postform">
 					<?php echo esc_html( __( 'Leave a ★★★★★ plugin review on WordPress.org', 'woof-by-category' ) ); ?>
 				</a>
 			</div>
@@ -670,18 +651,18 @@ class Woof_By_Category {
 			return;
 		}
 
-		$product_categories      = array_merge(
-			array(
+		$product_categories = array_merge(
+			[
 				''  => __( '--Select Category--', 'woof-by-category' ),
 				'/' => __( '-Shop Page-', 'woof-by-category' ),
-			),
+			],
 			$this->get_product_categories()
 		);
+
 		$this->product_cat_order = array_keys( $product_categories );
-		$woof_filters            = array_merge(
-			array(
-				'' => __( '--Select Filters--', 'woof-by-category' ),
-			),
+
+		$woof_filters = array_merge(
+			[ '' => __( '--Select Filters--', 'woof-by-category' ), ],
 			$this->get_woof_filters()
 		);
 
@@ -696,30 +677,30 @@ class Woof_By_Category {
 				}
 			}
 		} else {
-			$this->options = array();
+			$this->options = [];
 		}
 
 		// Sort settings array in same order as product_cat_order array,
 		// i.e. in hierarchial order.
-		uksort( $this->options, array( $this, 'compare_cat' ) );
+		uksort( $this->options, [ $this, 'compare_cat' ] );
 
 		// Reindex settings array.
 		$this->options = array_values( $this->options );
 
 		// Add empty group to the end.
 		$count                   = count( $this->options );
-		$this->options[ $count ] = array(
+		$this->options[ $count ] = [
 			'category' => '',
-			'filters'  => array(),
-		);
+			'filters'  => [],
+		];
 		$count ++;
 
 		// Save settings.
 		update_option( self::OPTION_NAME, $this->options );
 
 		for ( $i = 0; $i < $count; $i ++ ) {
-			$fields = array(
-				array(
+			$fields = [
+				[
 					'group'        => $i,
 					'uid'          => 'category',
 					'label'        => __( 'Product Category', 'woof-by-category' ),
@@ -730,8 +711,8 @@ class Woof_By_Category {
 					'helper'       => '',
 					'supplemental' => '',
 					'default'      => '',
-				),
-				array(
+				],
+				[
 					'group'        => $i,
 					'uid'          => 'filters',
 					'label'        => __( 'Filters', 'woof-by-category' ),
@@ -742,8 +723,8 @@ class Woof_By_Category {
 					'helper'       => '',
 					'supplemental' => '',
 					'default'      => '',
-				),
-			);
+				],
+			];
 			add_settings_section(
 				'first_section',
 				__( 'Categories and Filters', 'woof-by-category' ),
@@ -755,7 +736,7 @@ class Woof_By_Category {
 				add_settings_field(
 					$field['uid'] . $i,
 					$field['label'],
-					array( $this, 'field_callback' ),
+					[ $this, 'field_callback' ],
 					'woof-by-category',
 					$field['section'],
 					$field
@@ -826,12 +807,12 @@ class Woof_By_Category {
 						esc_html( $arguments['uid'] ),
 						wp_kses(
 							$options_markup,
-							array(
-								'option' => array(
-									'value'    => array(),
-									'selected' => array(),
-								),
-							)
+							[
+								'option' => [
+									'value'    => [],
+									'selected' => [],
+								],
+							]
 						)
 					);
 				}
@@ -864,12 +845,12 @@ class Woof_By_Category {
 						esc_html( $arguments['uid'] ),
 						wp_kses(
 							$options_markup,
-							array(
-								'option' => array(
-									'value'    => array(),
-									'selected' => array(),
-								),
-							)
+							[
+								'option' => [
+									'value'    => [],
+									'selected' => [],
+								],
+							]
 						)
 					);
 				}
@@ -896,7 +877,7 @@ class Woof_By_Category {
 	 */
 	public function check_requirements() {
 		if ( ! $this->requirements_met() ) {
-			add_action( 'admin_notices', array( $this, 'show_plugin_not_found_notice' ) );
+			add_action( 'admin_notices', [ $this, 'show_plugin_not_found_notice' ] );
 			if ( is_plugin_active( plugin_basename( WOOF_BY_CATEGORY_FILE ) ) ) {
 				deactivate_plugins( plugin_basename( WOOF_BY_CATEGORY_FILE ) );
 				// @codingStandardsIgnoreStart
@@ -904,7 +885,7 @@ class Woof_By_Category {
 					unset( $_GET['activate'] );
 				}
 				// @codingStandardsIgnoreEnd
-				add_action( 'admin_notices', array( $this, 'show_deactivate_notice' ) );
+				add_action( 'admin_notices', [ $this, 'show_deactivate_notice' ] );
 			}
 		}
 	}
@@ -917,6 +898,7 @@ class Woof_By_Category {
 	private function requirements_met() {
 		$all_active = true;
 
+		/** @noinspection PhpIncludeInspection */
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		foreach ( $this->required_plugins as $key => $required_plugin ) {
@@ -936,7 +918,7 @@ class Woof_By_Category {
 	public function show_plugin_not_found_notice() {
 		$message = __( 'WOOF by Category plugin requires the following plugins installed and activated: ', 'woof-by-category' );
 
-		$message_parts = array();
+		$message_parts = [];
 		foreach ( $this->required_plugins as $key => $required_plugin ) {
 			if ( ! $required_plugin['active'] ) {
 				$href = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=';
@@ -998,7 +980,7 @@ class Woof_By_Category {
 	 * @return array
 	 */
 	private function get_product_categories( $cat_id = 0 ) {
-		$cat_list = array();
+		$cat_list = [];
 
 		$crumbs = $this->get_product_term_crumbs( $cat_id );
 		$level  = count( $crumbs );
@@ -1008,14 +990,14 @@ class Woof_By_Category {
 			$crumbs_string .= ' < ' . $crumb['name'] . ' (' . $crumb['count'] . ')';
 		}
 
-		$args       = array(
+		$args       = [
 			'taxonomy'     => 'product_cat',
 			'parent'       => $cat_id,
 			'orderby'      => 'name',
 			'show_count'   => true,
 			'hierarchical' => true,
 			'hide_empty'   => false,
-		);
+		];
 		$categories = get_terms( $args );
 		foreach ( $categories as $cat ) {
 			$cat_list[ $cat->slug ] = str_repeat( '&nbsp;', $level * 2 ) . $cat->name . ' (' . $cat->count . ')' . $crumbs_string;
@@ -1038,7 +1020,7 @@ class Woof_By_Category {
 	 * @return array
 	 */
 	private function get_product_term_crumbs( $term_id ) {
-		$crumbs = array();
+		$crumbs = [];
 
 		$term = get_term_by( 'id', $term_id, 'product_cat' );
 		if ( ! $term ) {
@@ -1059,11 +1041,11 @@ class Woof_By_Category {
 	 * Get WOOF filters in array.
 	 */
 	private function get_woof_filters() {
-		$filters = array();
+		$filters = [];
 
-		remove_filter( 'option_woof_settings', array( $this, 'wbc_option_woof_settings' ) );
+		remove_filter( 'option_woof_settings', [ $this, 'wbc_option_woof_settings' ] );
 		$woof_settings = get_option( 'woof_settings' );
-		add_filter( 'option_woof_settings', array( $this, 'wbc_option_woof_settings' ) );
+		add_filter( 'option_woof_settings', [ $this, 'wbc_option_woof_settings' ] );
 
 		if ( isset( $woof_settings['tax'] ) ) {
 			foreach ( $woof_settings['tax'] as $tax => $value ) {
@@ -1125,9 +1107,11 @@ class Woof_By_Category {
 	 * @return array|mixed Plugin links
 	 */
 	public function add_settings_link( $links ) {
-		$action_links = array(
-			'settings' => '<a href="' . admin_url( 'admin.php?page=woof-by-category' ) . '" aria-label="' . esc_attr__( 'View WOOF by Category settings', 'woof-by-category' ) . '">' . esc_html__( 'Settings', 'woof-by-category' ) . '</a>',
-		);
+		$action_links = [
+			'settings' => '<a href="' . admin_url( 'admin.php?page=woof-by-category' ) . '" aria-label="' .
+			              esc_attr__( 'View WOOF by Category settings', 'woof-by-category' ) . '">' .
+			              esc_html__( 'Settings', 'woof-by-category' ) . '</a>',
+		];
 
 		return array_merge( $action_links, $links );
 	}
@@ -1139,7 +1123,7 @@ class Woof_By_Category {
 		wp_enqueue_style(
 			'woof-by-category-admin',
 			WOOF_BY_CATEGORY_URL . '/css/woof-by-category-admin.css',
-			array(),
+			[],
 			WOOF_BY_CATEGORY_VERSION
 		);
 	}

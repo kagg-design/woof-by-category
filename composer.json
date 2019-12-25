@@ -22,34 +22,32 @@
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "config": {
+    "platform": {
+      "php": "5.6"
+    }
+  },
   "require": {
-    "xrstf/composer-php52": "1.*",
-    "php": ">=5.5.0",
-    "composer/installers": "*"
+    "composer/installers": "^1.7"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
     "sebastian/phpcpd": "^3.0",
-    "10up/wp_mock": "^0.3",
-    "phpunit/phpunit": "^6.5",
-    "squizlabs/php_codesniffer": "^2.9",
-    "wimg/php-compatibility": "^9.0",
-    "wp-coding-standards/wpcs": "^1.2"
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
-    ],
-    "post-update-cmd": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
-    ],
-    "post-autoload-dump": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
-    ]
+    "10up/wp_mock": "~0.2",
+    "phpunit/phpunit": "^5.7",
+    "squizlabs/php_codesniffer": "^3.0",
+    "phpcompatibility/php-compatibility": "^9.0",
+    "wp-coding-standards/wpcs": "^2.0"
   },
   "autoload": {
     "classmap": [
-      "includes/"
+      "classes"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "classes",
+      "tests/phpunit/classes"
     ]
   }
 }

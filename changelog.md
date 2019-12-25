@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.3]
+### Added
+* Added Polylang support
+### Tested
+* Tested with WordPress 5.3
+* Tested with WooCommerce 3.8
+* Required PHP version is bumbed up to 5.6
+
 ## [2.2.1]
 ### Fixed
 * Fixed php warning in class-woof-by-category.php on line 371
