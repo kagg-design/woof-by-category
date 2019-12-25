@@ -113,10 +113,10 @@ class Woof_By_Category {
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 		add_filter( 'request', [ $this, 'wbc_request_filter' ] );
 		add_filter( 'woof_get_request_data', [ $this, 'wbc_get_request_data' ], 10, 1 );
-		add_filter( 'woof_print_content_before_search_form', [
-			$this,
-			'woof_print_content_before_search_form_filter',
-		] );
+		add_filter(
+			'woof_print_content_before_search_form',
+			[ $this, 'woof_print_content_before_search_form_filter' ]
+		);
 	}
 
 	/**
@@ -156,10 +156,12 @@ class Woof_By_Category {
 	 * Add pre_update_option filter for plugin options.
 	 */
 	private function add_pre_update_option_filter() {
-		add_filter( 'pre_update_option_' . self::OPTION_NAME, [
-			$this,
-			'wbc_pre_update_option_woof_by_category_settings',
-		], 10, 2 );
+		add_filter(
+			'pre_update_option_' . self::OPTION_NAME,
+			[ $this, 'wbc_pre_update_option_woof_by_category_settings' ],
+			10,
+			2
+		);
 	}
 
 	/**
@@ -181,10 +183,10 @@ class Woof_By_Category {
 	 * Remove pre_update_option filter for plugin options.
 	 */
 	private function remove_pre_update_option_filter() {
-		remove_filter( 'pre_update_option_' . self::OPTION_NAME, [
-			$this,
-			'wbc_pre_update_option_woof_by_category_settings',
-		] );
+		remove_filter(
+			'pre_update_option_' . self::OPTION_NAME,
+			[ $this, 'wbc_pre_update_option_woof_by_category_settings' ]
+		);
 	}
 
 	/**
@@ -317,6 +319,7 @@ class Woof_By_Category {
 		}
 
 		// Cannot check nonce here, as WOOF does not use it.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
 			return $data;
 		}
@@ -360,14 +363,18 @@ class Woof_By_Category {
 		 * Conclusion: WooCommerce can show only one product category on the category page.
 		 */
 		// @todo - check nonce
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( isset( $product_cat ) ) {
 			$cats = explode( ',', $product_cat );
 		} elseif ( isset( $_GET['product_cat'] ) ) {
 			// Works for ajaxifyed shop.
-			$cats = [ $_GET['product_cat'] ];
+			$cats = [ filter_input( INPUT_GET, 'product_cat', FILTER_SANITIZE_STRING ) ];
 		} elseif ( isset( $_GET['really_curr_tax'] ) ) {
 			// Works for widget and subcategory.
-			$really_curr_tax = explode( '-', $_GET['really_curr_tax'] );
+			$really_curr_tax = explode(
+				'-',
+				filter_input( INPUT_GET, 'really_curr_tax', FILTER_SANITIZE_STRING )
+			);
 			$term            = get_term( $really_curr_tax[0], $really_curr_tax[1] );
 			if ( ! is_wp_error( $term ) ) {
 				$cats = [ $term->slug ];
@@ -377,6 +384,7 @@ class Woof_By_Category {
 		} else {
 			$cats = null;
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		if ( null === $cats ) {
 			// Return null to indicate that we should not change WOOF filters.
@@ -662,7 +670,7 @@ class Woof_By_Category {
 		$this->product_cat_order = array_keys( $product_categories );
 
 		$woof_filters = array_merge(
-			[ '' => __( '--Select Filters--', 'woof-by-category' ), ],
+			[ '' => __( '--Select Filters--', 'woof-by-category' ) ],
 			$this->get_woof_filters()
 		);
 
@@ -880,11 +888,11 @@ class Woof_By_Category {
 			add_action( 'admin_notices', [ $this, 'show_plugin_not_found_notice' ] );
 			if ( is_plugin_active( plugin_basename( WOOF_BY_CATEGORY_FILE ) ) ) {
 				deactivate_plugins( plugin_basename( WOOF_BY_CATEGORY_FILE ) );
-				// @codingStandardsIgnoreStart
+				// phpcs:disable WordPress.Security.NonceVerification.Recommended
 				if ( isset( $_GET['activate'] ) ) {
 					unset( $_GET['activate'] );
 				}
-				// @codingStandardsIgnoreEnd
+				// phpcs:enable WordPress.Security.NonceVerification.Recommended
 				add_action( 'admin_notices', [ $this, 'show_deactivate_notice' ] );
 			}
 		}
@@ -898,7 +906,6 @@ class Woof_By_Category {
 	private function requirements_met() {
 		$all_active = true;
 
-		/** @noinspection PhpIncludeInspection */
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		foreach ( $this->required_plugins as $key => $required_plugin ) {
@@ -1108,9 +1115,10 @@ class Woof_By_Category {
 	 */
 	public function add_settings_link( $links ) {
 		$action_links = [
-			'settings' => '<a href="' . admin_url( 'admin.php?page=woof-by-category' ) . '" aria-label="' .
-			              esc_attr__( 'View WOOF by Category settings', 'woof-by-category' ) . '">' .
-			              esc_html__( 'Settings', 'woof-by-category' ) . '</a>',
+			'settings' =>
+				'<a href="' . admin_url( 'admin.php?page=woof-by-category' ) . '" aria-label="' .
+				esc_attr__( 'View WOOF by Category settings', 'woof-by-category' ) . '">' .
+				esc_html__( 'Settings', 'woof-by-category' ) . '</a>',
 		];
 
 		return array_merge( $action_links, $links );
