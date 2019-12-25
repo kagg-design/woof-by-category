@@ -1,0 +1,27 @@
+<phpunit
+		bootstrap="./tests/bootstrap.php"
+		backupGlobals="false"
+		colors="true"
+		convertErrorsToExceptions="true"
+		convertNoticesToExceptions="true"
+		convertWarningsToExceptions="true"
+>
+	<testsuites>
+		<testsuite name="woof-by-category-tests">
+			<directory prefix="test-" suffix=".php">./tests/tests/</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist>
+			<directory suffix=".php">./</directory>
+			<exclude>
+				<directory>./build</directory>
+				<directory>./locale</directory>
+				<directory>./tests</directory>
+				<directory>./vendor</directory>
+				<directory>./wordpress</directory>
+				<directory>./wordpress-tests-lib</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+</phpunit>
