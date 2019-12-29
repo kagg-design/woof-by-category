@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.3]
 ### Added
 * Added Polylang support
+### Fixed
+* Fixed bugs in ajax filter
 ### Tested
 * Tested with WordPress 5.3
 * Tested with WooCommerce 3.8
-* Required PHP version is bumbed up to 5.6
+* Required minimal PHP version set to 5.6
 
 ## [2.2.1]
 ### Fixed

@@ -6,6 +6,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * Class Woof_By_Category_TestCase
@@ -16,6 +17,7 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 	 * Setup test
 	 */
 	public function setUp() {
+		FunctionMocker::setUp();
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -27,6 +29,7 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 		\WP_Mock::tearDown();
 		Mockery::close();
 		parent::tearDown();
+		FunctionMocker::tearDown();
 	}
 
 	/**

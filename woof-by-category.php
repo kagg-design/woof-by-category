@@ -20,6 +20,7 @@
  * @author  KAGG Design
  */
 
+// @codeCoverageIgnoreStart
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -49,8 +50,9 @@ if ( ! defined( 'WOOF_BY_CATEGORY_VERSION' ) ) {
 	/**
 	 * Plugin version.
 	 */
-	define( 'WOOF_BY_CATEGORY_VERSION', '2.2.1' );
+	define( 'WOOF_BY_CATEGORY_VERSION', '2.3' );
 }
+// @codeCoverageIgnoreEnd
 
 /**
  * Init plugin class on plugin load.
@@ -61,4 +63,5 @@ if ( ! isset( $woof_by_category_plugin ) ) {
 	require_once WOOF_BY_CATEGORY_PATH . '/vendor/autoload.php';
 
 	$woof_by_category_plugin = new Woof_By_Category();
+	$woof_by_category_plugin->init();
 }

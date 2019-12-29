@@ -30,7 +30,7 @@ class Woof_By_Category {
 	 *
 	 * @var string
 	 */
-	const CACHE_GROUP = 'woof_by_category';
+	const CACHE_GROUP = __CLASS__;
 
 	/**
 	 * Required plugins.
@@ -73,16 +73,15 @@ class Woof_By_Category {
 				'active' => false,
 			],
 		];
-
-		$this->init();
-		$this->init_hooks();
 	}
 
 	/**
 	 * Init plugin.
 	 */
-	protected function init() {
+	public function init() {
 		wp_cache_add_non_persistent_groups( [ self::CACHE_GROUP ] );
+
+		$this->init_hooks();
 	}
 
 	/**
@@ -111,8 +110,6 @@ class Woof_By_Category {
 		add_action( 'current_screen', [ $this, 'setup_fields' ] );
 		add_action( 'plugins_loaded', [ $this, 'wbc_load_textdomain' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
-		add_filter( 'request', [ $this, 'wbc_request_filter' ] );
-		add_filter( 'woof_get_request_data', [ $this, 'wbc_get_request_data' ], 10, 1 );
 		add_filter(
 			'woof_print_content_before_search_form',
 			[ $this, 'woof_print_content_before_search_form_filter' ]
@@ -219,8 +216,8 @@ class Woof_By_Category {
 	}
 
 	/**
-	 * Filter update_option() of plugin settings to store value for current WPML language.
-	 * Pass through if WPML is not active.
+	 * Filter update_option() of plugin settings to store value for current language.
+	 * Pass through if WPML or Polylang is not active.
 	 *
 	 * @param mixed $value     The new, unserialized option value.
 	 * @param mixed $old_value The old option value.
@@ -307,52 +304,11 @@ class Woof_By_Category {
 	}
 
 	/**
-	 * Filter WOOF request data to unset WOOF filters not related to current category.
-	 *
-	 * @param array $data Request data.
-	 *
-	 * @return array Modified request data.
-	 */
-	public function wbc_get_request_data( $data ) {
-		if ( ! taxonomy_exists( 'product_cat' ) ) {
-			return $data; // If too early.
-		}
-
-		// Cannot check nonce here, as WOOF does not use it.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
-			return $data;
-		}
-
-		$allowed_filters = $this->get_allowed_filters();
-		if ( null === $allowed_filters ) {
-			return $data;
-		}
-
-		$new_data = [];
-		foreach ( $data as $key => $value ) {
-			if ( false !== strpos( $key, 'pa_' ) ) {
-				if ( ! in_array( $key, $allowed_filters, true ) ) {
-					continue;
-				}
-			}
-			$new_data[ $key ] = $value;
-		}
-
-		return $new_data;
-	}
-
-	/**
-	 * Get allowed filters for current category.
-	 *
-	 * @param array $query_vars Query vars.
+	 * Get allowed filters for current categories.
 	 *
 	 * @return array|null
 	 */
-	private function get_allowed_filters( $query_vars = null ) {
-		$product_cat      = $this->get_product_cat( $query_vars );
-		$category_filters = $this->get_category_filters();
-
+	protected function get_allowed_filters() {
 		/**
 		 * In theory, there could be a number of product_cat arguments.
 		 * But request like
@@ -362,107 +318,122 @@ class Woof_By_Category {
 		 * http://test.kagg.eu/product-category/quisquam/?post_type=product
 		 * Conclusion: WooCommerce can show only one product category on the category page.
 		 */
-		// @todo - check nonce
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( isset( $product_cat ) ) {
-			$cats = explode( ',', $product_cat );
-		} elseif ( isset( $_GET['product_cat'] ) ) {
-			// Works for ajaxifyed shop.
-			$cats = [ filter_input( INPUT_GET, 'product_cat', FILTER_SANITIZE_STRING ) ];
-		} elseif ( isset( $_GET['really_curr_tax'] ) ) {
-			// Works for widget and subcategory.
-			$really_curr_tax = explode(
-				'-',
-				filter_input( INPUT_GET, 'really_curr_tax', FILTER_SANITIZE_STRING )
-			);
-			$term            = get_term( $really_curr_tax[0], $really_curr_tax[1] );
-			if ( ! is_wp_error( $term ) ) {
-				$cats = [ $term->slug ];
-			} else {
-				$cats = null;
-			}
-		} else {
-			$cats = null;
-		}
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
-
-		if ( null === $cats ) {
+		$product_cat = $this->get_product_cat();
+		if ( null === $product_cat ) {
 			// Return null to indicate that we should not change WOOF filters.
 			return null;
 		}
+		$cats = explode( ',', $product_cat );
 
-		$key             = md5( wp_json_encode( [ $category_filters, $cats ] ) );
-		$allowed_filters = wp_cache_get( $key, self::CACHE_GROUP );
+		$category_filters = $this->get_category_filters();
+
+		$cache_key       = md5( wp_json_encode( [ $category_filters, $cats ] ) );
+		$allowed_filters = wp_cache_get( $cache_key, self::CACHE_GROUP );
 
 		if ( false !== $allowed_filters ) {
 			return $allowed_filters;
 		}
 
-		$allowed_filters        = [];
-		$max_distance_to_parent = PHP_INT_MAX;
-		foreach ( $category_filters as $cat => $filters ) {
-			$distance_to_parent = $this->has_parent( $cat, $cats );
-			if ( 0 <= $distance_to_parent ) {
-				if ( $distance_to_parent < $max_distance_to_parent ) {
-					$max_distance_to_parent = $distance_to_parent;
-					$allowed_filters        = $filters;
-				}
-			}
+		$allowed_filters = [];
+		foreach ( $cats as $current_cat ) {
+			$allowed_filters = array_merge(
+				$allowed_filters,
+				$this->get_allowed_filters_for_single_category( $category_filters, $current_cat )
+			);
 		}
-		if ( ! $allowed_filters ) {
-			$allowed_filters = [];
-		}
-		$allowed_filters = array_unique( $allowed_filters );
-		wp_cache_set( $key, $allowed_filters, self::CACHE_GROUP );
+		$allowed_filters = array_values( array_unique( $allowed_filters ) );
+
+		wp_cache_set( $cache_key, $allowed_filters, self::CACHE_GROUP );
 
 		return $allowed_filters;
 	}
 
 	/**
-	 * Get product category.
+	 * Get allowed filters for current single category.
 	 *
-	 * @param null|array $query_vars Query vars.
+	 * @param array  $category_filters Filters.
+	 * @param string $current_cat      Current single category.
 	 *
-	 * @return mixed|null
+	 * @return array|mixed
 	 */
-	private function get_product_cat( $query_vars ) {
-		global $wp_query;
-
-		$product_cat = null;
-		if ( null === $query_vars ) {
-			if ( isset( $wp_query->query_vars['product_cat'] ) ) {
-				$product_cat = $wp_query->query_vars['product_cat'];
-			}
-			if ( wp_doing_ajax() ) {
-				$product_cat = $this->get_last_category_in_path(
-					untrailingslashit( wp_parse_url( wp_get_referer(), PHP_URL_PATH ) )
-				);
-			}
-		} else {
-			if ( isset( $query_vars['product_cat'] ) ) {
-				$product_cat = $this->get_last_category_in_path( $query_vars['product_cat'] );
+	protected function get_allowed_filters_for_single_category( $category_filters, $current_cat ) {
+		$allowed_filters        = [];
+		$max_distance_to_parent = PHP_INT_MAX;
+		foreach ( $category_filters as $filter_cat => $filters ) {
+			$distance_to_parent = $this->has_parent( $filter_cat, $current_cat );
+			if ( 0 <= $distance_to_parent ) {
+				if ( $distance_to_parent < $max_distance_to_parent ) {
+					$max_distance_to_parent = $distance_to_parent;
+					$allowed_filters        = $filters ? $filters : [];
+				}
 			}
 		}
 
-		return $product_cat;
+		return $allowed_filters;
 	}
 
 	/**
-	 * Get last category in path.
-	 *
-	 * @param string $path Path of categories. May include parents or category base.
+	 * Get product category string.
 	 *
 	 * @return string|null
 	 */
-	private function get_last_category_in_path( $path ) {
-		$path = trim( $path, '/' );
-		if ( false !== strpos( $path, '/' ) ) {
-			$product_cat_arr = explode( '/', $path );
+	protected function get_product_cat() {
+		global $wp_query;
 
-			$path = array_pop( $product_cat_arr );
+		$product_cat = $this->get_category_from_woof();
+		if ( $product_cat ) {
+			return $product_cat;
 		}
 
-		return $path;
+		if ( isset( $wp_query->query_vars['product_cat'] ) ) {
+			return $wp_query->query_vars['product_cat'];
+		}
+
+		if ( is_shop() ) {
+			return '/';
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get product_cat from WOOF POST/GET variables.
+	 *
+	 * @return string|null
+	 */
+	protected function get_category_from_woof() {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
+			$link = isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '';
+			parse_str( wp_parse_url( $link, PHP_URL_QUERY ), $query_arr );
+
+			return isset( $query_arr['product_cat'] ) ? $query_arr['product_cat'] : '/';
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$swoof = isset( $_GET['swoof'] ) ? (bool) sanitize_text_field( wp_unslash( $_GET['swoof'] ) ) : false;
+		if ( $swoof ) {
+			return isset( $_GET['product_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['product_cat'] ) ) : '/';
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$really_curr_tax = isset( $_GET['really_curr_tax'] ) ? sanitize_text_field( wp_unslash( $_GET['really_curr_tax'] ) ) : '';
+		if ( $really_curr_tax ) {
+			// Works for widget and subcategory.
+			$really_curr_tax = explode( '-', $really_curr_tax );
+			if ( count( $really_curr_tax ) < 2 ) {
+				return null;
+			}
+			$term = get_term( $really_curr_tax[0], $really_curr_tax[1] );
+			if ( ! is_wp_error( $term ) ) {
+				return $term->slug;
+			}
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		return null;
 	}
 
 	/**
@@ -470,9 +441,8 @@ class Woof_By_Category {
 	 *
 	 * @return array
 	 */
-	private function get_category_filters() {
-		$key              = 'category_filters';
-		$category_filters = wp_cache_get( $key, self::CACHE_GROUP );
+	protected function get_category_filters() {
+		$category_filters = wp_cache_get( __METHOD__, self::CACHE_GROUP );
 
 		if ( false !== $category_filters ) {
 			return $category_filters;
@@ -495,7 +465,7 @@ class Woof_By_Category {
 			}
 		}
 
-		wp_cache_set( $key, $category_filters, self::CACHE_GROUP );
+		wp_cache_set( __METHOD__, $category_filters, self::CACHE_GROUP );
 
 		return $category_filters;
 	}
@@ -509,56 +479,28 @@ class Woof_By_Category {
 			return;
 		}
 
-		echo '<script>';
-
-		// @todo - check nonce
+		$keys_to_delete = [];
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		foreach ( $_GET as $key => $value ) {
 			$key = filter_var( $key, FILTER_SANITIZE_STRING );
 			if ( false !== strpos( $key, 'pa_' ) ) {
 				if ( ! in_array( $key, $allowed_filters, true ) ) {
-					echo 'delete woof_current_values["' . esc_html( $key ) . '"]; ';
+					$keys_to_delete[] = $key;
 				}
 			}
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
+		if ( ! $keys_to_delete ) {
+			return;
+		}
+
+		echo '<script>';
+		foreach ( $keys_to_delete as $key ) {
+			echo 'delete woof_current_values["' . esc_html( $key ) . '"]; ';
+		}
 		echo 'jQuery(document).ready(function($){ woof_get_submit_link(); })';
 		echo '</script>';
-	}
-
-	/**
-	 * Filter main WordPress request to unset WOOF filters not related to current category.
-	 *
-	 * @param array $query_vars Query vars.
-	 *
-	 * @return array Filtered query vars.
-	 */
-	public function wbc_request_filter( $query_vars ) {
-		if ( is_admin() ) {
-			return $query_vars;
-		}
-
-		if ( ! $query_vars || ! isset( $query_vars['product_cat'] ) ) {
-			return $query_vars;
-		}
-
-		$allowed_filters = $this->get_allowed_filters( $query_vars );
-		if ( null === $allowed_filters ) {
-			return $query_vars;
-		}
-
-		$new_query_vars = [];
-		foreach ( $query_vars as $key => $value ) {
-			if ( false !== strpos( $key, 'pa_' ) ) {
-				if ( ! in_array( $key, $allowed_filters, true ) ) {
-					continue;
-				}
-			}
-			$new_query_vars[ $key ] = $value;
-		}
-
-		return $new_query_vars;
 	}
 
 	/**
@@ -582,7 +524,6 @@ class Woof_By_Category {
 		$slug       = 'woof-by-category';
 		$callback   = [ $this, 'woof_by_category_settings_page' ];
 		$icon       = 'dashicons-filter';
-		$position   = null;
 		add_menu_page( $page_title, $menu_title, $capability, $slug, $callback, $icon );
 	}
 
@@ -906,6 +847,11 @@ class Woof_By_Category {
 	private function requirements_met() {
 		$all_active = true;
 
+		/**
+		 * Do not inspect ABSPATH.
+		 *
+		 * @noinspection PhpIncludeInspection
+		 */
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		foreach ( $this->required_plugins as $key => $required_plugin ) {
@@ -971,9 +917,7 @@ class Woof_By_Category {
 		?>
 		<div class="<?php echo esc_attr( $class ); ?>">
 			<p>
-				<span style="display: block; margin: 0.5em 0.5em 0 0; clear: both;">
-				<?php echo wp_kses( $message, wp_kses_allowed_html( 'post' ) ); ?>
-				</span>
+				<?php echo wp_kses_post( $message ); ?>
 			</p>
 		</div>
 		<?php
@@ -1067,43 +1011,45 @@ class Woof_By_Category {
 	/**
 	 * Find if category slug exists in the array of slugs or their parents.
 	 *
-	 * @param string      $cat  Category slug to find.
-	 * @param array|mixed $cats Array of category slugs or null.
+	 * @param string      $filter_cat  Category slug to find.
+	 * @param string|null $current_cat Array of category slugs or null.
 	 *
 	 * @return int Distance to parent in levels or -1 if parent is not found.
 	 */
-	private function has_parent( $cat, $cats ) {
-		if ( ( '/' === $cat ) && ( null === $cats ) ) {
-			return 0;
-		}
-
-		if ( null === $cats ) {
+	protected function has_parent( $filter_cat, $current_cat ) {
+		if ( null === $current_cat ) {
 			return - 1;
 		}
 
-		foreach ( $cats as $category ) {
-			$cat_object = get_term_by( 'slug', $category, 'product_cat' );
-			if ( $cat_object ) {
-				if ( $cat === $cat_object->slug ) {
-					return 0;
-				}
-				$parent_id          = $cat_object->parent;
-				$distance_to_parent = 0;
-				while ( 0 !== $parent_id ) {
-					$distance_to_parent ++;
-					$cat_object = get_term_by( 'id', $parent_id, 'product_cat' );
-					if ( ! $cat_object ) {
-						return - 1;
-					}
-					if ( $cat === $cat_object->slug ) {
-						return $distance_to_parent;
-					}
-					$parent_id = $cat_object->parent;
-				}
-			}
+		if ( ( '/' === $filter_cat ) && ( '/' === $current_cat ) ) {
+			return 0;
 		}
 
-		return - 1;
+		$current_cat_object = get_term_by( 'slug', $current_cat, 'product_cat' );
+
+		if ( ! $current_cat_object ) {
+			return - 1;
+		}
+
+		if ( $filter_cat === $current_cat_object->slug ) {
+			return 0;
+		}
+
+		$parent_id          = $current_cat_object->parent;
+		$distance_to_parent = 0;
+		while ( 0 !== $parent_id ) {
+			$distance_to_parent ++;
+			$current_cat_object = get_term_by( 'id', $parent_id, 'product_cat' );
+			if ( ! $current_cat_object ) {
+				return - 1;
+			}
+			if ( $filter_cat === $current_cat_object->slug ) {
+				return $distance_to_parent;
+			}
+			$parent_id = $current_cat_object->parent;
+		}
+
+		return -1;
 	}
 
 	/**
