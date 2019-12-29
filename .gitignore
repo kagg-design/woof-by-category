@@ -1,10 +1,15 @@
 .DS_Store
-.distignore
 Thumbs.db
 wp-cli.local.yml
 node_modules/
-bin/
+dist/**
+build/**
+tests/**/*.cache
 vendor/
 *.sql
 *.tar.gz
 *.zip
+*.lock
+*.opt
+.idea/
+!composer.lock
