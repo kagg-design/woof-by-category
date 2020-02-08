@@ -406,15 +406,20 @@ class Woof_By_Category {
 		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
 			$link = isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '';
 			parse_str( wp_parse_url( $link, PHP_URL_QUERY ), $query_arr );
-
-			return isset( $query_arr['product_cat'] ) ? $query_arr['product_cat'] : '/';
+			$cat = isset( $query_arr['product_cat'] ) ? $query_arr['product_cat'] : null;
+			if ( $cat ) {
+				return $cat;
+			}
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$swoof = isset( $_GET['swoof'] ) ? (bool) sanitize_text_field( wp_unslash( $_GET['swoof'] ) ) : false;
 		if ( $swoof ) {
-			return isset( $_GET['product_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['product_cat'] ) ) : '/';
+			$cat = isset( $_GET['product_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['product_cat'] ) ) : null;
+			if ( $cat ) {
+				return $cat;
+			}
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 

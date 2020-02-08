@@ -1004,7 +1004,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				],
 				null,
 				null,
-				'/',
+				null,
 			],
 			'post, link w/o product_cat'  => [
 				[
@@ -1013,7 +1013,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				],
 				null,
 				null,
-				'/',
+				null,
 			],
 			'post, link with product_cat' => [
 				[
@@ -1030,7 +1030,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 					'swoof' => '1',
 				],
 				null,
-				'/',
+				null,
 			],
 			'swoof, product_cat'          => [
 				null,
