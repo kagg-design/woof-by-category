@@ -273,62 +273,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @return array
 	 */
 	public function dp_test_get_category_filters() {
-		$options  = [
-			0 =>
-				[
-					'category' => '/',
-					'filters'  =>
-						[
-							0 => 'product_cat',
-							1 => 'pa_color',
-						],
-				],
-			1 =>
-				[
-					'category' => 'assumenda',
-					'filters'  =>
-						[
-							0 => 'product_cat',
-							1 => 'pa_color',
-							2 => 'pa_material',
-						],
-				],
-			2 =>
-				[
-					'category' => 'sub-assumenda',
-					'filters'  =>
-						[
-							0 => 'product_cat',
-							1 => 'pa_color',
-						],
-				],
-			3 =>
-				[
-					'category' => 'sub-sub-assumenda',
-					'filters'  =>
-						[
-							0 => 'product_cat',
-							1 => 'pa_color',
-						],
-				],
-			4 =>
-				[
-					'category' => 'quisquam',
-					'filters'  =>
-						[
-							0 => 'product_cat',
-							1 => 'pa_size',
-							2 => 'pa_weight',
-						],
-				],
-			5 =>
-				[
-					'category' => '',
-					'filters'  =>
-						[
-						],
-				],
-		];
+		$options  = $this->get_test_options();
 		$expected = [
 			'/'                 =>
 				[
@@ -650,6 +595,76 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			'no tax'                  => [ $no_tax_value, [ 'some filters' ], $no_tax_value ],
 			'allowed filters is null' => [ $value, null, $value ],
 			'allowed filters'         => [ $value, $allowed_filters, $allowed_value ],
+		];
+	}
+
+	/**
+	 * @param $lang
+	 * @param $lang_value
+	 * @param $value
+	 * @param $expected
+	 *
+	 * @dataProvider dp_test_wbc_pre_option_woof_by_category_settings
+	 */
+	public function test_wbc_pre_option_woof_by_category_settings( $lang, $lang_value, $value, $expected ) {
+		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+
+		$mock->shouldReceive( 'get_current_language' )->andReturn( $lang );
+
+		\WP_Mock::userFunction( 'get_option' )->with( \Woof_By_Category::OPTION_NAME . '_' . $lang )
+		        ->andReturn( $lang_value );
+		\WP_Mock::userFunction( 'get_option' )->with( \Woof_By_Category::OPTION_NAME )
+		        ->andReturn( $value );
+
+		if ( ! $lang_value ) {
+			\WP_Mock::userFunction( 'remove_filter' )
+			        ->with(
+				        'pre_option_' . \Woof_By_Category::OPTION_NAME,
+				        [ $mock, 'wbc_pre_option_woof_by_category_settings' ]
+			        )
+			        ->once();
+
+			\WP_Mock::expectFilterAdded(
+				'pre_option_' . \Woof_By_Category::OPTION_NAME,
+				[ $mock, 'wbc_pre_option_woof_by_category_settings' ]
+			);
+
+			\WP_Mock::userFunction( 'get_term_by' )->andReturnUsing(
+				function ( $field, $value, $taxonomy ) {
+					return (object) [ 'slug' => $value ];
+				}
+			);
+
+			if ( is_array( $value ) ) {
+				array_pop( $value ); // Remove last element, which is empty.
+			}
+
+			\WP_Mock::userFunction( 'update_option' )
+			        ->with( \Woof_By_Category::OPTION_NAME . '_' . $lang, $value );
+
+		}
+
+		$this->assertSame( $expected, $mock->wbc_pre_option_woof_by_category_settings() );
+	}
+
+	/**
+	 * Data provider for test_wbc_pre_option_woof_by_category_settings
+	 *
+	 * @return array
+	 */
+	public function dp_test_wbc_pre_option_woof_by_category_settings() {
+		$options        = $this->get_test_options();
+		$popped_options = $options;
+		array_pop( $popped_options );
+
+		$options_ru = $this->get_test_options_ru();
+
+		return [
+			'no language, no option'                  => [ null, false, false, false ],
+			'no language, option exists'              => [ null, false, $options, $popped_options ],
+			'no language, option with no lang exists' => [ null, $options, null, $options ],
+			'ru, option_ru exists'                    => [ 'ru', $options_ru, null, $options_ru ],
+			'ru, option_ru does not exist'            => [ 'ru', false, $options, $popped_options ],
 		];
 	}
 
@@ -1185,5 +1200,142 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$subject = new Woof_By_Category();
 		$subject->admin_enqueue_scripts();
+	}
+
+	/**
+	 * @return array
+	 */
+	private function get_test_options() {
+		return [
+			0 =>
+				[
+					'category' => '/',
+					'filters'  =>
+						[
+							0 => 'product_cat',
+							1 => 'pa_color',
+						],
+				],
+			1 =>
+				[
+					'category' => 'assumenda',
+					'filters'  =>
+						[
+							0 => 'product_cat',
+							1 => 'pa_color',
+							2 => 'pa_material',
+						],
+				],
+			2 =>
+				[
+					'category' => 'sub-assumenda',
+					'filters'  =>
+						[
+							0 => 'product_cat',
+							1 => 'pa_color',
+						],
+				],
+			3 =>
+				[
+					'category' => 'sub-sub-assumenda',
+					'filters'  =>
+						[
+							0 => 'product_cat',
+							1 => 'pa_color',
+						],
+				],
+			4 =>
+				[
+					'category' => 'quisquam',
+					'filters'  =>
+						[
+							0 => 'product_cat',
+							1 => 'pa_size',
+							2 => 'pa_weight',
+						],
+				],
+			5 =>
+				[
+					'category' => '',
+					'filters'  => [],
+				],
+		];
+	}
+
+	/**
+	 * @return array
+	 */
+	private function get_test_options_ru() {
+		return [
+			0 =>
+				[
+					'category' => '/',
+				],
+			1 =>
+				[
+					'category' => 'assumenda',
+					'filters'  =>
+						[
+							0 => 'pa_color',
+							1 => 'pa_material',
+						],
+				],
+			2 =>
+				[
+					'category' => 'sab-assumenda',
+					'filters'  => [ 0 => 'pa_material' ],
+				],
+			3 =>
+				[
+					'category' => '',
+					'filters'  => [],
+				],
+		];
+	}
+
+	/**
+	 * @return array
+	 */
+	private function get_test_options_en() {
+		return [
+			0 =>
+				[
+					'category' => '/',
+					'filters'  => [ 0 => '' ],
+				],
+			1 =>
+				[
+					'category' => 'assumenda',
+					'filters'  =>
+						[
+							0 => 'pa_color',
+							1 => 'pa_material',
+						],
+				],
+			2 =>
+				[
+					'category' => 'sub-assumenda',
+					'filters'  => [ 0 => 'pa_color' ],
+				],
+			3 =>
+				[
+					'category' => 'sub-sub-assumenda',
+					'filters'  => [ 0 => 'pa_color' ],
+				],
+			4 =>
+				[
+					'category' => 'quisquam',
+					'filters'  =>
+						[
+							0 => 'pa_size',
+							1 => 'pa_weight',
+						],
+				],
+			5 =>
+				[
+					'category' => '',
+					'filters'  => [],
+				],
+		];
 	}
 }

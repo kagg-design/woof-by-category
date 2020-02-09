@@ -260,7 +260,7 @@ class Woof_By_Category {
 	 *
 	 * @return bool|mixed|string|null
 	 */
-	private function get_current_language() {
+	protected function get_current_language() {
 		if ( class_exists( 'SitePress' ) ) {
 			global $sitepress;
 
