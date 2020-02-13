@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.5]
+### Added
+* Added filtering of unused terms to improve performance
+
 ## [2.4]
 ### Added
 * Added compatibility with WOOF v2.2.3

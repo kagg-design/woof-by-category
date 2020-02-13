@@ -114,6 +114,12 @@ class Woof_By_Category {
 			'woof_print_content_before_search_form',
 			[ $this, 'woof_print_content_before_search_form_filter' ]
 		);
+
+		add_filter(
+			'woof_sort_terms_before_out',
+			[ $this, 'woof_sort_terms_before_out_filter' ],
+			- PHP_INT_MAX
+		);
 	}
 
 	/**
@@ -506,6 +512,24 @@ class Woof_By_Category {
 		}
 		echo 'jQuery(document).ready(function($){ woof_get_submit_link(); })';
 		echo '</script>';
+	}
+
+	/**
+	 * Filter terms before output.
+	 *
+	 * @param array $terms Terms.
+	 *
+	 * @return array
+	 */
+	public function woof_sort_terms_before_out_filter( $terms ) {
+		$allowed_filters = $this->get_allowed_filters();
+		foreach ( $terms as $id => $term ) {
+			if ( ! in_array( $term['taxonomy'], $allowed_filters, true ) ) {
+				unset( $terms[ $id ] );
+			}
+		}
+
+		return $terms;
 	}
 
 	/**
