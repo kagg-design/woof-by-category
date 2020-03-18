@@ -523,6 +523,7 @@ class Woof_By_Category {
 	 */
 	public function woof_sort_terms_before_out_filter( $terms ) {
 		$allowed_filters = $this->get_allowed_filters();
+		$allowed_filters = $allowed_filters ? $allowed_filters : [];
 		foreach ( $terms as $id => $term ) {
 			if ( ! in_array( $term['taxonomy'], $allowed_filters, true ) ) {
 				unset( $terms[ $id ] );
