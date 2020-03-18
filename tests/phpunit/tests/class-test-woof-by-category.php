@@ -1083,6 +1083,43 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		];
 	}
 
+	public function test_woof_sort_terms_before_out_filter() {
+		$allowed_filters = [
+			0 => 'product_cat',
+			1 => 'pa_color',
+		];
+
+		$terms = [
+			52  =>
+				[
+					'term_id'  => 52,
+					'slug'     => 'uncategorized',
+					'taxonomy' => 'product_cat',
+					'name'     => 'Uncategorized',
+					'count'    => 0,
+					'parent'   => 0,
+					'childs'   => [],
+				],
+			75  =>
+				[
+					'term_id'  => 75,
+					'slug'     => 'some-taxonomy',
+					'taxonomy' => 'some_taxonomy',
+					'name'     => 'Some taxonomy',
+					'count'    => 0,
+					'parent'   => 0,
+					'childs'   => [],
+				],
+		];
+
+		$expected = $terms;
+		unset( $expected [75] );
+
+		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock->shouldReceive( 'get_allowed_filters' )->with()->andReturn( $allowed_filters );
+		$this->assertSame( $expected, $mock->woof_sort_terms_before_out_filter( $terms ) );
+	}
+
 	/**
 	 * @param $filter_cat
 	 * @param $current_cat
