@@ -25,7 +25,7 @@ The WordPress Plugin WOOF by Category includes the following files:
 ```
 git clone https://github.com/kagg-design/woof-by-category
 cd woof-by-category
-composer install --no-dev
+make install
 ```
 
 ## Recommended Tools

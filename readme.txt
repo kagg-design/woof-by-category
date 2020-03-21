@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
 Tested up to: 5.4
-Stable tag: 2.5.1
+Stable tag: 2.6
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -44,6 +44,20 @@ Automatic updates should work like a charm; as always though, ensure you backup 
 
 == Frequently Asked Questions ==
 
+= How to use additional product taxonomies, not only product_cat?
+
+Add this code to your theme's `functions.php` file:
+
+`
+function wbc_product_categories_filter( $categories ) {
+	return array_merge( $categories, [ 'tax-1', 'tax-2' ] );
+}
+
+add_filter( 'wbc_product_categories', 'wbc_product_categories_filter' );
+`
+
+where `tax-1`, `tax-2`, are additional product taxonomies to use with the plugin.
+
 = Where can I get support or talk to other users? =
 
 If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](https://wordpress.org/support/plugin/woof-by-category).
@@ -55,6 +69,9 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 3. Plugins filters (Size and Weight) on a "Quisquam" category page.
 
 == Changelog ==
+
+= 2.6 =
+* Added filter to use additional product taxonomies, not product_cat only
 
 = 2.5.1 =
 * Fixed php warning in woof_sort_terms_before_out_filter().

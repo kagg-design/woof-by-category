@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6]
+### Added
+* Added filter to use additional product taxonomies, not product_cat only
+
 ## [2.5.1]
 ### Fixed
 * Fixed php warning in woof_sort_terms_before_out_filter().
