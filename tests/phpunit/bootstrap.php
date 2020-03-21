@@ -47,6 +47,9 @@ FunctionMocker::init(
 		'whitelist'             => [
 			realpath( PLUGIN_PATH . '/classes' ),
 		],
+		'redefinable-internals' => [
+			'class_exists',
+		],
 	]
 );
 

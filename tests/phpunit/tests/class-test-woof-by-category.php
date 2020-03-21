@@ -13,7 +13,7 @@ use tad\FunctionMocker\FunctionMocker;
 class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 	public function tearDown() {
-		unset( $GLOBALS['wp_query'], $_POST, $_GET );
+		unset( $GLOBALS['wp_query'], $GLOBALS['sitepress'], $_POST, $_GET );
 
 		parent::tearDown();
 	}
@@ -666,6 +666,171 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			'ru, option_ru exists'                    => [ 'ru', $options_ru, null, $options_ru ],
 			'ru, option_ru does not exist'            => [ 'ru', false, $options, $popped_options ],
 		];
+	}
+
+	/**
+	 * @param $lang
+	 * @param $default_lang
+	 * @param $value
+	 * @param $old_value
+	 * @param $expected
+	 *
+	 * @dataProvider dp_wbc_pre_update_option_woof_by_category_settings
+	 */
+	public function test_wbc_pre_update_option_woof_by_category_settings( $lang, $default_lang, $value, $old_value, $expected ) {
+		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+
+		$mock->shouldReceive( 'get_current_language' )->once()->andReturn( $lang );
+		$mock->shouldReceive( 'get_default_language' )->once()->andReturn( $default_lang );
+
+		\WP_Mock::userFunction( 'update_option' )->with( \Woof_By_Category::OPTION_NAME . '_' . $lang, $value );
+		\WP_Mock::userFunction( 'update_option' )->with( \Woof_By_Category::OPTION_NAME, $value );
+
+		if ( $lang === $default_lang ) {
+			\WP_Mock::userFunction( 'remove_filter' )
+			        ->with(
+				        'pre_option_' . \Woof_By_Category::OPTION_NAME,
+				        [ $mock, 'wbc_pre_option_woof_by_category_settings' ]
+			        )
+			        ->once();
+
+			\WP_Mock::userFunction( 'remove_filter' )
+			        ->with(
+				        'pre_update_option_' . \Woof_By_Category::OPTION_NAME,
+				        [ $mock, 'wbc_pre_update_option_woof_by_category_settings' ]
+			        )
+			        ->once();
+
+			\WP_Mock::expectFilterAdded(
+				'pre_option_' . \Woof_By_Category::OPTION_NAME,
+				[ $mock, 'wbc_pre_option_woof_by_category_settings' ]
+			);
+
+			\WP_Mock::expectFilterAdded(
+				'pre_update_option_' . \Woof_By_Category::OPTION_NAME,
+				[ $mock, 'wbc_pre_update_option_woof_by_category_settings' ],
+				10,
+				2
+			);
+
+			\WP_Mock::userFunction( 'update_option' )
+			        ->with( \Woof_By_Category::OPTION_NAME, $value );
+
+		}
+
+		$this->assertSame( $expected, $mock->wbc_pre_update_option_woof_by_category_settings( $value, $old_value ) );
+	}
+
+	/**
+	 * Data provider for test_wbc_pre_update_option_woof_by_category_settings
+	 *
+	 * @return array
+	 */
+	public function dp_wbc_pre_update_option_woof_by_category_settings() {
+		$options        = $this->get_test_options();
+		$popped_options = $options;
+		array_pop( $popped_options );
+
+		$options_ru = $this->get_test_options_ru();
+		$options_en = $this->get_test_options_en();
+
+		return [
+			'no language, no option'             => [ null, null, false, false, false ],
+			'no language, option, no old option' => [ null, null, $options, false, false ],
+			'no language, option, old option'    => [ null, null, $options, [], [] ],
+			'en, option_en'                      => [ 'en', 'en', $options_ru, [], [] ],
+			'ru, option_ru'                      => [ 'ru', 'en', $options_en, [], [] ],
+		];
+	}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function test_get_default_language() {
+		$sitepress_exists = false;
+		$polylang_exists  = false;
+
+		$wpml_default_language = 'en';
+		$pll_default_language  = 'ru';
+
+		FunctionMocker::replace(
+			'class_exists',
+			function ( $class_name ) use ( &$sitepress_exists, &$polylang_exists ) {
+				if ( 'SitePress' === $class_name ) {
+					return $sitepress_exists;
+				}
+				if ( 'Polylang' === $class_name ) {
+					return $polylang_exists;
+				}
+
+				return null;
+			}
+		);
+
+		$sitepress = \Mockery::mock( 'SitePress' );
+		$sitepress->shouldReceive( 'get_default_language' )->andReturn( $wpml_default_language );
+
+		$GLOBALS['sitepress'] = $sitepress;
+
+		\WP_Mock::userFunction( 'pll_default_language' )->with()->andReturn( $pll_default_language );
+
+		$subject = new Woof_By_Category();
+
+		$method = $this->set_method_accessibility( $subject, 'get_default_language' );
+
+		$this->assertNull( $method->invoke( $subject ) );
+
+		$sitepress_exists = true;
+		$this->assertSame( $wpml_default_language, $method->invoke( $subject ) );
+
+		$sitepress_exists = false;
+		$polylang_exists  = true;
+		$this->assertSame( 'pll_' . $pll_default_language, $method->invoke( $subject ) );
+	}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function test_get_current_language() {
+		$sitepress_exists = false;
+		$polylang_exists  = false;
+
+		$wpml_current_language = 'en';
+		$pll_current_language  = 'ru';
+
+		FunctionMocker::replace(
+			'class_exists',
+			function ( $class_name ) use ( &$sitepress_exists, &$polylang_exists ) {
+				if ( 'SitePress' === $class_name ) {
+					return $sitepress_exists;
+				}
+				if ( 'Polylang' === $class_name ) {
+					return $polylang_exists;
+				}
+
+				return null;
+			}
+		);
+
+		$sitepress = \Mockery::mock( 'SitePress' );
+		$sitepress->shouldReceive( 'get_current_language' )->andReturn( $wpml_current_language );
+
+		$GLOBALS['sitepress'] = $sitepress;
+
+		\WP_Mock::userFunction( 'pll_current_language' )->with()->andReturn( $pll_current_language );
+
+		$subject = new Woof_By_Category();
+
+		$method = $this->set_method_accessibility( $subject, 'get_current_language' );
+
+		$this->assertNull( $method->invoke( $subject ) );
+
+		$sitepress_exists = true;
+		$this->assertSame( $wpml_current_language, $method->invoke( $subject ) );
+
+		$sitepress_exists = false;
+		$polylang_exists  = true;
+		$this->assertSame( 'pll_' . $pll_current_language, $method->invoke( $subject ) );
 	}
 
 	public function test_get_allowed_filters_from_cache() {
