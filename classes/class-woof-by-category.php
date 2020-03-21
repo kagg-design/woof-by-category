@@ -786,25 +786,19 @@ class Woof_By_Category {
 						 */
 						$options_markup .= sprintf(
 							'<option value="%s" %s>%s</option>',
-							$key,
+							esc_attr( $key ),
 							selected( $value, $key, false ),
-							$label
+							esc_html( $label )
 						);
 					}
+					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 					printf(
 						'<select name="woof_by_category_settings[%1$s][%2$s]">%3$s</select>',
 						esc_html( $arguments['group'] ),
 						esc_html( $arguments['uid'] ),
-						wp_kses(
-							$options_markup,
-							[
-								'option' => [
-									'value'    => [],
-									'selected' => [],
-								],
-							]
-						)
+						$options_markup
 					);
+					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				break;
 			case 'multiple': // If it is a multiple select dropdown.
@@ -824,25 +818,19 @@ class Woof_By_Category {
 						 */
 						$options_markup .= sprintf(
 							'<option value="%s" %s>%s</option>',
-							$key,
+							esc_attr( $key ),
 							$selected,
-							$label
+							esc_html( $label )
 						);
 					}
+					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 					printf(
 						'<select multiple="multiple" name="woof_by_category_settings[%1$s][%2$s][]">%3$s</select>',
 						esc_html( $arguments['group'] ),
 						esc_html( $arguments['uid'] ),
-						wp_kses(
-							$options_markup,
-							[
-								'option' => [
-									'value'    => [],
-									'selected' => [],
-								],
-							]
-						)
+						$options_markup
 					);
+					// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				break;
 			default:
