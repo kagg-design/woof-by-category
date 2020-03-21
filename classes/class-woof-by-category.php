@@ -297,7 +297,7 @@ class Woof_By_Category {
 				if ( '/' === $group['category'] ) {
 					$translated_options[] = $group;
 				} else {
-					$translated_category = get_term_by( 'slug', $group['category'], 'product_cat' );
+					$translated_category = $this->get_term_by_slug( $group['category'] );
 					if ( $translated_category ) {
 						$group['category']    = $translated_category->slug;
 						$translated_options[] = $group;
@@ -393,6 +393,15 @@ class Woof_By_Category {
 
 		if ( isset( $wp_query->query_vars['product_cat'] ) ) {
 			return $wp_query->query_vars['product_cat'];
+		}
+
+		if ( is_tax() ) {
+			$queried_object   = get_queried_object();
+			$current_taxonomy = get_taxonomy( $queried_object->taxonomy );
+			$object_types     = $current_taxonomy->object_type;
+			if ( ! empty( $object_types ) && in_array( 'product', $object_types, true ) ) {
+				return $queried_object->slug;
+			}
 		}
 
 		if ( is_shop() ) {
@@ -877,11 +886,6 @@ class Woof_By_Category {
 	private function requirements_met() {
 		$all_active = true;
 
-		/**
-		 * Do not inspect ABSPATH.
-		 *
-		 * @noinspection PhpIncludeInspection
-		 */
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		foreach ( $this->required_plugins as $key => $required_plugin ) {
@@ -971,8 +975,10 @@ class Woof_By_Category {
 			$crumbs_string .= ' < ' . $crumb['name'] . ' (' . $crumb['count'] . ')';
 		}
 
+		$taxonomies = $this->get_taxonomies();
+
 		$args       = [
-			'taxonomy'     => 'product_cat',
+			'taxonomy'     => $taxonomies,
 			'parent'       => $cat_id,
 			'orderby'      => 'name',
 			'show_count'   => true,
@@ -980,6 +986,11 @@ class Woof_By_Category {
 			'hide_empty'   => false,
 		];
 		$categories = get_terms( $args );
+
+		if ( is_wp_error( $categories ) ) {
+			return $cat_list;
+		}
+
 		foreach ( $categories as $cat ) {
 			$cat_list[ $cat->slug ] = str_repeat( '&nbsp;', $level * 2 ) . $cat->name . ' (' . $cat->count . ')' . $crumbs_string;
 			$child_categories       = $this->get_product_categories( $cat->term_id );
@@ -1003,16 +1014,16 @@ class Woof_By_Category {
 	private function get_product_term_crumbs( $term_id ) {
 		$crumbs = [];
 
-		$term = get_term_by( 'id', $term_id, 'product_cat' );
-		if ( ! $term ) {
+		$term = get_term( $term_id );
+		if ( ! $term || is_wp_error( $term ) ) {
 			return $crumbs;
 		}
 
-		while ( $term && 0 !== $term->term_id ) {
+		while ( $term && ! is_wp_error( $term ) && 0 !== $term->term_id ) {
 			$crumb['name']  = $term->name;
 			$crumb['count'] = $term->count;
 			$crumbs[]       = $crumb;
-			$term           = get_term_by( 'id', $term->parent, 'product_cat' );
+			$term           = get_term( $term->parent );
 		}
 
 		return $crumbs;
@@ -1055,7 +1066,7 @@ class Woof_By_Category {
 			return 0;
 		}
 
-		$current_cat_object = get_term_by( 'slug', $current_cat, 'product_cat' );
+		$current_cat_object = $this->get_term_by_slug( $current_cat );
 
 		if ( ! $current_cat_object ) {
 			return - 1;
@@ -1069,8 +1080,8 @@ class Woof_By_Category {
 		$distance_to_parent = 0;
 		while ( 0 !== $parent_id ) {
 			$distance_to_parent ++;
-			$current_cat_object = get_term_by( 'id', $parent_id, 'product_cat' );
-			if ( ! $current_cat_object ) {
+			$current_cat_object = get_term( $parent_id );
+			if ( ! $current_cat_object || is_wp_error( $current_cat_object ) ) {
 				return - 1;
 			}
 			if ( $filter_cat === $current_cat_object->slug ) {
@@ -1079,7 +1090,41 @@ class Woof_By_Category {
 			$parent_id = $current_cat_object->parent;
 		}
 
-		return -1;
+		return - 1;
+	}
+
+	/**
+	 * Get term by slug in all taxonomies.
+	 *
+	 * @param string $slug Term slug.
+	 *
+	 * @return WP_Term|false
+	 */
+	private function get_term_by_slug( $slug ) {
+		$taxonomies = $this->get_taxonomies();
+
+		foreach ( $taxonomies as $taxonomy ) {
+			$current_cat_object = get_term_by( 'slug', $slug, $taxonomy );
+			if ( $current_cat_object ) {
+				return $current_cat_object;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get taxonomies to use.
+	 *
+	 * @return array
+	 */
+	private function get_taxonomies() {
+		/**
+		 * Filters the product taxonomies to use.
+		 *
+		 * @param array $categories Product categories.
+		 */
+		return apply_filters( 'wbc_product_categories', [ 'product_cat' ] );
 	}
 
 	/**
