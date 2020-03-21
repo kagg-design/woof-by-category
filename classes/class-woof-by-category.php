@@ -248,12 +248,13 @@ class Woof_By_Category {
 	 *
 	 * @return bool|mixed|string|null
 	 */
-	private function get_default_language() {
+	protected function get_default_language() {
 		if ( class_exists( 'SitePress' ) ) {
 			global $sitepress;
 
 			return $sitepress->get_default_language();
 		}
+
 		if ( class_exists( 'Polylang' ) ) {
 			return 'pll_' . pll_default_language();
 		}
@@ -272,6 +273,7 @@ class Woof_By_Category {
 
 			return $sitepress->get_current_language();
 		}
+
 		if ( class_exists( 'Polylang' ) ) {
 			return 'pll_' . pll_current_language();
 		}

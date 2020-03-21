@@ -905,12 +905,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	/**
 	 * @param $category_from_woof
 	 * @param $query_vars
+	 * @param $is_tax
+	 * @param $object_types
 	 * @param $is_shop
 	 * @param $expected
 	 *
 	 * @dataProvider dp_test_get_product_cat
 	 */
-	public function test_get_product_cat( $category_from_woof, $query_vars, $is_shop, $expected ) {
+	public function test_get_product_cat( $category_from_woof, $query_vars, $is_tax, $object_types, $is_shop, $expected ) {
 		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$mock->shouldReceive( 'get_category_from_woof' )->andReturn( $category_from_woof );
@@ -919,12 +921,25 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$GLOBALS['wp_query'] = $wp_query;
 
-		\WP_Mock::userFunction(
-			'is_shop',
-			[
-				'return' => $is_shop,
-			]
-		);
+		\WP_Mock::userFunction( 'is_tax' )->with()->andReturn( $is_tax );
+
+		if ( $is_tax ) {
+			$queried_object = (object) [
+				'term_id'  => 1044,
+				'slug'     => $expected,
+				'taxonomy' => 'pwb-brand',
+			];
+
+			$current_taxonomy = (object) [
+				'name'        => 'pwb-brand',
+				'object_type' => $object_types,
+			];
+
+			\WP_Mock::userFunction( 'get_queried_object' )->with()->andReturn( $queried_object );
+			\WP_Mock::userFunction( 'get_taxonomy' )->with( $queried_object->taxonomy )->andReturn( $current_taxonomy );
+		}
+
+		\WP_Mock::userFunction( 'is_shop' )->with()->andReturn( $is_shop );
 
 		$this->assertSame( $expected, $mock->get_product_cat() );
 	}
@@ -936,10 +951,20 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function dp_test_get_product_cat() {
 		return [
-			'product_cat'   => [ 'assumenda,quisquam', [ 'some_query_vars' ], null, 'assumenda,quisquam' ],
-			'query_vars'    => [ null, [ 'product_cat' => 'assumenda' ], null, 'assumenda' ],
-			'is_shop=false' => [ null, [ 'some_query_vars' ], false, null ],
-			'is_shop=true'  => [ null, [ 'some_query_vars' ], true, '/' ],
+			'product_cat'             => [
+				'assumenda,quisquam',
+				[ 'some_query_vars' ],
+				null,
+				null,
+				null,
+				'assumenda,quisquam',
+			],
+			'query_vars'              => [ null, [ 'product_cat' => 'assumenda' ], null, null, null, 'assumenda' ],
+			'is_tax=true, product'    => [ null, [ 'some_query_vars' ], true, [ 'product' ], false, 'la-mer' ],
+			'is_tax=true, other type' => [ null, [ 'some_query_vars' ], true, [ 'other' ], false, null ],
+			'is_tax=true, no type'    => [ null, [ 'some_query_vars' ], true, [], false, null ],
+			'is_shop=false'           => [ null, [ 'some_query_vars' ], null, null, false, null ],
+			'is_shop=true'            => [ null, [ 'some_query_vars' ], null, null, true, '/' ],
 		];
 	}
 
@@ -1165,18 +1190,18 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		foreach ( $cat_objects as $slug => $cat_object ) {
 			\WP_Mock::userFunction(
-				'get_term_by',
+				'get_term',
 				[
-					'args'   => [ 'id', $cat_object->id, 'product_cat' ],
+					'args'   => [ $cat_object->id ],
 					'return' => $cat_object,
 				]
 			);
 		}
 
 		\WP_Mock::userFunction(
-			'get_term_by',
+			'get_term',
 			[
-				'args'   => [ 'id', $bad->parent, 'product_cat' ],
+				'args'   => [ $bad->parent ],
 				'return' => false,
 			]
 		);
