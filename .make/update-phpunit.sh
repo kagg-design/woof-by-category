@@ -44,7 +44,6 @@ fi
 echo "Building with phpunit-$PHP_UNIT"
 
 if [[ $PHP_UNIT == '5.7' ]]; then
-  composer config repositories.patchwork '{"type": "vcs", "url": "https://github.com/OnTheGoSystems/patchwork.git", "no-api": true}'
   composer config github-protocols https
   composer config platform.php 5.6
 
@@ -53,7 +52,6 @@ if [[ $PHP_UNIT == '5.7' ]]; then
 fi
 
 if [[ $PHP_UNIT == '7.5' ]]; then
-  composer config repositories.patchwork '{"type": "vcs", "url": "https://github.com/antecedent/patchwork.git", "no-api": true}'
   composer config github-protocols https
   composer config platform.php 7.2
 
