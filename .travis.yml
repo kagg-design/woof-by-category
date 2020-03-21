@@ -54,7 +54,6 @@ cache:
     - node_modules
 
 before_script:
-  - echo $COMPOSER_AUTH
   - phpenv rehash
   - composer install $DEV
 
