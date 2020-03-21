@@ -54,8 +54,9 @@ cache:
     - node_modules
 
 before_script:
+  - echo $COMPOSER_AUTH
   - phpenv rehash
-  - composer -vvv install $DEV
+  - composer install $DEV
 
 script:
   - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs --colors; fi
