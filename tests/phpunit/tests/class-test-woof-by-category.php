@@ -85,8 +85,21 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		\WP_Mock::expectFilterNotAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
 
 		\WP_Mock::expectActionNotAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
+
+		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) use ( $woof_by_category_file ) {
+				if ( 'WOOF_BY_CATEGORY_FILE' === $name ) {
+					return $woof_by_category_file;
+				}
+
+				return null;
+			}
+		);
+
 		\WP_Mock::expectFilterNotAdded(
-			'plugin_action_links_' . plugin_basename( WOOF_BY_CATEGORY_FILE ),
+			'plugin_action_links_' . plugin_basename( $woof_by_category_file ),
 			[ $subject, 'add_settings_link' ]
 		);
 		\WP_Mock::expectActionNotAdded( 'current_screen', [ $subject, 'setup_fields' ] );
@@ -127,8 +140,21 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		\WP_Mock::expectFilterAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
 
 		\WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
+
+		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) use ( $woof_by_category_file ) {
+				if ( 'WOOF_BY_CATEGORY_FILE' === $name ) {
+					return $woof_by_category_file;
+				}
+
+				return null;
+			}
+		);
+
 		\WP_Mock::expectFilterAdded(
-			'plugin_action_links_' . plugin_basename( WOOF_BY_CATEGORY_FILE ),
+			'plugin_action_links_' . plugin_basename( $woof_by_category_file ),
 			[ $subject, 'add_settings_link' ]
 		);
 		\WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
@@ -173,8 +199,21 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		\WP_Mock::expectFilterAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
 
 		\WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
+
+		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) use ( $woof_by_category_file ) {
+				if ( 'WOOF_BY_CATEGORY_FILE' === $name ) {
+					return $woof_by_category_file;
+				}
+
+				return null;
+			}
+		);
+
 		\WP_Mock::expectFilterAdded(
-			'plugin_action_links_' . plugin_basename( WOOF_BY_CATEGORY_FILE ),
+			'plugin_action_links_' . plugin_basename( $woof_by_category_file ),
 			[ $subject, 'add_settings_link' ]
 		);
 		\WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
@@ -318,10 +357,23 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		$subject = new Woof_By_Category();
 
 		\WP_Mock::passthruFunction( 'plugin_basename' );
+
+		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) use ( $woof_by_category_file ) {
+				if ( 'WOOF_BY_CATEGORY_FILE' === $name ) {
+					return $woof_by_category_file;
+				}
+
+				return null;
+			}
+		);
+
 		\WP_Mock::userFunction( 'load_plugin_textdomain' )->with(
 			'woof-by-category',
 			false,
-			dirname( WOOF_BY_CATEGORY_FILE ) . '/languages/'
+			dirname( $woof_by_category_file ) . '/languages/'
 		);
 
 		$subject->wbc_load_textdomain();
@@ -1412,14 +1464,31 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	public function test_admin_enqueue_scripts() {
+		$woof_by_category_url     = 'http://site.org/wp-content/plugins/woof-by-category';
+		$woof_by_category_version = 'test-version';
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) use ( $woof_by_category_url, $woof_by_category_version ) {
+				if ( 'WOOF_BY_CATEGORY_URL' === $name ) {
+					return $woof_by_category_url;
+				}
+
+				if ( 'WOOF_BY_CATEGORY_VERSION' === $name ) {
+					return $woof_by_category_version;
+				}
+
+				return null;
+			}
+		);
+
 		\WP_Mock::userFunction(
 			'wp_enqueue_style',
 			[
 				'args'  => [
 					'woof-by-category-admin',
-					WOOF_BY_CATEGORY_URL . '/css/woof-by-category-admin.css',
+					$woof_by_category_url . '/css/woof-by-category-admin.css',
 					[],
-					WOOF_BY_CATEGORY_VERSION,
+					$woof_by_category_version,
 				],
 				'times' => 1,
 			]

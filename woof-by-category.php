@@ -22,46 +22,38 @@
 
 // @codeCoverageIgnoreStart
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
-
-if ( ! defined( 'WOOF_BY_CATEGORY_PATH' ) ) {
-	/**
-	 * Path to the plugin dir.
-	 */
-	define( 'WOOF_BY_CATEGORY_PATH', dirname( __FILE__ ) );
-}
-
-if ( ! defined( 'WOOF_BY_CATEGORY_URL' ) ) {
-	/**
-	 * Plugin dir url.
-	 */
-	define( 'WOOF_BY_CATEGORY_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
-}
-
-if ( ! defined( 'WOOF_BY_CATEGORY_FILE' ) ) {
-	/**
-	 * Main plugin file.
-	 */
-	define( 'WOOF_BY_CATEGORY_FILE', __FILE__ );
-}
-
-if ( ! defined( 'WOOF_BY_CATEGORY_VERSION' ) ) {
-	/**
-	 * Plugin version.
-	 */
-	define( 'WOOF_BY_CATEGORY_VERSION', '2.5.1' );
+	exit(); // Exit if accessed directly.
 }
 // @codeCoverageIgnoreEnd
+
+if ( defined( 'WOOF_BY_CATEGORY_VERSION' ) ) {
+	return;
+}
+
+/**
+ * Plugin version.
+ */
+define( 'WOOF_BY_CATEGORY_VERSION', '2.5.1' );
+
+/**
+ * Path to the plugin dir.
+ */
+define( 'WOOF_BY_CATEGORY_PATH', dirname( __FILE__ ) );
+
+/**
+ * Plugin dir url.
+ */
+define( 'WOOF_BY_CATEGORY_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
+
+/**
+ * Main plugin file.
+ */
+define( 'WOOF_BY_CATEGORY_FILE', __FILE__ );
 
 /**
  * Init plugin class on plugin load.
  */
-static $woof_by_category_plugin;
+require_once constant( 'WOOF_BY_CATEGORY_PATH' ) . '/vendor/autoload.php';
 
-if ( ! isset( $woof_by_category_plugin ) ) {
-	require_once WOOF_BY_CATEGORY_PATH . '/vendor/autoload.php';
-
-	$woof_by_category_plugin = new Woof_By_Category();
-	$woof_by_category_plugin->init();
-}
+$woof_by_category_plugin = new Woof_By_Category();
+$woof_by_category_plugin->init();

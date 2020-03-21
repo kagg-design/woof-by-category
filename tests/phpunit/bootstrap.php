@@ -15,29 +15,14 @@ define( 'PLUGIN_TESTS_DIR', __DIR__ );
 /**
  * Plugin main file.
  */
-define( 'PLUGIN_MAIN_FILE', __DIR__ . '/../../woof-by-category.php' );
+define( 'PLUGIN_MAIN_FILE', realpath( __DIR__ . '/../../woof-by-category.php' ) );
 
 /**
  * Path to the plugin dir.
  */
-define( 'PLUGIN_PATH', __DIR__ . '/../..' );
+define( 'PLUGIN_PATH', realpath( __DIR__ . '/../..' ) );
 
 require_once PLUGIN_PATH . '/vendor/autoload.php';
-
-/**
- * Main plugin file.
- */
-define( 'WOOF_BY_CATEGORY_FILE', PLUGIN_PATH . '/woof-by-category.php' );
-
-/**
- * Plugin dir url.
- */
-define( 'WOOF_BY_CATEGORY_URL', 'http://site.org/wp-content/plugins/woof-by-category' );
-
-/**
- * Plugin version.
- */
-define( 'WOOF_BY_CATEGORY_VERSION', 'test-version' );
 
 FunctionMocker::init(
 	[
@@ -45,9 +30,13 @@ FunctionMocker::init(
 			realpath( PLUGIN_PATH ),
 		],
 		'whitelist'             => [
+			realpath( PLUGIN_PATH . '/woof-by-category.php' ),
 			realpath( PLUGIN_PATH . '/classes' ),
 		],
 		'redefinable-internals' => [
+			'define',
+			'defined',
+			'constant',
 			'class_exists',
 		],
 	]

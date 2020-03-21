@@ -104,7 +104,7 @@ class Woof_By_Category {
 
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_filter(
-			'plugin_action_links_' . plugin_basename( WOOF_BY_CATEGORY_FILE ),
+			'plugin_action_links_' . plugin_basename( constant( 'WOOF_BY_CATEGORY_FILE' ) ),
 			[ $this, 'add_settings_link' ]
 		);
 		add_action( 'current_screen', [ $this, 'setup_fields' ] );
@@ -551,7 +551,7 @@ class Woof_By_Category {
 		load_plugin_textdomain(
 			'woof-by-category',
 			false,
-			dirname( plugin_basename( WOOF_BY_CATEGORY_FILE ) ) . '/languages/'
+			dirname( plugin_basename( constant( 'WOOF_BY_CATEGORY_FILE' ) ) ) . '/languages/'
 		);
 	}
 
@@ -868,8 +868,8 @@ class Woof_By_Category {
 	public function check_requirements() {
 		if ( ! $this->requirements_met() ) {
 			add_action( 'admin_notices', [ $this, 'show_plugin_not_found_notice' ] );
-			if ( is_plugin_active( plugin_basename( WOOF_BY_CATEGORY_FILE ) ) ) {
-				deactivate_plugins( plugin_basename( WOOF_BY_CATEGORY_FILE ) );
+			if ( is_plugin_active( plugin_basename( constant( 'WOOF_BY_CATEGORY_FILE' ) ) ) ) {
+				deactivate_plugins( plugin_basename( constant( 'WOOF_BY_CATEGORY_FILE' ) ) );
 				// phpcs:disable WordPress.Security.NonceVerification.Recommended
 				if ( isset( $_GET['activate'] ) ) {
 					unset( $_GET['activate'] );
@@ -1153,9 +1153,9 @@ class Woof_By_Category {
 	public function admin_enqueue_scripts() {
 		wp_enqueue_style(
 			'woof-by-category-admin',
-			WOOF_BY_CATEGORY_URL . '/css/woof-by-category-admin.css',
+			constant( 'WOOF_BY_CATEGORY_URL' ) . '/css/woof-by-category-admin.css',
 			[],
-			WOOF_BY_CATEGORY_VERSION
+			constant( 'WOOF_BY_CATEGORY_VERSION' )
 		);
 	}
 }
