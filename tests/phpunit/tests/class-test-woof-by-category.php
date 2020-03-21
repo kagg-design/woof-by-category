@@ -1214,7 +1214,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		);
 
 		$really_curr_tax = isset( $_GET['really_curr_tax'] ) ? $_GET['really_curr_tax'] : '';
-		$really_curr_tax = explode( '-', $really_curr_tax );
+		$really_curr_tax = explode( '-', $really_curr_tax,2 );
 		if ( count( $really_curr_tax ) < 2 ) {
 			$really_curr_tax = [ '', '' ];
 		}
@@ -1310,6 +1310,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				[
 					'really_curr_tax' => 'assumenda-product',
+				],
+				false,
+				'assumenda',
+			],
+			'really_curr_tax, composite term ok'    => [
+				null,
+				[
+					'really_curr_tax' => '1044-pwb-brand',
 				],
 				false,
 				'assumenda',

@@ -444,7 +444,7 @@ class Woof_By_Category {
 		$really_curr_tax = isset( $_GET['really_curr_tax'] ) ? sanitize_text_field( wp_unslash( $_GET['really_curr_tax'] ) ) : '';
 		if ( $really_curr_tax ) {
 			// Works for widget and subcategory.
-			$really_curr_tax = explode( '-', $really_curr_tax );
+			$really_curr_tax = explode( '-', $really_curr_tax, 2 );
 			if ( count( $really_curr_tax ) < 2 ) {
 				return null;
 			}
