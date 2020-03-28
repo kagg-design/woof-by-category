@@ -20,7 +20,7 @@ define( 'PLUGIN_MAIN_FILE', realpath( __DIR__ . '/../../woof-by-category.php' ) 
 /**
  * Path to the plugin dir.
  */
-define( 'PLUGIN_PATH', realpath( __DIR__ . '/../..' ) );
+define( 'PLUGIN_PATH', realpath( dirname( PLUGIN_MAIN_FILE ) ) );
 
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 

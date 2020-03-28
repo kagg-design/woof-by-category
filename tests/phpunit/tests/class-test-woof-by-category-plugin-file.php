@@ -14,6 +14,10 @@ use tad\FunctionMocker\FunctionMocker;
  */
 class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 
+	public function tearDown() {
+		unset( $GLOBALS[ 'woof_by_category_plugin' ] );
+		parent::tearDown();
+	}
 
 	public function test_when_woof_by_category_version_defined() {
 		FunctionMocker::replace(
@@ -40,6 +44,7 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 
 	/**
 	 * Test loading of main plugin file.
+	 *
 	 * Does not work with php 5.6 due to the bug in Reflection class prior php 7.0,
 	 * and relevant problem in Patchwork.
 	 *
