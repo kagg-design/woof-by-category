@@ -2,8 +2,7 @@
 /**
  * Plugin Name: WOOF by Category
  * Plugin URI: https://wordpress.org/plugins/woof-by-category/
- * Description: WooCommerce Product Filter (WOOF) extension to display set of filters depending on current product
- * category page.
+ * Description: WooCommerce Product Filter (WOOF) extension to display set of filters depending on current product category page.
  * Author: KAGG Design
  * Version: 2.6
  * Author URI: https://kagg.eu/en/
