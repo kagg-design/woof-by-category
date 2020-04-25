@@ -201,8 +201,8 @@ class Woof_By_Category {
 	}
 
 	/**
-	 * Filter get_option() of plugin settings to get value for current WPML language.
-	 * Pass through if WPML is not active.
+	 * Filter get_option() of plugin settings to get value for current language.
+	 * Pass through if WPML or Polylang is not active.
 	 *
 	 * @return mixed Settings for current WPML language.
 	 */
