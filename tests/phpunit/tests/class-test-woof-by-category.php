@@ -16,7 +16,11 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * Tear down.
 	 */
 	public function tearDown() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		unset( $GLOBALS['wp_query'], $GLOBALS['sitepress'], $_POST, $_GET );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		parent::tearDown();
 	}
@@ -71,7 +75,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @throws ReflectionException
+	 * Test init_hooks() when no required plugins activated.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_hooks_when_no_required_plugins_activated() {
 		$basename = 'woof-by-category/woof-by-category.php';
@@ -81,10 +87,10 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
 
-		\WP_Mock::expectFilterNotAdded( 'pre_option_' . $subject::OPTION_NAME, [
-			$subject,
-			'wbc_pre_option_woof_by_category_settings',
-		] );
+		\WP_Mock::expectFilterNotAdded(
+			'pre_option_' . $subject::OPTION_NAME,
+			[ $subject, 'wbc_pre_option_woof_by_category_settings' ]
+		);
 		\WP_Mock::expectFilterNotAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_update_option_woof_by_category_settings' ]
@@ -123,7 +129,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @throws ReflectionException
+	 * Test init_hooks() when required plugins are activated.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_hooks_when_required_plugins_are_activated() {
 		$basename = 'woof-by-category/woof-by-category.php';
@@ -136,10 +144,10 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
 
-		\WP_Mock::expectFilterNotAdded( 'pre_option_' . $subject::OPTION_NAME, [
-			$subject,
-			'wbc_pre_option_woof_by_category_settings',
-		] );
+		\WP_Mock::expectFilterNotAdded(
+			'pre_option_' . $subject::OPTION_NAME,
+			[ $subject, 'wbc_pre_option_woof_by_category_settings' ]
+		);
 		\WP_Mock::expectFilterNotAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_update_option_woof_by_category_settings' ]
@@ -178,8 +186,12 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
+	 * Test init_hooks() when required plugins and multilingual plugin are activated.
+	 *
+	 * @param string $mulitilingual_plugin Class name of multilingual plugin.
+	 *
 	 * @dataProvider dp_test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated( $mulitilingual_plugin ) {
 		$basename = 'woof-by-category/woof-by-category.php';
@@ -193,10 +205,10 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
 
-		\WP_Mock::expectFilterAdded( 'pre_option_' . $subject::OPTION_NAME, [
-			$subject,
-			'wbc_pre_option_woof_by_category_settings',
-		] );
+		\WP_Mock::expectFilterAdded(
+			'pre_option_' . $subject::OPTION_NAME,
+			[ $subject, 'wbc_pre_option_woof_by_category_settings' ]
+		);
 		\WP_Mock::expectFilterAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_update_option_woof_by_category_settings' ],
@@ -249,7 +261,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @throws ReflectionException
+	 * Test get_category_filters() from cache.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_category_filters_from_cache() {
 		$subject = new Woof_By_Category();
@@ -270,12 +284,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @param array|mixed $options
-	 * @param array       $expected
+	 * Test get_category_filters().
+	 *
+	 * @param array|mixed $options  Options.
+	 * @param array       $expected Expected.
 	 *
 	 * @dataProvider dp_test_get_category_filters
 	 *
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_category_filters( $options, $expected ) {
 		global $test_expected;
@@ -361,6 +377,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		];
 	}
 
+	/**
+	 * Test wbc_load_textdomain().
+	 */
 	public function test_wbc_load_textdomain() {
 		$subject = new Woof_By_Category();
 
@@ -387,6 +406,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		$subject->wbc_load_textdomain();
 	}
 
+	/**
+	 * Test add_settings_page().
+	 */
 	public function test_add_settings_page() {
 		$subject = new Woof_By_Category();
 
@@ -405,8 +427,11 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @param $value
-	 * @param $expected
+	 * Test wbc_option_woof_settings().
+	 *
+	 * @param array $value           Value.
+	 * @param array $allowed_filters Allowed filters.
+	 * @param array $expected        Expected.
 	 *
 	 * @dataProvider dp_test_wbc_option_woof_settings
 	 */
@@ -659,10 +684,12 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @param $lang
-	 * @param $lang_value
-	 * @param $value
-	 * @param $expected
+	 * Test wbc_pre_option_woof_by_category_settings().
+	 *
+	 * @param string|null $lang       Language.
+	 * @param bool|array  $lang_value Option for this language.
+	 * @param null|array  $value      Option.
+	 * @param bool|array  $expected   Expected.
 	 *
 	 * @dataProvider dp_test_wbc_pre_option_woof_by_category_settings
 	 */
@@ -673,8 +700,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		\WP_Mock::userFunction( 'get_option' )->with( \Woof_By_Category::OPTION_NAME . '_' . $lang )
 		        ->andReturn( $lang_value );
-		\WP_Mock::userFunction( 'get_option' )->with( \Woof_By_Category::OPTION_NAME )
-		        ->andReturn( $value );
+		\WP_Mock::userFunction( 'get_option' )->with( \Woof_By_Category::OPTION_NAME )->andReturn( $value );
 
 		if ( ! $lang_value ) {
 			\WP_Mock::userFunction( 'remove_filter' )
@@ -729,11 +755,13 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @param $lang
-	 * @param $default_lang
-	 * @param $value
-	 * @param $old_value
-	 * @param $expected
+	 * Test wbc_pre_update_option_woof_by_category_settings().
+	 *
+	 * @param string|null $lang         Language.
+	 * @param string|null $default_lang Default language.
+	 * @param null|array  $value        Option.
+	 * @param null|array  $old_value    Old option.
+	 * @param bool|array  $expected     Expected.
 	 *
 	 * @dataProvider dp_wbc_pre_update_option_woof_by_category_settings
 	 */
@@ -804,7 +832,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @throws ReflectionException
+	 * Test get_default_language().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_default_language() {
 		$sitepress_exists = false;
