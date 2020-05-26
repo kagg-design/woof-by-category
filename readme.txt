@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
 Tested up to: 5.4
-Stable tag: 2.6
+Stable tag: 2.6.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -30,7 +30,7 @@ It is possible to set up any number of category->filters pairs.
 
 = Automatic installation =
 
-Automatic installation is the easiest option as WordPress handles the file transfers itself and you don’t need to leave your web browser. To do an automatic install of WOOF by Category, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
+Automatic installation is the easiest option as WordPress handles the file transfers itself, and you don’t need to leave your web browser. To do an automatic install of WOOF by Category, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
 
 In the search field type “WOOF by Category” and click Search Plugins. Once you’ve found our plugin you can view details about it such as the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
 
@@ -65,10 +65,13 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 == Screenshots ==
 
 1. The WOOF by Category settings panel.
-2. Plugins filters (Color and Material) on an "Assumenda" category page.
-3. Plugins filters (Size and Weight) on a "Quisquam" category page.
+2. Plugin filters (Color and Material) on an "Assumenda" category page.
+3. Plugin filters (Size and Weight) on a "Quisquam" category page.
 
 == Changelog ==
+
+= 2.6.1 =
+* Fixed the bug with disappearing filters on shop page with ajax.
 
 = 2.6 =
 * Added filter to use additional product taxonomies, not product_cat only

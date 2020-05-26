@@ -12,6 +12,9 @@ use tad\FunctionMocker\FunctionMocker;
  */
 class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
+	/**
+	 * Tear down.
+	 */
 	public function tearDown() {
 		unset( $GLOBALS['wp_query'], $GLOBALS['sitepress'], $_POST, $_GET );
 
@@ -19,7 +22,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @throws ReflectionException
+	 * Test constructor.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_constructor() {
 		$classname = 'Woof_By_Category';
@@ -49,6 +54,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		$this->assertSame( $required_plugins, $this->get_protected_property( $mock, 'required_plugins' ) );
 	}
 
+	/**
+	 * Test init().
+	 */
 	public function test_init() {
 		$classname = 'Woof_By_Category';
 		$mock      = \Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -1239,6 +1247,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			]
 		);
 
+		\WP_Mock::userFunction( 'wc_get_page_permalink' )->with( 'shop' )->andReturn( 'http://test.test/shop/' );
+
+		\WP_Mock::userFunction( 'wp_parse_url' )->andReturnUsing(
+			function ( $url, $component ) {
+				return parse_url( $url, $component );
+			}
+		);
+
 		$this->assertSame( $expected, $mock->get_category_from_woof() );
 	}
 
@@ -1249,13 +1265,13 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function dp_test_get_category_from_woof() {
 		return [
-			'no post, no get'             => [
+			'no post, no get'                 => [
 				null,
 				null,
 				null,
 				null,
 			],
-			'post, no link'               => [
+			'post, no link'                   => [
 				[
 					'action' => 'woof_draw_products',
 				],
@@ -1263,16 +1279,16 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				null,
 			],
-			'post, link w/o product_cat'  => [
+			'post, link w/o product_cat'      => [
 				[
 					'action' => 'woof_draw_products',
 					'link'   => 'http://test.test/shop/?swoof=1&paged=1',
 				],
 				null,
 				null,
-				null,
+				'/',
 			],
-			'post, link with product_cat'               => [
+			'post, link with product_cat'     => [
 				[
 					'action' => 'woof_draw_products',
 					'link'   => 'http://test.test/shop/?swoof=1&product_cat=assumenda&paged=1',
@@ -1281,7 +1297,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				'assumenda',
 			],
-			'swoof, no product_cat'                     => [
+			'swoof, no product_cat'           => [
 				null,
 				[
 					'swoof' => '1',
@@ -1289,7 +1305,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				null,
 			],
-			'swoof, product_cat'                        => [
+			'swoof, product_cat'              => [
 				null,
 				[
 					'swoof'       => '1',
@@ -1298,7 +1314,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				'assumenda,quisquam',
 			],
-			'really_curr_tax, wrong'                    => [
+			'really_curr_tax, wrong'          => [
 				null,
 				[
 					'really_curr_tax' => 'wrong',

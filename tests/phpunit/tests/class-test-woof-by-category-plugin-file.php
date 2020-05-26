@@ -14,11 +14,17 @@ use tad\FunctionMocker\FunctionMocker;
  */
 class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 
+	/**
+	 * Tear down.
+	 */
 	public function tearDown() {
-		unset( $GLOBALS[ 'woof_by_category_plugin' ] );
+		unset( $GLOBALS['woof_by_category_plugin'] );
 		parent::tearDown();
 	}
 
+	/**
+	 * Test main plugin file when woof by category version defined.
+	 */
 	public function test_when_woof_by_category_version_defined() {
 		FunctionMocker::replace(
 			'defined',
@@ -63,7 +69,7 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 		FunctionMocker::replace(
 			'constant',
 			function ( $name ) {
-				if ( $name === 'WOOF_BY_CATEGORY_PATH' ) {
+				if ( 'WOOF_BY_CATEGORY_PATH' === $name ) {
 					return PLUGIN_PATH;
 				}
 

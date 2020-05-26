@@ -424,8 +424,16 @@ class Woof_By_Category {
 			$link = isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '';
 			parse_str( wp_parse_url( $link, PHP_URL_QUERY ), $query_arr );
 			$cat = isset( $query_arr['product_cat'] ) ? $query_arr['product_cat'] : null;
+
 			if ( $cat ) {
 				return $cat;
+			}
+
+			$link_path = wp_parse_url( $link, PHP_URL_PATH );
+			$shop_path = wp_parse_url( wc_get_page_permalink( 'shop' ), PHP_URL_PATH );
+
+			if ( $link_path === $shop_path ) {
+				return '/';
 			}
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
@@ -434,6 +442,7 @@ class Woof_By_Category {
 		$swoof = isset( $_GET['swoof'] ) ? (bool) sanitize_text_field( wp_unslash( $_GET['swoof'] ) ) : false;
 		if ( $swoof ) {
 			$cat = isset( $_GET['product_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['product_cat'] ) ) : null;
+
 			if ( $cat ) {
 				return $cat;
 			}
@@ -445,10 +454,13 @@ class Woof_By_Category {
 		if ( $really_curr_tax ) {
 			// Works for widget and subcategory.
 			$really_curr_tax = explode( '-', $really_curr_tax, 2 );
+
 			if ( count( $really_curr_tax ) < 2 ) {
 				return null;
 			}
+
 			$term = get_term( $really_curr_tax[0], $really_curr_tax[1] );
+
 			if ( ! is_wp_error( $term ) ) {
 				return $term->slug;
 			}
