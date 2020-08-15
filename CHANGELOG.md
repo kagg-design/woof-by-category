@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7]
+### Fixed
+* Fixed the bug with not showing filters on single product page.
+
 ## [2.6.1]
+### Fixed
 * Fixed the bug with disappearing filters on shop page with ajax.
 
 ## [2.6]

@@ -23,7 +23,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/antecedent/patchwork.git"
+      "url": "https://github.com/OnTheGoSystems/patchwork.git"
     },
     {
       "type": "vcs",

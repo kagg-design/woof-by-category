@@ -406,7 +406,7 @@ class Woof_By_Category {
 			}
 		}
 
-		if ( is_shop() ) {
+		if ( is_shop() || is_product() ) {
 			return '/';
 		}
 

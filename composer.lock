@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5441299124dae1d54efbf7e77af4019b",
+    "content-hash": "b042289173d929c33362143662d59386",
     "packages": [
         {
             "name": "composer/installers",
@@ -174,16 +174,16 @@
         },
         {
             "name": "antecedent/patchwork",
-            "version": "2.0.9",
+            "version": "2.0.10",
             "source": {
                 "type": "git",
-                "url": "https://github.com/antecedent/patchwork.git",
-                "reference": "cab3be4865e47f1dc447715e76c7b616e48b005d"
+                "url": "https://github.com/OnTheGoSystems/patchwork.git",
+                "reference": "b3503602ee500ee88ebcd7ba001fcca057497ddf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/antecedent/patchwork/zipball/cab3be4865e47f1dc447715e76c7b616e48b005d",
-                "reference": "cab3be4865e47f1dc447715e76c7b616e48b005d",
+                "url": "https://api.github.com/repos/OnTheGoSystems/patchwork/zipball/b3503602ee500ee88ebcd7ba001fcca057497ddf",
+                "reference": "b3503602ee500ee88ebcd7ba001fcca057497ddf",
                 "shasum": ""
             },
             "require": {
@@ -211,10 +211,9 @@
                 "testing"
             ],
             "support": {
-                "source": "https://github.com/antecedent/patchwork/tree/2.0.9",
-                "issues": "https://github.com/antecedent/patchwork/issues"
+                "source": "https://github.com/OnTheGoSystems/patchwork/tree/2.0.10"
             },
-            "time": "2017-08-01T11:52:57+00:00"
+            "time": "2019-05-23T09:20:20+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -2722,5 +2721,6 @@
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.6"
-    }
+    },
+    "plugin-api-version": "1.1.0"
 }

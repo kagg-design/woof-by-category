@@ -1163,11 +1163,12 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @param $is_tax
 	 * @param $object_types
 	 * @param $is_shop
+	 * @param $is_product
 	 * @param $expected
 	 *
 	 * @dataProvider dp_test_get_product_cat
 	 */
-	public function test_get_product_cat( $category_from_woof, $query_vars, $is_tax, $object_types, $is_shop, $expected ) {
+	public function test_get_product_cat( $category_from_woof, $query_vars, $is_tax, $object_types, $is_shop, $is_product, $expected ) {
 		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$mock->shouldReceive( 'get_category_from_woof' )->andReturn( $category_from_woof );
@@ -1195,6 +1196,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		}
 
 		\WP_Mock::userFunction( 'is_shop' )->with()->andReturn( $is_shop );
+		\WP_Mock::userFunction( 'is_product' )->with()->andReturn( $is_product );
 
 		$this->assertSame( $expected, $mock->get_product_cat() );
 	}
@@ -1212,14 +1214,25 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				null,
 				null,
+				null,
 				'assumenda,quisquam',
 			],
-			'query_vars'              => [ null, [ 'product_cat' => 'assumenda' ], null, null, null, 'assumenda' ],
-			'is_tax=true, product'    => [ null, [ 'some_query_vars' ], true, [ 'product' ], false, 'la-mer' ],
-			'is_tax=true, other type' => [ null, [ 'some_query_vars' ], true, [ 'other' ], false, null ],
-			'is_tax=true, no type'    => [ null, [ 'some_query_vars' ], true, [], false, null ],
-			'is_shop=false'           => [ null, [ 'some_query_vars' ], null, null, false, null ],
-			'is_shop=true'            => [ null, [ 'some_query_vars' ], null, null, true, '/' ],
+			'query_vars'              => [
+				null,
+				[ 'product_cat' => 'assumenda' ],
+				null,
+				null,
+				null,
+				null,
+				'assumenda',
+			],
+			'is_tax=true, product'    => [ null, [ 'some_query_vars' ], true, [ 'product' ], false, null, 'la-mer' ],
+			'is_tax=true, other type' => [ null, [ 'some_query_vars' ], true, [ 'other' ], false, null, null ],
+			'is_tax=true, no type'    => [ null, [ 'some_query_vars' ], true, [], false, null, null ],
+			'is_shop=false'           => [ null, [ 'some_query_vars' ], null, null, false, null, null ],
+			'is_shop=true'            => [ null, [ 'some_query_vars' ], null, null, true, null, '/' ],
+			'is_product=false'        => [ null, [ 'some_query_vars' ], null, null, null, false, null ],
+			'is_product=true'         => [ null, [ 'some_query_vars' ], null, null, null, true, '/' ],
 		];
 	}
 
