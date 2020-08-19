@@ -10,7 +10,7 @@
  * Tested up to: 5.5
  * Requires PHP: 5.6
  * WC requires at least: 3.0
- * WC tested up to: 4.3
+ * WC tested up to: 4.4
  *
  * Text Domain: woof-by-category
  * Domain Path: /languages/
