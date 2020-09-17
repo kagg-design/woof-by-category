@@ -471,8 +471,15 @@ class Woof_By_Category {
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_REQUEST['woof_shortcode_txt'] ) ) {
-			// Shortcode can define tax_only to indicate which filters by categories to use.
+		if (
+			isset( $_REQUEST['woof_shortcode_txt'] ) &&
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			false === strpos( $_REQUEST['woof_shortcode_txt'], "sid='widget'" )
+			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		) {
+			// Shortcode on the page can define tax_only to indicate which filters by categories to use.
 			// Return null to indicate that we should not change WOOF filters.
 			return null;
 		}

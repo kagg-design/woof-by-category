@@ -18,7 +18,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	public function tearDown() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		unset( $GLOBALS['wp_query'], $GLOBALS['sitepress'], $_POST, $_GET );
+		unset( $GLOBALS['wp_query'], $GLOBALS['sitepress'], $_POST, $_GET, $_REQUEST );
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
@@ -1240,15 +1240,17 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @param $post
 	 * @param $get
 	 * @param $is_wp_error
+	 * @param $woof_shortcode_txt
 	 * @param $expected
 	 *
 	 * @dataProvider dp_test_get_category_from_woof
 	 */
-	public function test_get_category_from_woof( $post, $get, $is_wp_error, $expected ) {
+	public function test_get_category_from_woof( $post, $get, $is_wp_error, $woof_shortcode_txt, $expected ) {
 		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$_POST = $post;
 		$_GET  = $get;
+		$_REQUEST['woof_shortcode_txt'] = $woof_shortcode_txt;
 
 		\WP_Mock::passthruFunction( 'wp_unslash' );
 		\WP_Mock::passthruFunction( 'sanitize_text_field' );
@@ -1308,86 +1310,110 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function dp_test_get_category_from_woof() {
 		return [
-			'no post, no get'                 => [
+			'no post, no get'                        => [
 				null,
 				null,
 				null,
+				"woof sid='widget'",
 				false,
 			],
-			'post, no link'                   => [
+			'post, no link'                          => [
 				[
 					'action' => 'woof_draw_products',
 				],
 				null,
 				null,
+				"woof sid='widget'",
 				false,
 			],
-			'post, link w/o product_cat'      => [
+			'post, link w/o product_cat'             => [
 				[
 					'action' => 'woof_draw_products',
 					'link'   => 'http://test.test/shop/?swoof=1&paged=1',
 				],
 				null,
 				null,
+				"woof sid='widget'",
 				'/',
 			],
-			'post, link with product_cat'     => [
+			'post, link with product_cat'            => [
 				[
 					'action' => 'woof_draw_products',
 					'link'   => 'http://test.test/shop/?swoof=1&product_cat=assumenda&paged=1',
 				],
 				null,
 				null,
+				"woof sid='widget'",
 				'assumenda',
 			],
-			'swoof, no product_cat'           => [
+			'swoof, no product_cat'                  => [
 				null,
 				[
 					'swoof' => '1',
 				],
 				null,
+				"woof sid='widget'",
 				false,
 			],
-			'swoof, product_cat'              => [
+			'swoof, product_cat'                     => [
 				null,
 				[
 					'swoof'       => '1',
 					'product_cat' => 'assumenda,quisquam',
 				],
 				null,
+				"woof sid='widget'",
 				'assumenda,quisquam',
 			],
-			'really_curr_tax, wrong'          => [
+			'really_curr_tax, wrong'                 => [
 				null,
 				[
 					'really_curr_tax' => 'wrong',
 				],
 				null,
+				"woof sid='widget'",
 				false,
 			],
-			'really_curr_tax, term ok'        => [
+			'really_curr_tax, term ok'               => [
 				null,
 				[
 					'really_curr_tax' => '27-product_cat',
 				],
 				false,
+				"woof sid='widget'",
 				'product_cat',
 			],
-			'really_curr_tax, bad term'       => [
+			'really_curr_tax, bad term'              => [
 				null,
 				[
 					'really_curr_tax' => '31-bad',
 				],
 				true,
+				"woof sid='widget'",
 				false,
 			],
-			'really_curr_tax, hyphen term ok' => [
+			'really_curr_tax, hyphen term ok'        => [
 				null,
 				[
 					'really_curr_tax' => '1044-pwb-brand',
 				],
 				false,
+				"woof sid='widget'",
 				'pwb-brand',
+			],
+			'woof_shortcode_txt from widget'         => [
+				null,
+				null,
+				null,
+				"woof sid='widget'",
+				false,
+			],
+			'woof_shortcode_txt from page shortcode' => [
+				null,
+				null,
+				null,
+				'woof',
+				null,
 			],
 		];
 	}
