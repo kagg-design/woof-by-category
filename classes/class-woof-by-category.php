@@ -314,7 +314,7 @@ class Woof_By_Category {
 	/**
 	 * Get allowed filters for current categories.
 	 *
-	 * @return array|null
+	 * @return array|null null indicates that we should not change WOOF filters.
 	 */
 	protected function get_allowed_filters() {
 		/**
@@ -331,6 +331,7 @@ class Woof_By_Category {
 			// Return null to indicate that we should not change WOOF filters.
 			return null;
 		}
+
 		$cats = explode( ',', $product_cat );
 
 		$category_filters = $this->get_category_filters();
@@ -383,13 +384,13 @@ class Woof_By_Category {
 	/**
 	 * Get product category string.
 	 *
-	 * @return string|null
+	 * @return string|null null indicates that we should not change WOOF filters.
 	 */
 	protected function get_product_cat() {
 		global $wp_query;
 
 		$product_cat = $this->get_category_from_woof();
-		if ( $product_cat ) {
+		if ( null === $product_cat || $product_cat ) {
 			return $product_cat;
 		}
 
@@ -416,14 +417,16 @@ class Woof_By_Category {
 	/**
 	 * Get product_cat from WOOF POST/GET variables.
 	 *
-	 * @return string|null
+	 * @return string|false|null
+	 * false indicates that no category from WOOF was found.
+	 * null indicates that we should not change WOOF filters.
 	 */
 	protected function get_category_from_woof() {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
 			$link = isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '';
 			parse_str( wp_parse_url( $link, PHP_URL_QUERY ), $query_arr );
-			$cat = isset( $query_arr['product_cat'] ) ? $query_arr['product_cat'] : null;
+			$cat = isset( $query_arr['product_cat'] ) ? $query_arr['product_cat'] : false;
 
 			if ( $cat ) {
 				return $cat;
@@ -441,7 +444,7 @@ class Woof_By_Category {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$swoof = isset( $_GET['swoof'] ) ? (bool) sanitize_text_field( wp_unslash( $_GET['swoof'] ) ) : false;
 		if ( $swoof ) {
-			$cat = isset( $_GET['product_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['product_cat'] ) ) : null;
+			$cat = isset( $_GET['product_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['product_cat'] ) ) : false;
 
 			if ( $cat ) {
 				return $cat;
@@ -456,7 +459,7 @@ class Woof_By_Category {
 			$really_curr_tax = explode( '-', $really_curr_tax, 2 );
 
 			if ( count( $really_curr_tax ) < 2 ) {
-				return null;
+				return false;
 			}
 
 			$term = get_term( $really_curr_tax[0], $really_curr_tax[1] );
@@ -467,7 +470,15 @@ class Woof_By_Category {
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		return null;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_REQUEST['woof_shortcode_txt'] ) ) {
+			// Shortcode can define tax_only to indicate which filters by categories to use.
+			// Return null to indicate that we should not change WOOF filters.
+			return null;
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		return false;
 	}
 
 	/**
@@ -546,6 +557,11 @@ class Woof_By_Category {
 	 */
 	public function woof_sort_terms_before_out_filter( $terms ) {
 		$allowed_filters = $this->get_allowed_filters();
+
+		if ( null === $allowed_filters ) {
+			return $terms;
+		}
+
 		$allowed_filters = $allowed_filters ? $allowed_filters : [];
 		foreach ( $terms as $id => $term ) {
 			if ( ! in_array( $term['taxonomy'], $allowed_filters, true ) ) {

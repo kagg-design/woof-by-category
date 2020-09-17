@@ -1218,7 +1218,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				'assumenda,quisquam',
 			],
 			'query_vars'              => [
-				null,
+				false,
 				[ 'product_cat' => 'assumenda' ],
 				null,
 				null,
@@ -1226,13 +1226,13 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				'assumenda',
 			],
-			'is_tax=true, product'    => [ null, [ 'some_query_vars' ], true, [ 'product' ], false, null, 'la-mer' ],
-			'is_tax=true, other type' => [ null, [ 'some_query_vars' ], true, [ 'other' ], false, null, null ],
-			'is_tax=true, no type'    => [ null, [ 'some_query_vars' ], true, [], false, null, null ],
-			'is_shop=false'           => [ null, [ 'some_query_vars' ], null, null, false, null, null ],
-			'is_shop=true'            => [ null, [ 'some_query_vars' ], null, null, true, null, '/' ],
-			'is_product=false'        => [ null, [ 'some_query_vars' ], null, null, null, false, null ],
-			'is_product=true'         => [ null, [ 'some_query_vars' ], null, null, null, true, '/' ],
+			'is_tax=true, product'    => [ false, [ 'some_query_vars' ], true, [ 'product' ], false, null, 'la-mer' ],
+			'is_tax=true, other type' => [ false, [ 'some_query_vars' ], true, [ 'other' ], false, null, null ],
+			'is_tax=true, no type'    => [ false, [ 'some_query_vars' ], true, [], false, null, null ],
+			'is_shop=false'           => [ false, [ 'some_query_vars' ], null, null, false, null, null ],
+			'is_shop=true'            => [ false, [ 'some_query_vars' ], null, null, true, null, '/' ],
+			'is_product=false'        => [ false, [ 'some_query_vars' ], null, null, null, false, null ],
+			'is_product=true'         => [ false, [ 'some_query_vars' ], null, null, null, true, '/' ],
 		];
 	}
 
@@ -1312,7 +1312,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				null,
 				null,
-				null,
+				false,
 			],
 			'post, no link'                   => [
 				[
@@ -1320,7 +1320,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				],
 				null,
 				null,
-				null,
+				false,
 			],
 			'post, link w/o product_cat'      => [
 				[
@@ -1346,7 +1346,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 					'swoof' => '1',
 				],
 				null,
-				null,
+				false,
 			],
 			'swoof, product_cat'              => [
 				null,
@@ -1363,7 +1363,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 					'really_curr_tax' => 'wrong',
 				],
 				null,
-				null,
+				false,
 			],
 			'really_curr_tax, term ok'        => [
 				null,
@@ -1379,7 +1379,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 					'really_curr_tax' => '31-bad',
 				],
 				true,
-				null,
+				false,
 			],
 			'really_curr_tax, hyphen term ok' => [
 				null,

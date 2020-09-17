@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.9]
 ### Tested
 * Tested with WooCommerce 4.5
+* Added ability to work with WOOF shortcodes
 
 ## [2.8]
 ### Tested
