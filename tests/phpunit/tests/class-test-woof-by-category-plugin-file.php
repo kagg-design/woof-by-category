@@ -82,7 +82,7 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 
 		require PLUGIN_MAIN_FILE;
 
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_VERSION', '2.9.1' ] );
+		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_VERSION', '2.9.2' ] );
 		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_PATH', dirname( PLUGIN_MAIN_FILE ) ] );
 		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_URL', PLUGIN_MAIN_FILE ] );
 		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_FILE', PLUGIN_MAIN_FILE ] );

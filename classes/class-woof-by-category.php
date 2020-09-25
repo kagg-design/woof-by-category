@@ -471,21 +471,65 @@ class Woof_By_Category {
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if (
-			isset( $_REQUEST['woof_shortcode_txt'] ) &&
-			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			false === strpos( $_REQUEST['woof_shortcode_txt'], "sid='widget'" )
-			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		) {
-			// Shortcode on the page can define tax_only to indicate which filters by categories to use.
-			// Return null to indicate that we should not change WOOF filters.
-			return null;
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( isset( $_REQUEST['woof_shortcode_txt'] ) ) {
+			if ( false !== strpos( $_REQUEST['woof_shortcode_txt'], "sid='widget'" ) ) {
+				// Allow to work widget as usual.
+				return false;
+			}
+
+			if ( false !== strpos( $_REQUEST['woof_shortcode_txt'], "sid='auto_shortcode'" ) ) {
+				// Allow to work auto_shortcode as usual.
+				return false;
+			}
+
+			if ( isset( $_REQUEST['additional_taxes'] ) ) {
+				// Process additional taxes in the shortcode.
+				return $this->expand_additional_taxes( $_REQUEST['additional_taxes'] );
+			}
 		}
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		return false;
+	}
+
+	/**
+	 * Expand additional taxes and return first tax from it.
+	 *
+	 * @todo Allow to return several taxes, and merge filters for them.
+	 *
+	 * @param string $additional_taxes Additional taxonomies.
+	 *
+	 * @return array|mixed
+	 */
+	protected function expand_additional_taxes( $additional_taxes ) {
+		if ( ! $additional_taxes ) {
+			return false;
+		}
+
+		$additional_taxes = explode( '+', $additional_taxes );
+
+		$slugs = [];
+
+		foreach ( $additional_taxes as $taxes ) {
+			$taxes = explode( ':', $taxes );
+			if ( 2 !== count( $taxes ) ) {
+				continue;
+			}
+			$tax_slug  = $taxes[0];
+			$tax_terms = explode( ',', $taxes[1] );
+			foreach ( $tax_terms as $term_id ) {
+				$term = get_term( intval( $term_id ), $tax_slug );
+				if ( ! is_wp_error( $term ) ) {
+					$slugs[] = $term->slug;
+				}
+			}
+		}
+
+		return empty( $slugs ) ? false : $slugs[0];
 	}
 
 	/**

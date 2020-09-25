@@ -1241,16 +1241,21 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @param $get
 	 * @param $is_wp_error
 	 * @param $woof_shortcode_txt
+	 * @param $additional_taxes
 	 * @param $expected
 	 *
 	 * @dataProvider dp_test_get_category_from_woof
 	 */
-	public function test_get_category_from_woof( $post, $get, $is_wp_error, $woof_shortcode_txt, $expected ) {
+	public function test_get_category_from_woof(
+		$post, $get, $is_wp_error, $woof_shortcode_txt, $additional_taxes, $expected
+	) {
 		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock->shouldReceive( 'expand_additional_taxes' )->andReturn( $additional_taxes );
 
-		$_POST = $post;
-		$_GET  = $get;
+		$_POST                          = $post;
+		$_GET                           = $get;
 		$_REQUEST['woof_shortcode_txt'] = $woof_shortcode_txt;
+		$_REQUEST['additional_taxes']   = $additional_taxes;
 
 		\WP_Mock::passthruFunction( 'wp_unslash' );
 		\WP_Mock::passthruFunction( 'sanitize_text_field' );
@@ -1267,7 +1272,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		);
 
 		$really_curr_tax = isset( $_GET['really_curr_tax'] ) ? $_GET['really_curr_tax'] : '';
-		$really_curr_tax = explode( '-', $really_curr_tax,2 );
+		$really_curr_tax = explode( '-', $really_curr_tax, 2 );
 		if ( count( $really_curr_tax ) < 2 ) {
 			$really_curr_tax = [ '', '' ];
 		}
@@ -1310,23 +1315,25 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function dp_test_get_category_from_woof() {
 		return [
-			'no post, no get'                        => [
+			'no post, no get'                                              => [
 				null,
 				null,
 				null,
 				"woof sid='widget'",
+				null,
 				false,
 			],
-			'post, no link'                          => [
+			'post, no link'                                                => [
 				[
 					'action' => 'woof_draw_products',
 				],
 				null,
 				null,
 				"woof sid='widget'",
+				null,
 				false,
 			],
-			'post, link w/o product_cat'             => [
+			'post, link w/o product_cat'                                   => [
 				[
 					'action' => 'woof_draw_products',
 					'link'   => 'http://test.test/shop/?swoof=1&paged=1',
@@ -1334,9 +1341,10 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				null,
 				"woof sid='widget'",
+				null,
 				'/',
 			],
-			'post, link with product_cat'            => [
+			'post, link with product_cat'                                  => [
 				[
 					'action' => 'woof_draw_products',
 					'link'   => 'http://test.test/shop/?swoof=1&product_cat=assumenda&paged=1',
@@ -1344,18 +1352,20 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				null,
 				null,
 				"woof sid='widget'",
+				null,
 				'assumenda',
 			],
-			'swoof, no product_cat'                  => [
+			'swoof, no product_cat'                                        => [
 				null,
 				[
 					'swoof' => '1',
 				],
 				null,
 				"woof sid='widget'",
+				null,
 				false,
 			],
-			'swoof, product_cat'                     => [
+			'swoof, product_cat'                                           => [
 				null,
 				[
 					'swoof'       => '1',
@@ -1363,58 +1373,141 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				],
 				null,
 				"woof sid='widget'",
+				null,
 				'assumenda,quisquam',
 			],
-			'really_curr_tax, wrong'                 => [
+			'really_curr_tax, wrong'                                       => [
 				null,
 				[
 					'really_curr_tax' => 'wrong',
 				],
 				null,
 				"woof sid='widget'",
+				null,
 				false,
 			],
-			'really_curr_tax, term ok'               => [
+			'really_curr_tax, term ok'                                     => [
 				null,
 				[
 					'really_curr_tax' => '27-product_cat',
 				],
 				false,
 				"woof sid='widget'",
+				null,
 				'product_cat',
 			],
-			'really_curr_tax, bad term'              => [
+			'really_curr_tax, bad term'                                    => [
 				null,
 				[
 					'really_curr_tax' => '31-bad',
 				],
 				true,
 				"woof sid='widget'",
+				null,
 				false,
 			],
-			'really_curr_tax, hyphen term ok'        => [
+			'really_curr_tax, hyphen term ok'                              => [
 				null,
 				[
 					'really_curr_tax' => '1044-pwb-brand',
 				],
 				false,
 				"woof sid='widget'",
+				null,
 				'pwb-brand',
 			],
-			'woof_shortcode_txt from widget'         => [
+			'woof_shortcode_txt from widget'                               => [
 				null,
 				null,
 				null,
-				"woof sid='widget'",
+				"woof sid='widget' autosubmit='-1' start_filtering_btn='0' price_filter='0' redirect='' ajax_redraw='0' btn_position='b' dynamic_recount='-1'",
+				null,
 				false,
 			],
-			'woof_shortcode_txt from page shortcode' => [
+			'woof_shortcode_txt from auto_shortcode'                       => [
 				null,
 				null,
 				null,
-				'woof',
+				"woof sid='auto_shortcode' autohide='price_filter=0'",
 				null,
+				false,
 			],
+			'woof_shortcode_txt from page shortcode'                       => [
+				null,
+				null,
+				null,
+				"woof is_ajax='1' per_page='15' columns='3' sid='flat_grey woof_auto_1_columns'",
+				null,
+				false,
+			],
+			'woof_shortcode_txt from page shortcode with additional taxes' => [
+				null,
+				null,
+				false,
+				"woof is_ajax='1' per_page='15' taxonomies='product_cat:27' columns='3'",
+				'product_cat:27,45+locations:30,31',
+				'product_cat:27,45+locations:30,31',
+			],
+		];
+	}
+
+	/**
+	 * @param $additional_taxes
+	 * @param $terms
+	 * @param $expected
+	 *
+	 * @dataProvider dp_test_expand_additional_taxes
+	 */
+	public function test_expand_additional_taxes( $additional_taxes, $terms, $expected ) {
+		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+
+		\WP_Mock::userFunction( 'get_term' )->andReturnUsing(
+			function ( $term_id, $tax_slug ) use ( $terms ) {
+				if ( ! is_int( $term_id ) || ! $tax_slug ) {
+					return false;
+				}
+
+				if ( ! isset( $terms[ $tax_slug ][ $term_id ] ) ) {
+					return false;
+				}
+
+				$term = (object) [
+					'slug' => $terms[ $tax_slug ][ $term_id ],
+				];
+
+				return $term;
+			}
+		);
+		\WP_Mock::userFunction( 'is_wp_error' )->andReturnUsing(
+			function( $term ) {
+				return false === $term;
+			}
+		);
+
+		$this->assertSame( $expected, $mock->expand_additional_taxes( $additional_taxes ) );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function dp_test_expand_additional_taxes() {
+		$terms = [
+			'product_cat' => [
+				27 => 'Assumenda',
+				28 => 'Quisquam',
+			],
+			'locations'   => [
+				30 => 'Riga',
+				31 => 'Tallinn',
+			],
+		];
+
+		return [
+			'empty'                            => [ '', $terms, false ],
+			'no term specified'                => [ 'product_cat', $terms, false ],
+			'cat terms specified'              => [ 'product_cat:27,28', $terms, 'Assumenda' ],
+			'cat and location terms specified' => [ 'product_cat:28,27+locations:30,31', $terms, 'Quisquam' ],
+			'wrong cat term specified'         => [ 'product_cat:28,99', $terms, 'Quisquam' ],
 		];
 	}
 
@@ -1425,7 +1518,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		];
 
 		$terms = [
-			52  =>
+			52 =>
 				[
 					'term_id'  => 52,
 					'slug'     => 'uncategorized',
@@ -1435,7 +1528,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 					'parent'   => 0,
 					'childs'   => [],
 				],
-			75  =>
+			75 =>
 				[
 					'term_id'  => 75,
 					'slug'     => 'some-taxonomy',
