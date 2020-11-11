@@ -70,6 +70,9 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 == Changelog ==
 
+= 2.10 =
+* Tested with WooCommerce 4.7
+
 = 2.9.2 =
 * Fixed bug with auto_shortcode and additional taxonomies in woof widget.
 
