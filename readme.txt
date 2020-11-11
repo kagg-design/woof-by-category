@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
 Tested up to: 5.5
-Stable tag: 2.9.2
+Stable tag: 2.10
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
