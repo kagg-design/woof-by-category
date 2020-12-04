@@ -2,7 +2,7 @@
 # This file updates phpunit library depending on current php version, or using 1st argument.
 # Usage:
 #   composer-update.sh - to update phpunit library for current php version (or do nothing if already updated)
-#   composer-update.sh x.x - to force update phpunit library for specific php version, where x.x = 5|7|5.6|7.0|7.1|7.2|7.3|7.4
+#   composer-update.sh x.x - to force update phpunit library for specific php version, where x.x = 5.6|7.0|7.1|7.2|7.3|7.4|8.0
 
 if [[ $1 == '' ]]; then
   PHP_VERSION=$(php -v | tac | tail -n 1 | cut -d " " -f 2 | cut -c 1-3)
@@ -11,8 +11,20 @@ if [[ $1 == '' ]]; then
     CURRENT_PHP_UNIT='5.7'
   fi
 
+  if grep -qE 'version.+6\.5' 'vendor/phpunit/phpunit/src/Runner/Version.php'; then
+    CURRENT_PHP_UNIT='6.5'
+  fi
+
   if grep -qE 'version.+7\.5' 'vendor/phpunit/phpunit/src/Runner/Version.php'; then
     CURRENT_PHP_UNIT='7.5'
+  fi
+
+  if grep -qE 'version.+8\.5' 'vendor/phpunit/phpunit/src/Runner/Version.php'; then
+    CURRENT_PHP_UNIT='8.5'
+  fi
+
+  if grep -qE 'version.+9\.5' 'vendor/phpunit/phpunit/src/Runner/Version.php'; then
+    CURRENT_PHP_UNIT='9.5'
   fi
 
   echo "CURRENT_PHP_UNIT: $CURRENT_PHP_UNIT"
