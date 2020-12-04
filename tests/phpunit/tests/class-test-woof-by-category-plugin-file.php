@@ -17,7 +17,7 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 	/**
 	 * Tear down.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $GLOBALS['woof_by_category_plugin'] );
 		parent::tearDown();
 	}

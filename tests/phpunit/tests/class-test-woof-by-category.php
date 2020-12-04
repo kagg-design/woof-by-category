@@ -15,7 +15,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	/**
 	 * Tear down.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		unset( $GLOBALS['wp_query'], $GLOBALS['sitepress'], $_POST, $_GET, $_REQUEST );
