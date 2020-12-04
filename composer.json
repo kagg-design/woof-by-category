@@ -35,8 +35,7 @@
   "config": {
     "platform": {
       "php": "5.6"
-    },
-    "github-protocols": ["https"]
+    }
   },
   "require": {
     "composer/installers": "^1.9"

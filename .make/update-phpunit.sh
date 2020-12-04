@@ -22,12 +22,24 @@ fi
 
 echo "PHP_VERSION: $PHP_VERSION"
 
-if [[ $PHP_VERSION == '5' || $PHP_VERSION == '5.6' || $PHP_VERSION == '7.0' || $PHP_VERSION == '7.1' ]]; then
+if [[ $PHP_VERSION == '5.6' ]]; then
   PHP_UNIT='5.7'
 fi
 
-if [[ $PHP_VERSION == '7' || $PHP_VERSION == '7.2' || $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' ]]; then
+if [[ $PHP_VERSION == '7.0' ]]; then
+  PHP_UNIT='6.5'
+fi
+
+if [[ $PHP_VERSION == '7.1' ]]; then
   PHP_UNIT='7.5'
+fi
+
+if [[ $PHP_VERSION == '7.2' ]]; then
+  PHP_UNIT='8.5'
+fi
+
+if [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' ]]; then
+  PHP_UNIT='9.5'
 fi
 
 if [[ $PHP_UNIT == '' ]]; then
@@ -37,26 +49,54 @@ fi
 
 if [[ $CURRENT_PHP_UNIT == "$PHP_UNIT" ]]; then
   # Do nothing if current version of phpunit is the same as required. Important on CI.
-  # Anytime force update available specifying first argument like 'composer-update.sh 7'
+  # Anytime force update available specifying first argument like 'update-phpunit.sh 7.4'
   exit 0
 fi
 
 echo "Building with phpunit-$PHP_UNIT"
 
+# Restore test files to the current branch version.
+git checkout -- tests
+
 if [[ $PHP_UNIT == '5.7' ]]; then
-  composer config github-protocols https
   composer config platform.php 5.6
 
-  composer remove --dev antecedent/patchwork sebastian/phpcpd phpunit/phpunit 10up/wp_mock lucatume/function-mocker symfony/console phpunit/php-timer
-  composer require --dev antecedent/patchwork:^2.0 sebastian/phpcpd:^3.0 phpunit/phpunit:^5.7 10up/wp_mock:~0.2 lucatume/function-mocker:~1.3 symfony/console:^3.4.36 phpunit/php-timer:^1.0.9
+  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker symfony/console phpunit/php-timer
+  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-test-on-windows symfony/console phpunit/php-timer
+
+  find tests -type f -exec sed -i "s/: void / /g" {} \;
+fi
+
+if [[ $PHP_UNIT == '6.5' ]]; then
+  composer config platform.php 7.0
+
+  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
+  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-test-on-windows symfony/console phpunit/php-timer
+
+  find tests -type f -exec sed -i "s/: void / /g" {} \;
 fi
 
 if [[ $PHP_UNIT == '7.5' ]]; then
-  composer config github-protocols https
+  composer config platform.php 7.1
+
+  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
+  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-test-on-windows symfony/console phpunit/php-timer
+
+  find tests -type f -exec sed -i "s/: void / /g" {} \;
+fi
+
+if [[ $PHP_UNIT == '8.5' ]]; then
   composer config platform.php 7.2
 
-  composer remove --dev antecedent/patchwork sebastian/phpcpd phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
-  composer require --dev antecedent/patchwork:^2.1 sebastian/phpcpd:^4.1 phpunit/phpunit:^7.5 10up/wp_mock:^0.4 lucatume/function-mocker:^1.3 symfony/console:^4.4 phpunit/php-timer:^2.1
+  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
+  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-php8 symfony/console phpunit/php-timer
+fi
+
+if [[ $PHP_UNIT == '9.5' ]]; then
+  composer config platform.php 7.3
+
+  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
+  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-php8 symfony/console phpunit/php-timer
 fi
 
 RESULT=$?

@@ -3,7 +3,7 @@ Contributors: kaggdesign
 Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
-Tested up to: 5.5
+Tested up to: 5.6
 Stable tag: 2.10
 Requires PHP: 5.6
 License: GPLv2 or later
@@ -23,7 +23,7 @@ It is possible to set up any number of category->filters pairs.
 
 = Minimum Requirements =
 
-* PHP version 5.6 or greater (PHP 7.3 or greater is recommended)
+* PHP version 5.6 or greater (PHP 8.0 or greater is recommended)
 * MySQL version 5.0 or greater (MySQL 5.6 or greater is recommended)
 * WooCommerce 3.0 or greater
 * WooCommerce Product Filter (WOOF) plugin
