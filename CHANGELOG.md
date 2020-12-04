@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.11]
+### Tested
+* Tested with WordPress 5.6
+* Tests added for PHP 8.0
+
 ## [2.10]
 ### Tested
 * Tested with WooCommerce 4.7
