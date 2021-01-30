@@ -7,6 +7,10 @@
 
 use tad\FunctionMocker\FunctionMocker;
 
+// phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
+// phpcs:disable WordPress.WhiteSpace.PrecisionAlignment.Found
+// phpcs:disable Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed
+
 /**
  * Class Test_Woof_By_Category
  */
@@ -32,7 +36,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function test_constructor() {
 		$classname = 'Woof_By_Category';
-		$mock      = \Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
+		$mock      = Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
@@ -55,7 +59,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				'active' => false,
 			],
 		];
-		$this->assertSame( $required_plugins, $this->get_protected_property( $mock, 'required_plugins' ) );
+		self::assertSame( $required_plugins, $this->get_protected_property( $mock, 'required_plugins' ) );
 	}
 
 	/**
@@ -63,10 +67,16 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function test_init() {
 		$classname = 'Woof_By_Category';
-		$mock      = \Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		/**
+		 * Mock.
+		 *
+		 * @var Mockery\Mock|Woof_By_Category $mock
+		 */
+		$mock = Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
 		$mock->shouldReceive( 'init_hooks' )->once();
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_cache_add_non_persistent_groups',
 			[ 'times' => 1 ]
 		);
@@ -81,24 +91,24 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function test_init_hooks_when_no_required_plugins_activated() {
 		$basename = 'woof-by-category/woof-by-category.php';
-		\WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
+		WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
 
 		$subject = new Woof_By_Category();
 
-		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
+		WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
 
-		\WP_Mock::expectFilterNotAdded(
+		WP_Mock::expectFilterNotAdded(
 			'pre_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_option_woof_by_category_settings' ]
 		);
-		\WP_Mock::expectFilterNotAdded(
+		WP_Mock::expectFilterNotAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_update_option_woof_by_category_settings' ]
 		);
 
-		\WP_Mock::expectFilterNotAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
+		WP_Mock::expectFilterNotAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
 
-		\WP_Mock::expectActionNotAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
+		WP_Mock::expectActionNotAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 
 		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
 		FunctionMocker::replace(
@@ -112,14 +122,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			}
 		);
 
-		\WP_Mock::expectFilterNotAdded(
+		WP_Mock::expectFilterNotAdded(
 			'plugin_action_links_' . plugin_basename( $woof_by_category_file ),
 			[ $subject, 'add_settings_link' ]
 		);
-		\WP_Mock::expectActionNotAdded( 'current_screen', [ $subject, 'setup_fields' ] );
-		\WP_Mock::expectActionNotAdded( 'plugins_loaded', [ $subject, 'wbc_load_textdomain' ] );
-		\WP_Mock::expectActionNotAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
-		\WP_Mock::expectFilterNotAdded(
+		WP_Mock::expectActionNotAdded( 'current_screen', [ $subject, 'setup_fields' ] );
+		WP_Mock::expectActionNotAdded( 'plugins_loaded', [ $subject, 'wbc_load_textdomain' ] );
+		WP_Mock::expectActionNotAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectFilterNotAdded(
 			'woof_print_content_before_search_form',
 			[ $subject, 'woof_print_content_before_search_form_filter' ]
 		);
@@ -135,27 +145,27 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function test_init_hooks_when_required_plugins_are_activated() {
 		$basename = 'woof-by-category/woof-by-category.php';
-		\WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
+		WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
 
-		\Mockery::mock( 'WooCommerce' );
-		\Mockery::mock( 'WOOF' );
+		Mockery::mock( 'WooCommerce' );
+		Mockery::mock( 'WOOF' );
 
 		$subject = new Woof_By_Category();
 
-		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
+		WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
 
-		\WP_Mock::expectFilterNotAdded(
+		WP_Mock::expectFilterNotAdded(
 			'pre_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_option_woof_by_category_settings' ]
 		);
-		\WP_Mock::expectFilterNotAdded(
+		WP_Mock::expectFilterNotAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_update_option_woof_by_category_settings' ]
 		);
 
-		\WP_Mock::expectFilterAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
+		WP_Mock::expectFilterAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
 
-		\WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
+		WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 
 		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
 		FunctionMocker::replace(
@@ -169,14 +179,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			}
 		);
 
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectFilterAdded(
 			'plugin_action_links_' . plugin_basename( $woof_by_category_file ),
 			[ $subject, 'add_settings_link' ]
 		);
-		\WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
-		\WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'wbc_load_textdomain' ] );
-		\WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
+		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'wbc_load_textdomain' ] );
+		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectFilterAdded(
 			'woof_print_content_before_search_form',
 			[ $subject, 'woof_print_content_before_search_form_filter' ]
 		);
@@ -195,30 +205,30 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated( $mulitilingual_plugin ) {
 		$basename = 'woof-by-category/woof-by-category.php';
-		\WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
+		WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
 
-		\Mockery::mock( 'WooCommerce' );
-		\Mockery::mock( 'WOOF' );
-		\Mockery::mock( $mulitilingual_plugin );
+		Mockery::mock( 'WooCommerce' );
+		Mockery::mock( 'WOOF' );
+		Mockery::mock( $mulitilingual_plugin );
 
 		$subject = new Woof_By_Category();
 
-		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
+		WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'check_requirements' ] );
 
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectFilterAdded(
 			'pre_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_option_woof_by_category_settings' ]
 		);
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectFilterAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
 			[ $subject, 'wbc_pre_update_option_woof_by_category_settings' ],
 			10,
 			2
 		);
 
-		\WP_Mock::expectFilterAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
+		WP_Mock::expectFilterAdded( 'option_woof_settings', [ $subject, 'wbc_option_woof_settings' ] );
 
-		\WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
+		WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 
 		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
 		FunctionMocker::replace(
@@ -232,14 +242,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			}
 		);
 
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectFilterAdded(
 			'plugin_action_links_' . plugin_basename( $woof_by_category_file ),
 			[ $subject, 'add_settings_link' ]
 		);
-		\WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
-		\WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'wbc_load_textdomain' ] );
-		\WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
+		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'wbc_load_textdomain' ] );
+		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectFilterAdded(
 			'woof_print_content_before_search_form',
 			[ $subject, 'woof_print_content_before_search_form_filter' ]
 		);
@@ -270,7 +280,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$category_filters = [ 'some_array' ];
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
 				'args'   => [ 'Woof_By_Category::get_category_filters', $subject::CACHE_GROUP ],
@@ -280,7 +290,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		);
 
 		$method = $this->set_method_accessibility( $subject, 'get_category_filters' );
-		$this->assertSame( $category_filters, $method->invoke( $subject ) );
+		self::assertSame( $category_filters, $method->invoke( $subject ) );
 	}
 
 	/**
@@ -299,7 +309,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$subject = new Woof_By_Category();
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
 				'args'   => [ 'Woof_By_Category::get_category_filters', $subject::CACHE_GROUP ],
@@ -308,7 +318,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			]
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_option',
 			[
 				'args'   => [ $subject::OPTION_NAME ],
@@ -317,7 +327,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			]
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_cache_set',
 			[
 				'args'  => [ 'Woof_By_Category::get_category_filters', $expected, $subject::CACHE_GROUP ],
@@ -327,7 +337,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$method = $this->set_method_accessibility( $subject, 'get_category_filters' );
 
-		$this->assertSame( $expected, $method->invoke( $subject ) );
+		self::assertSame( $expected, $method->invoke( $subject ) );
 	}
 
 	/**
@@ -387,7 +397,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	public function test_wbc_load_textdomain() {
 		$subject = new Woof_By_Category();
 
-		\WP_Mock::passthruFunction( 'plugin_basename' );
+		WP_Mock::passthruFunction( 'plugin_basename' );
 
 		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
 		FunctionMocker::replace(
@@ -401,7 +411,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			}
 		);
 
-		\WP_Mock::userFunction( 'load_plugin_textdomain' )->with(
+		WP_Mock::userFunction( 'load_plugin_textdomain' )->with(
 			'woof-by-category',
 			false,
 			dirname( $woof_by_category_file ) . '/languages/'
@@ -416,8 +426,8 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	public function test_add_settings_page() {
 		$subject = new Woof_By_Category();
 
-		\WP_Mock::passthruFunction( '__' );
-		\WP_Mock::userFunction( 'add_menu_page' )->with(
+		WP_Mock::passthruFunction( '__' );
+		WP_Mock::userFunction( 'add_menu_page' )->with(
 			'WOOF by Category',
 			'WOOF by Category',
 			'manage_options',
@@ -440,11 +450,16 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @dataProvider dp_test_wbc_option_woof_settings
 	 */
 	public function test_wbc_option_woof_settings( $value, $allowed_filters, $expected ) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		/**
+		 * Mock.
+		 *
+		 * @var Mockery\Mock|Woof_By_Category $mock
+		 */
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$mock->shouldReceive( 'get_allowed_filters' )->andReturn( $allowed_filters );
 
-		$this->assertSame( $expected, $mock->wbc_option_woof_settings( $value ) );
+		self::assertSame( $expected, $mock->wbc_option_woof_settings( $value ) );
 	}
 
 	/**
@@ -675,10 +690,12 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		];
 
 		$allowed_value = $value;
-		unset( $allowed_value['tax']['pa_material'] );
-		unset( $allowed_value['tax']['pa_size'] );
-		unset( $allowed_value['tax']['pa_style'] );
-		unset( $allowed_value['tax']['pa_weight'] );
+		unset(
+			$allowed_value['tax']['pa_material'],
+			$allowed_value['tax']['pa_size'],
+			$allowed_value['tax']['pa_style'],
+			$allowed_value['tax']['pa_weight']
+		);
 
 		return [
 			'no tax'                  => [ $no_tax_value, [ 'some filters' ], $no_tax_value ],
@@ -698,28 +715,32 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @dataProvider dp_test_wbc_pre_option_woof_by_category_settings
 	 */
 	public function test_wbc_pre_option_woof_by_category_settings( $lang, $lang_value, $value, $expected ) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		/**
+		 * Mock.
+		 *
+		 * @var Mockery\Mock|Woof_By_Category $mock
+		 */
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$mock->shouldReceive( 'get_current_language' )->andReturn( $lang );
 
-		\WP_Mock::userFunction( 'get_option' )->with( \Woof_By_Category::OPTION_NAME . '_' . $lang )
-		        ->andReturn( $lang_value );
-		\WP_Mock::userFunction( 'get_option' )->with( \Woof_By_Category::OPTION_NAME )->andReturn( $value );
+		WP_Mock::userFunction( 'get_option' )->with( Woof_By_Category::OPTION_NAME . '_' . $lang )->andReturn( $lang_value );
+		WP_Mock::userFunction( 'get_option' )->with( Woof_By_Category::OPTION_NAME )->andReturn( $value );
 
 		if ( ! $lang_value ) {
-			\WP_Mock::userFunction( 'remove_filter' )
-			        ->with(
-				        'pre_option_' . \Woof_By_Category::OPTION_NAME,
-				        [ $mock, 'wbc_pre_option_woof_by_category_settings' ]
-			        )
-			        ->once();
+			WP_Mock::userFunction( 'remove_filter' )
+			       ->with(
+				       'pre_option_' . Woof_By_Category::OPTION_NAME,
+				       [ $mock, 'wbc_pre_option_woof_by_category_settings' ]
+			       )
+			       ->once();
 
-			\WP_Mock::expectFilterAdded(
-				'pre_option_' . \Woof_By_Category::OPTION_NAME,
+			WP_Mock::expectFilterAdded(
+				'pre_option_' . Woof_By_Category::OPTION_NAME,
 				[ $mock, 'wbc_pre_option_woof_by_category_settings' ]
 			);
 
-			\WP_Mock::userFunction( 'get_term_by' )->andReturnUsing(
+			WP_Mock::userFunction( 'get_term_by' )->andReturnUsing(
 				function ( $field, $value, $taxonomy ) {
 					return (object) [ 'slug' => $value ];
 				}
@@ -729,12 +750,11 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				array_pop( $value ); // Remove last element, which is empty.
 			}
 
-			\WP_Mock::userFunction( 'update_option' )
-			        ->with( \Woof_By_Category::OPTION_NAME . '_' . $lang, $value );
-
+			WP_Mock::userFunction( 'update_option' )
+			       ->with( Woof_By_Category::OPTION_NAME . '_' . $lang, $value );
 		}
 
-		$this->assertSame( $expected, $mock->wbc_pre_option_woof_by_category_settings() );
+		self::assertSame( $expected, $mock->wbc_pre_option_woof_by_category_settings() );
 	}
 
 	/**
@@ -770,47 +790,52 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @dataProvider dp_wbc_pre_update_option_woof_by_category_settings
 	 */
 	public function test_wbc_pre_update_option_woof_by_category_settings( $lang, $default_lang, $value, $old_value, $expected ) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		/**
+		 * Mock.
+		 *
+		 * @var Mockery\Mock|Woof_By_Category $mock
+		 */
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$mock->shouldReceive( 'get_current_language' )->once()->andReturn( $lang );
 		$mock->shouldReceive( 'get_default_language' )->once()->andReturn( $default_lang );
 
-		\WP_Mock::userFunction( 'update_option' )->with( \Woof_By_Category::OPTION_NAME . '_' . $lang, $value );
-		\WP_Mock::userFunction( 'update_option' )->with( \Woof_By_Category::OPTION_NAME, $value );
+		WP_Mock::userFunction( 'update_option' )->with( Woof_By_Category::OPTION_NAME . '_' . $lang, $value );
+		WP_Mock::userFunction( 'update_option' )->with( Woof_By_Category::OPTION_NAME, $value );
 
 		if ( $lang === $default_lang ) {
-			\WP_Mock::userFunction( 'remove_filter' )
-			        ->with(
-				        'pre_option_' . \Woof_By_Category::OPTION_NAME,
-				        [ $mock, 'wbc_pre_option_woof_by_category_settings' ]
-			        )
-			        ->once();
+			WP_Mock::userFunction( 'remove_filter' )
+			       ->with(
+				       'pre_option_' . Woof_By_Category::OPTION_NAME,
+				       [ $mock, 'wbc_pre_option_woof_by_category_settings' ]
+			       )
+			       ->once();
 
-			\WP_Mock::userFunction( 'remove_filter' )
-			        ->with(
-				        'pre_update_option_' . \Woof_By_Category::OPTION_NAME,
-				        [ $mock, 'wbc_pre_update_option_woof_by_category_settings' ]
-			        )
-			        ->once();
+			WP_Mock::userFunction( 'remove_filter' )
+			       ->with(
+				       'pre_update_option_' . Woof_By_Category::OPTION_NAME,
+				       [ $mock, 'wbc_pre_update_option_woof_by_category_settings' ]
+			       )
+			       ->once();
 
-			\WP_Mock::expectFilterAdded(
-				'pre_option_' . \Woof_By_Category::OPTION_NAME,
+			WP_Mock::expectFilterAdded(
+				'pre_option_' . Woof_By_Category::OPTION_NAME,
 				[ $mock, 'wbc_pre_option_woof_by_category_settings' ]
 			);
 
-			\WP_Mock::expectFilterAdded(
-				'pre_update_option_' . \Woof_By_Category::OPTION_NAME,
+			WP_Mock::expectFilterAdded(
+				'pre_update_option_' . Woof_By_Category::OPTION_NAME,
 				[ $mock, 'wbc_pre_update_option_woof_by_category_settings' ],
 				10,
 				2
 			);
 
-			\WP_Mock::userFunction( 'update_option' )
-			        ->with( \Woof_By_Category::OPTION_NAME, $value );
+			WP_Mock::userFunction( 'update_option' )
+			       ->with( Woof_By_Category::OPTION_NAME, $value );
 
 		}
 
-		$this->assertSame( $expected, $mock->wbc_pre_update_option_woof_by_category_settings( $value, $old_value ) );
+		self::assertSame( $expected, $mock->wbc_pre_update_option_woof_by_category_settings( $value, $old_value ) );
 	}
 
 	/**
@@ -861,29 +886,31 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			}
 		);
 
-		$sitepress = \Mockery::mock( 'SitePress' );
+		$sitepress = Mockery::mock( 'SitePress' );
 		$sitepress->shouldReceive( 'get_default_language' )->andReturn( $wpml_default_language );
 
 		$GLOBALS['sitepress'] = $sitepress;
 
-		\WP_Mock::userFunction( 'pll_default_language' )->with()->andReturn( $pll_default_language );
+		WP_Mock::userFunction( 'pll_default_language' )->with()->andReturn( $pll_default_language );
 
 		$subject = new Woof_By_Category();
 
 		$method = $this->set_method_accessibility( $subject, 'get_default_language' );
 
-		$this->assertNull( $method->invoke( $subject ) );
+		self::assertNull( $method->invoke( $subject ) );
 
 		$sitepress_exists = true;
-		$this->assertSame( $wpml_default_language, $method->invoke( $subject ) );
+		self::assertSame( $wpml_default_language, $method->invoke( $subject ) );
 
 		$sitepress_exists = false;
 		$polylang_exists  = true;
-		$this->assertSame( 'pll_' . $pll_default_language, $method->invoke( $subject ) );
+		self::assertSame( 'pll_' . $pll_default_language, $method->invoke( $subject ) );
 	}
 
 	/**
-	 * @throws ReflectionException
+	 * Test get_current_language().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_current_language() {
 		$sitepress_exists = false;
@@ -906,29 +933,32 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			}
 		);
 
-		$sitepress = \Mockery::mock( 'SitePress' );
+		$sitepress = Mockery::mock( 'SitePress' );
 		$sitepress->shouldReceive( 'get_current_language' )->andReturn( $wpml_current_language );
 
 		$GLOBALS['sitepress'] = $sitepress;
 
-		\WP_Mock::userFunction( 'pll_current_language' )->with()->andReturn( $pll_current_language );
+		WP_Mock::userFunction( 'pll_current_language' )->with()->andReturn( $pll_current_language );
 
 		$subject = new Woof_By_Category();
 
 		$method = $this->set_method_accessibility( $subject, 'get_current_language' );
 
-		$this->assertNull( $method->invoke( $subject ) );
+		self::assertNull( $method->invoke( $subject ) );
 
 		$sitepress_exists = true;
-		$this->assertSame( $wpml_current_language, $method->invoke( $subject ) );
+		self::assertSame( $wpml_current_language, $method->invoke( $subject ) );
 
 		$sitepress_exists = false;
 		$polylang_exists  = true;
-		$this->assertSame( 'pll_' . $pll_current_language, $method->invoke( $subject ) );
+		self::assertSame( 'pll_' . $pll_current_language, $method->invoke( $subject ) );
 	}
 
+	/**
+	 * Test get_allowed_filters_from_cache().
+	 */
 	public function test_get_allowed_filters_from_cache() {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$product_cat = 'some product cat';
 		$mock->shouldReceive( 'get_product_cat' )->andReturn( $product_cat );
@@ -940,7 +970,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$expected = [ 'some allowed filters' ];
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_json_encode',
 			[
 				'args'   => [ [ $category_filters, $cats ] ],
@@ -950,7 +980,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$key = md5( json_encode( [ $category_filters, $cats ] ) );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
 				'args'   => [ $key, $mock::CACHE_GROUP ],
@@ -958,7 +988,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			]
 		);
 
-		$this->assertSame( $expected, $mock->get_allowed_filters() );
+		self::assertSame( $expected, $mock->get_allowed_filters() );
 	}
 
 	/**
@@ -970,14 +1000,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @dataProvider dp_test_get_allowed_filters
 	 */
 	public function test_get_allowed_filters( $product_cat, $category_filters, $allowed_filters, $expected ) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$mock->shouldReceive( 'get_product_cat' )->andReturn( $product_cat );
 		$cats = explode( ',', $product_cat );
 
 		$mock->shouldReceive( 'get_category_filters' )->andReturn( $category_filters );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_json_encode',
 			[
 				'args'   => [ [ $category_filters, $cats ] ],
@@ -987,7 +1017,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$key = md5( json_encode( [ $category_filters, $cats ] ) );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
 				'args'   => [ $key, $mock::CACHE_GROUP ],
@@ -1001,21 +1031,21 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		}
 
 		if ( null === $expected ) {
-			$this->assertNull( $mock->get_allowed_filters() );
+			self::assertNull( $mock->get_allowed_filters() );
 		} else {
 			$filtered = $expected;
 
-			\WP_Mock::onFilter( 'wbc_allowed_filters' )->with( $expected, $cats )->reply( $filtered );
+			WP_Mock::onFilter( 'wbc_allowed_filters' )->with( $expected, $cats )->reply( $filtered );
 
 			$mock->shouldReceive( 'get_default_filters' )->with()->andReturn( $category_filters['*'] );
 
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'wp_cache_set',
 				[
 					'args' => [ $key, $filtered, $mock::CACHE_GROUP ],
 				]
 			);
-			$this->assertSame( $filtered, $mock->get_allowed_filters() );
+			self::assertSame( $filtered, $mock->get_allowed_filters() );
 		}
 	}
 
@@ -1102,7 +1132,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @dataProvider dp_test_get_allowed_filters_for_single_category
 	 */
 	public function test_get_allowed_filters_for_single_category( $category_filters, $current_cat, $distances, $expected ) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$i = 0;
 		foreach ( $category_filters as $filter_cat => $filters ) {
@@ -1110,7 +1140,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			$i ++;
 		}
 
-		$this->assertSame( $expected, $mock->get_allowed_filters_for_single_category( $category_filters, $current_cat ) );
+		self::assertSame( $expected, $mock->get_allowed_filters_for_single_category( $category_filters, $current_cat ) );
 	}
 
 	/**
@@ -1192,11 +1222,11 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @dataProvider dp_test_get_default_filters
 	 */
 	public function test_get_default_filters( $options, $expected ) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
-		\WP_Mock::userFunction( 'get_option' )->with( $mock::OPTION_NAME )->andReturn( $options );
+		WP_Mock::userFunction( 'get_option' )->with( $mock::OPTION_NAME )->andReturn( $options );
 
-		$this->assertSame( $expected, $mock->get_default_filters() );
+		self::assertSame( $expected, $mock->get_default_filters() );
 	}
 
 	/**
@@ -1240,7 +1270,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 * @dataProvider dp_test_get_product_cat
 	 */
 	public function test_get_product_cat( $category_from_woof, $query_vars, $is_tax, $object_types, $is_shop, $is_product, $expected ) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
 		$mock->shouldReceive( 'get_category_from_woof' )->andReturn( $category_from_woof );
 
@@ -1248,7 +1278,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 
 		$GLOBALS['wp_query'] = $wp_query;
 
-		\WP_Mock::userFunction( 'is_tax' )->with()->andReturn( $is_tax );
+		WP_Mock::userFunction( 'is_tax' )->with()->andReturn( $is_tax );
 
 		if ( $is_tax ) {
 			$queried_object = (object) [
@@ -1262,14 +1292,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				'object_type' => $object_types,
 			];
 
-			\WP_Mock::userFunction( 'get_queried_object' )->with()->andReturn( $queried_object );
-			\WP_Mock::userFunction( 'get_taxonomy' )->with( $queried_object->taxonomy )->andReturn( $current_taxonomy );
+			WP_Mock::userFunction( 'get_queried_object' )->with()->andReturn( $queried_object );
+			WP_Mock::userFunction( 'get_taxonomy' )->with( $queried_object->taxonomy )->andReturn( $current_taxonomy );
 		}
 
-		\WP_Mock::userFunction( 'is_shop' )->with()->andReturn( $is_shop );
-		\WP_Mock::userFunction( 'is_product' )->with()->andReturn( $is_product );
+		WP_Mock::userFunction( 'is_shop' )->with()->andReturn( $is_shop );
+		WP_Mock::userFunction( 'is_product' )->with()->andReturn( $is_product );
 
-		$this->assertSame( $expected, $mock->get_product_cat() );
+		self::assertSame( $expected, $mock->get_product_cat() );
 	}
 
 	/**
@@ -1320,7 +1350,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	public function test_get_category_from_woof(
 		$post, $get, $is_wp_error, $woof_shortcode_txt, $additional_taxes, $expected
 	) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 		$mock->shouldReceive( 'expand_additional_taxes' )->andReturn( $additional_taxes );
 
 		$_POST                          = $post;
@@ -1328,13 +1358,13 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		$_REQUEST['woof_shortcode_txt'] = $woof_shortcode_txt;
 		$_REQUEST['additional_taxes']   = $additional_taxes;
 
-		\WP_Mock::passthruFunction( 'wp_unslash' );
-		\WP_Mock::passthruFunction( 'sanitize_text_field' );
+		WP_Mock::passthruFunction( 'wp_unslash' );
+		WP_Mock::passthruFunction( 'sanitize_text_field' );
 
 		$link      = isset( $_POST['link'] ) ? $_POST['link'] : '';
 		$parse_url = parse_url( $link, PHP_URL_QUERY );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_parse_url',
 			[
 				'args'   => [ $link, PHP_URL_QUERY ],
@@ -1352,7 +1382,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			'slug' => $really_curr_tax[1],
 		];
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_term',
 			[
 				'args'   => [ $really_curr_tax[0], $really_curr_tax[1] ],
@@ -1360,7 +1390,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			]
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'is_wp_error',
 			[
 				'args'   => [ $term ],
@@ -1368,15 +1398,15 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			]
 		);
 
-		\WP_Mock::userFunction( 'wc_get_page_permalink' )->with( 'shop' )->andReturn( 'http://test.test/shop/' );
+		WP_Mock::userFunction( 'wc_get_page_permalink' )->with( 'shop' )->andReturn( 'http://test.test/shop/' );
 
-		\WP_Mock::userFunction( 'wp_parse_url' )->andReturnUsing(
+		WP_Mock::userFunction( 'wp_parse_url' )->andReturnUsing(
 			function ( $url, $component ) {
 				return parse_url( $url, $component );
 			}
 		);
 
-		$this->assertSame( $expected, $mock->get_category_from_woof() );
+		self::assertSame( $expected, $mock->get_category_from_woof() );
 	}
 
 	/**
@@ -1523,16 +1553,18 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
-	 * @param $additional_taxes
-	 * @param $terms
-	 * @param $expected
+	 * Test expand_additional_taxes().
+	 *
+	 * @param string      $additional_taxes Additional taxes.
+	 * @param array       $terms            Terms.
+	 * @param array|false $expected         Expected.
 	 *
 	 * @dataProvider dp_test_expand_additional_taxes
 	 */
 	public function test_expand_additional_taxes( $additional_taxes, $terms, $expected ) {
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 
-		\WP_Mock::userFunction( 'get_term' )->andReturnUsing(
+		WP_Mock::userFunction( 'get_term' )->andReturnUsing(
 			function ( $term_id, $tax_slug ) use ( $terms ) {
 				if ( ! is_int( $term_id ) || ! $tax_slug ) {
 					return false;
@@ -1542,20 +1574,18 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 					return false;
 				}
 
-				$term = (object) [
+				return (object) [
 					'slug' => $terms[ $tax_slug ][ $term_id ],
 				];
-
-				return $term;
 			}
 		);
-		\WP_Mock::userFunction( 'is_wp_error' )->andReturnUsing(
-			function( $term ) {
+		WP_Mock::userFunction( 'is_wp_error' )->andReturnUsing(
+			function ( $term ) {
 				return false === $term;
 			}
 		);
 
-		$this->assertSame( $expected, $mock->expand_additional_taxes( $additional_taxes ) );
+		self::assertSame( $expected, $mock->expand_additional_taxes( $additional_taxes ) );
 	}
 
 	/**
@@ -1582,6 +1612,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		];
 	}
 
+	/**
+	 * Test woof_sort_terms_before_out_filter().
+	 */
 	public function test_woof_sort_terms_before_out_filter() {
 		$allowed_filters = [
 			0 => 'product_cat',
@@ -1614,9 +1647,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		$expected = $terms;
 		unset( $expected [75] );
 
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		/**
+		 * Mock.
+		 *
+		 * @var Mockery\Mock|Woof_By_Category $mock
+		 */
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
 		$mock->shouldReceive( 'get_allowed_filters' )->with()->andReturn( $allowed_filters );
-		$this->assertSame( $expected, $mock->woof_sort_terms_before_out_filter( $terms ) );
+		self::assertSame( $expected, $mock->woof_sort_terms_before_out_filter( $terms ) );
 	}
 
 	/**
@@ -1654,7 +1692,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			'bad'               => $bad,
 		];
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_term_by',
 			[
 				'args'   => [ 'slug', $current_cat, 'product_cat' ],
@@ -1663,7 +1701,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		);
 
 		foreach ( $cat_objects as $slug => $cat_object ) {
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'get_term',
 				[
 					'args'   => [ $cat_object->id ],
@@ -1672,7 +1710,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			);
 		}
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_term',
 			[
 				'args'   => [ $bad->parent ],
@@ -1680,8 +1718,8 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			]
 		);
 
-		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
-		$this->assertSame( $expected, $mock->has_parent( $filter_cat, $current_cat ) );
+		$mock = Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+		self::assertSame( $expected, $mock->has_parent( $filter_cat, $current_cat ) );
 	}
 
 	/**
@@ -1702,6 +1740,9 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		];
 	}
 
+	/**
+	 * Test add_settings_link().
+	 */
 	public function test_add_settings_link() {
 		$links        = [ 'some_link' => '<a href="#">Some link</a>' ];
 		$action_links = [
@@ -1712,14 +1753,17 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		];
 		$expected     = array_merge( $action_links, $links );
 
-		\WP_Mock::passthruFunction( 'admin_url' );
-		\WP_Mock::passthruFunction( 'esc_attr__' );
-		\WP_Mock::passthruFunction( 'esc_html__' );
+		WP_Mock::passthruFunction( 'admin_url' );
+		WP_Mock::passthruFunction( 'esc_attr__' );
+		WP_Mock::passthruFunction( 'esc_html__' );
 
 		$subject = new Woof_By_Category();
 		self::assertSame( $expected, $subject->add_settings_link( $links ) );
 	}
 
+	/**
+	 * Test admin_enqueue_scripts().
+	 */
 	public function test_admin_enqueue_scripts() {
 		$woof_by_category_url     = 'http://site.org/wp-content/plugins/woof-by-category';
 		$woof_by_category_version = 'test-version';
@@ -1738,7 +1782,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			}
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_enqueue_style',
 			[
 				'args'  => [
@@ -1756,6 +1800,8 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
+	 * Get test options.
+	 *
 	 * @return array
 	 */
 	private function get_test_options() {
@@ -1824,6 +1870,8 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
+	 * Get test options ru.
+	 *
 	 * @return array
 	 */
 	private function get_test_options_ru() {
@@ -1855,6 +1903,8 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	}
 
 	/**
+	 * Get test options en.
+	 *
 	 * @return array
 	 */
 	private function get_test_options_en() {

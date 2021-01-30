@@ -87,6 +87,6 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_URL', PLUGIN_MAIN_FILE ] );
 		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_FILE', PLUGIN_MAIN_FILE ] );
 
-		$this->assertInstanceOf( Woof_By_Category::class, $woof_by_category_plugin );
+		self::assertInstanceOf( Woof_By_Category::class, $woof_by_category_plugin );
 	}
 }
