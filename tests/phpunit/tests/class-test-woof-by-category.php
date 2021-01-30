@@ -338,6 +338,10 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	public function dp_test_get_category_filters() {
 		$options  = $this->get_test_options();
 		$expected = [
+			'*'                 =>
+				[
+					0 => 'pa_weight',
+				],
 			'/'                 =>
 				[
 					0 => 'product_cat',
@@ -1001,7 +1005,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		} else {
 			$filtered = $expected;
 
-			\WP_Mock::onFilter( 'wbc_allowed_filters' )->with( $expected )->reply( $filtered );
+			\WP_Mock::onFilter( 'wbc_allowed_filters' )->with( $expected, $cats )->reply( $filtered );
 
 			$mock->shouldReceive( 'get_default_filters' )->with()->andReturn( $category_filters['*'] );
 
@@ -1175,6 +1179,51 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 				'quisquam',
 				[ 2, - 1, - 1, - 1, 1 ],
 				[ 'product_cat', 'pa_size', 'pa_weight' ],
+			],
+		];
+	}
+
+	/**
+	 * @param $category_filters
+	 * @param $current_cat
+	 * @param $distances
+	 * @param $expected
+	 *
+	 * @dataProvider dp_test_get_default_filters
+	 */
+	public function test_get_default_filters( $options, $expected ) {
+		$mock = \Mockery::mock( 'Woof_By_Category' )->shouldAllowMockingProtectedMethods()->makePartial();
+
+		\WP_Mock::userFunction( 'get_option' )->with( $mock::OPTION_NAME )->andReturn( $options );
+
+		$this->assertSame( $expected, $mock->get_default_filters() );
+	}
+
+	/**
+	 * Data provider for test_get_default_filters().
+	 *
+	 * @return array
+	 */
+	public function dp_test_get_default_filters() {
+		$options = $this->get_test_options();
+
+		return [
+			'no option'   => [
+				[],
+				[],
+			],
+			'no default'  => [
+				[
+					0 => [
+						'category' => 'some-category',
+						'filters'  => [ 'some filter' ],
+					],
+				],
+				[],
+			],
+			'has default' => [
+				$options,
+				$options[0]['filters'],
 			],
 		];
 	}
@@ -1713,6 +1762,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		return [
 			0 =>
 				[
+					'category' => '*',
+					'filters'  =>
+						[
+							0 => 'pa_weight',
+						],
+				],
+			1 =>
+				[
 					'category' => '/',
 					'filters'  =>
 						[
@@ -1720,7 +1777,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 							1 => 'pa_color',
 						],
 				],
-			1 =>
+			2 =>
 				[
 					'category' => 'assumenda',
 					'filters'  =>
@@ -1730,7 +1787,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 							2 => 'pa_material',
 						],
 				],
-			2 =>
+			3 =>
 				[
 					'category' => 'sub-assumenda',
 					'filters'  =>
@@ -1739,7 +1796,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 							1 => 'pa_color',
 						],
 				],
-			3 =>
+			4 =>
 				[
 					'category' => 'sub-sub-assumenda',
 					'filters'  =>
@@ -1748,7 +1805,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 							1 => 'pa_color',
 						],
 				],
-			4 =>
+			5 =>
 				[
 					'category' => 'quisquam',
 					'filters'  =>
@@ -1758,7 +1815,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 							2 => 'pa_weight',
 						],
 				],
-			5 =>
+			6 =>
 				[
 					'category' => '',
 					'filters'  => [],

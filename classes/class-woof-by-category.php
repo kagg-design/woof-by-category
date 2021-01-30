@@ -359,7 +359,13 @@ class Woof_By_Category {
 		}
 		$allowed_filters = array_values( array_unique( $allowed_filters ) );
 
-		$allowed_filters = apply_filters( 'wbc_allowed_filters', $allowed_filters );
+		/**
+		 * Filters the array of allowed filters.
+		 *
+		 * @param array $allowed_filters The array of allowed filters for the given set of categories.
+		 * @param string[] $cats The array of categories.
+		 */
+		$allowed_filters = apply_filters( 'wbc_allowed_filters', $allowed_filters, $cats );
 
 		if ( empty( $allowed_filters ) ) {
 			$allowed_filters = $this->get_default_filters();
@@ -403,8 +409,15 @@ class Woof_By_Category {
 		// Get current settings.
 		$options = get_option( self::OPTION_NAME );
 
+		if ( ! $options ) {
+			return [];
+		}
+
 		foreach ( $options as $option ) {
-			if ( self::DEFAULT_FILTERS_KEY === $option['category'] ) {
+			if (
+				isset( $option['category'] ) &&
+				self::DEFAULT_FILTERS_KEY === $option['category']
+			) {
 				return $option['filters'];
 			}
 		}
