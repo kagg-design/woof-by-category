@@ -37,7 +37,7 @@ define( 'WOOF_BY_CATEGORY_VERSION', '2.11' );
 /**
  * Path to the plugin dir.
  */
-define( 'WOOF_BY_CATEGORY_PATH', dirname( __FILE__ ) );
+define( 'WOOF_BY_CATEGORY_PATH', __DIR__ );
 
 /**
  * Plugin dir url.
