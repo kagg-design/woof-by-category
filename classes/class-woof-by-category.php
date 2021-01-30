@@ -442,11 +442,9 @@ class Woof_By_Category {
 		}
 
 		if ( is_tax() ) {
-			$queried_object   = get_queried_object();
-			$current_taxonomy = get_taxonomy( $queried_object->taxonomy );
-			$object_types     = $current_taxonomy->object_type;
-			if ( ! empty( $object_types ) && in_array( 'product', $object_types, true ) ) {
-				return $queried_object->slug;
+			$slug = $this->get_current_taxonomy_slug();
+			if ( $slug ) {
+				return $slug;
 			}
 		}
 
@@ -455,6 +453,30 @@ class Woof_By_Category {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get slug of current taxonomy.
+	 *
+	 * @return string
+	 */
+	private function get_current_taxonomy_slug() {
+		$queried_object = get_queried_object();
+		if ( null === $queried_object || ! isset( $queried_object->taxonomy ) ) {
+			return '';
+		}
+
+		$current_taxonomy = get_taxonomy( $queried_object->taxonomy );
+		if ( false === $current_taxonomy ) {
+			return '';
+		}
+
+		$object_types = $current_taxonomy->object_type;
+		if ( ! empty( $object_types ) && in_array( 'product', $object_types, true ) ) {
+			return $queried_object->slug;
+		}
+
+		return '';
 	}
 
 	/**
