@@ -725,6 +725,7 @@ class Woof_By_Category {
 		$product_categories = array_merge(
 			[
 				''  => __( '--Select Category--', 'woof-by-category' ),
+				'*' => __( '-Default filters-', 'woof-by-category' ),
 				'/' => __( '-Shop Page-', 'woof-by-category' ),
 			],
 			$this->get_product_categories()
@@ -913,13 +914,13 @@ class Woof_By_Category {
 		}
 
 		// If there is help text.
-		$helper = $arguments['helper'];
+		$helper = isset( $arguments['helper'] ) ? $arguments['helper'] : '';
 		if ( $helper ) {
 			printf( '<span class="helper"> %s</span>', esc_html( $helper ) ); // Show it.
 		}
 
 		// If there is supplemental text.
-		$supplemental = $arguments['supplemental'];
+		$supplemental = isset( $arguments['supplemental'] ) ? $arguments['supplemental'] : '';
 		if ( $supplemental ) {
 			printf( '<p class="description">%s</p>', esc_html( $supplemental ) ); // Show it.
 		}
