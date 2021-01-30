@@ -996,14 +996,21 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 			     ->andReturn( $allowed_filters[ $current_cat ] );
 		}
 
-		\WP_Mock::userFunction(
-			'wp_cache_set',
-			[
-				'args' => [ $key, $expected, $mock::CACHE_GROUP ],
-			]
-		);
+		if ( null === $expected ) {
+			$this->assertNull( $mock->get_allowed_filters() );
+		} else {
+			$filtered = [ 'expected' => $expected ];
 
-		$this->assertSame( $expected, $mock->get_allowed_filters() );
+			\WP_Mock::onFilter( 'wbc_allowed_filters' )->with( $expected )->reply( $filtered );
+
+			\WP_Mock::userFunction(
+				'wp_cache_set',
+				[
+					'args' => [ $key, $filtered, $mock::CACHE_GROUP ],
+				]
+			);
+			$this->assertSame( $filtered, $mock->get_allowed_filters() );
+		}
 	}
 
 	/**

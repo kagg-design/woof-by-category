@@ -352,6 +352,8 @@ class Woof_By_Category {
 		}
 		$allowed_filters = array_values( array_unique( $allowed_filters ) );
 
+		$allowed_filters = apply_filters( 'wbc_allowed_filters', $allowed_filters );
+
 		wp_cache_set( $cache_key, $allowed_filters, self::CACHE_GROUP );
 
 		return $allowed_filters;
