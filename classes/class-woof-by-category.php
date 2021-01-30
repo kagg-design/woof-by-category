@@ -33,6 +33,13 @@ class Woof_By_Category {
 	const CACHE_GROUP = __CLASS__;
 
 	/**
+	 * Default filters key.
+	 *
+	 * @var string
+	 */
+	const DEFAULT_FILTERS_KEY = '*';
+
+	/**
 	 * Required plugins.
 	 *
 	 * @var array
@@ -354,6 +361,10 @@ class Woof_By_Category {
 
 		$allowed_filters = apply_filters( 'wbc_allowed_filters', $allowed_filters );
 
+		if ( empty( $allowed_filters ) ) {
+			$allowed_filters = $this->get_default_filters();
+		}
+
 		wp_cache_set( $cache_key, $allowed_filters, self::CACHE_GROUP );
 
 		return $allowed_filters;
@@ -381,6 +392,24 @@ class Woof_By_Category {
 		}
 
 		return $allowed_filters;
+	}
+
+	/**
+	 * Get default filters.
+	 *
+	 * @return array
+	 */
+	protected function get_default_filters() {
+		// Get current settings.
+		$options = get_option( self::OPTION_NAME );
+
+		foreach ( $options as $option ) {
+			if ( self::DEFAULT_FILTERS_KEY === $option['category'] ) {
+				return $option['filters'];
+			}
+		}
+
+		return [];
 	}
 
 	/**
@@ -724,9 +753,9 @@ class Woof_By_Category {
 
 		$product_categories = array_merge(
 			[
-				''  => __( '--Select Category--', 'woof-by-category' ),
-				'*' => __( '-Default filters-', 'woof-by-category' ),
-				'/' => __( '-Shop Page-', 'woof-by-category' ),
+				''                        => __( '--Select Category--', 'woof-by-category' ),
+				self::DEFAULT_FILTERS_KEY => __( '-Default filters-', 'woof-by-category' ),
+				'/'                       => __( '-Shop Page-', 'woof-by-category' ),
 			],
 			$this->get_product_categories()
 		);

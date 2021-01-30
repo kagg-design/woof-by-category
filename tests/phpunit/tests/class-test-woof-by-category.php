@@ -999,9 +999,11 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 		if ( null === $expected ) {
 			$this->assertNull( $mock->get_allowed_filters() );
 		} else {
-			$filtered = [ 'expected' => $expected ];
+			$filtered = $expected;
 
 			\WP_Mock::onFilter( 'wbc_allowed_filters' )->with( $expected )->reply( $filtered );
+
+			$mock->shouldReceive( 'get_default_filters' )->with()->andReturn( $category_filters['*'] );
 
 			\WP_Mock::userFunction(
 				'wp_cache_set',
@@ -1020,6 +1022,10 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 	 */
 	public function dp_test_get_allowed_filters() {
 		$category_filters = [
+			'*'                 =>
+				[
+					0 => 'pa_weight',
+				],
 			'/'                 =>
 				[
 					0 => 'product_cat',
@@ -1047,6 +1053,7 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 					1 => 'pa_size',
 					2 => 'pa_weight',
 				],
+			'simple-products'   => [],
 		];
 
 		return [
@@ -1070,6 +1077,14 @@ class Test_Woof_By_Category extends Woof_By_Category_TestCase {
 					'quisquam'  => [ 'product_cat', 'pa_size', 'pa_weight' ],
 				],
 				[ 'product_cat', 'pa_color', 'pa_material', 'pa_size', 'pa_weight' ],
+			],
+			'default filters'    => [
+				'simple-products',
+				$category_filters,
+				[
+					'simple-products' => [],
+				],
+				[ 'pa_weight' ],
 			],
 		];
 	}
