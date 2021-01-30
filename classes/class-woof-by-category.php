@@ -352,11 +352,10 @@ class Woof_By_Category {
 
 		$allowed_filters = [];
 		foreach ( $cats as $current_cat ) {
-			$allowed_filters = array_merge(
-				$allowed_filters,
-				$this->get_allowed_filters_for_single_category( $category_filters, $current_cat )
-			);
+			$allowed_filters[] = $this->get_allowed_filters_for_single_category( $category_filters, $current_cat );
 		}
+		$allowed_filters = array_merge( [], ...$allowed_filters );
+
 		$allowed_filters = array_values( array_unique( $allowed_filters ) );
 
 		/**
