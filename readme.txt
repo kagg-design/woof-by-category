@@ -71,7 +71,7 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 == Changelog ==
 
 = 2.13 =
-* Tested with WooCommerce 4.7
+* Tested with WooCommerce 5.0
 
 = 2.12 =
 * Added default filters.
