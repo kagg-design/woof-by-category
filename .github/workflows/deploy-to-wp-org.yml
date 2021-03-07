@@ -23,6 +23,7 @@ jobs:
         with:
           generate-zip: true
         env:
+          SVN_SERVER: ${{ secrets.SVN_SERVER }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 
