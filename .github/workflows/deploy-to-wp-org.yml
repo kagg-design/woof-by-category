@@ -27,6 +27,11 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 
+      - name: Sleep for 10s
+          uses: juliangruber/sleep-action@v1
+          with:
+            time: 10s
+
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
