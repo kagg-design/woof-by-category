@@ -27,12 +27,13 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 
-      - name: Sleep for 10s
+      - name: Sleep for 10s to respect API limit rate
         uses: juliangruber/sleep-action@v1
         with:
           time: 10s
 
       - name: Upload release asset
+        id: assets
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
