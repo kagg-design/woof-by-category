@@ -15,6 +15,7 @@ jobs:
       - name: Install dependencies in prod version
         run: make install-prod
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: WordPress Plugin Deploy
@@ -23,6 +24,7 @@ jobs:
         with:
           generate-zip: true
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SVN_SERVER: ${{ secrets.SVN_SERVER }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
