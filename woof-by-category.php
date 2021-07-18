@@ -37,12 +37,12 @@ if ( defined( 'WOOF_BY_CATEGORY_VERSION' ) ) {
 /**
  * Plugin version.
  */
-define( 'WOOF_BY_CATEGORY_VERSION', '2.15' );
+const WOOF_BY_CATEGORY_VERSION = '2.15';
 
 /**
  * Path to the plugin dir.
  */
-define( 'WOOF_BY_CATEGORY_PATH', __DIR__ );
+const WOOF_BY_CATEGORY_PATH = __DIR__;
 
 /**
  * Plugin dir url.
@@ -52,12 +52,12 @@ define( 'WOOF_BY_CATEGORY_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) 
 /**
  * Main plugin file.
  */
-define( 'WOOF_BY_CATEGORY_FILE', __FILE__ );
+const WOOF_BY_CATEGORY_FILE = __FILE__;
 
 /**
  * Init plugin class on plugin load.
  */
-require_once constant( 'WOOF_BY_CATEGORY_PATH' ) . '/vendor/autoload.php';
+require_once WOOF_BY_CATEGORY_PATH . '/vendor/autoload.php';
 
 $woof_by_category_plugin = new Woof_By_Category();
 $woof_by_category_plugin->init();

@@ -24,6 +24,8 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 
 	/**
 	 * Test main plugin file when woof by category version defined.
+	 *
+	 * @noinspection PhpIncludeInspection
 	 */
 	public function test_when_woof_by_category_version_defined() {
 		FunctionMocker::replace(
@@ -58,29 +60,21 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
+	 * @noinspection        PhpIncludeInspection
 	 */
 	public function test_plugin_file_at_first_time() {
 		global $woof_by_category_plugin;
 
 		$mock = Mockery::mock( 'overload:' . Woof_By_Category::class );
-		$mock->shouldReceive( 'init' );
+		$mock->shouldReceive( 'init' )->once();
 
-		$define = FunctionMocker::replace( 'define', null );
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				if ( 'WOOF_BY_CATEGORY_PATH' === $name ) {
-					return PLUGIN_PATH;
-				}
-
-				return null;
-			}
-		);
-
-		\WP_Mock::passthruFunction( 'plugin_dir_url' );
-		\WP_Mock::passthruFunction( 'untrailingslashit' );
+		WP_Mock::passthruFunction( 'plugin_dir_url' );
+		WP_Mock::passthruFunction( 'untrailingslashit' );
 
 		require PLUGIN_MAIN_FILE;
+
+		// Include main file the second time to make sure that plugin is not activated again.
+		include PLUGIN_MAIN_FILE;
 
 		$expected    = [
 			'version' => WOOF_BY_CATEGORY_TEST_VERSION,
@@ -95,10 +89,10 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 
 		self::assertSame( $expected, $plugin_headers );
 
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_VERSION', WOOF_BY_CATEGORY_TEST_VERSION ] );
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_PATH', dirname( PLUGIN_MAIN_FILE ) ] );
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_URL', PLUGIN_MAIN_FILE ] );
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_FILE', PLUGIN_MAIN_FILE ] );
+		self::assertSame( WOOF_BY_CATEGORY_TEST_VERSION, constant( 'WOOF_BY_CATEGORY_VERSION' ) );
+		self::assertSame( WOOF_BY_CATEGORY_PATH, dirname( PLUGIN_MAIN_FILE ) );
+		self::assertSame( WOOF_BY_CATEGORY_FILE, PLUGIN_MAIN_FILE );
+		self::assertSame( WOOF_BY_CATEGORY_URL, PLUGIN_MAIN_FILE );
 
 		self::assertInstanceOf( Woof_By_Category::class, $woof_by_category_plugin );
 	}

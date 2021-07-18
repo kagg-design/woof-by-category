@@ -19,14 +19,14 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 	public function setUp(): void {
 		FunctionMocker::setUp();
 		parent::setUp();
-		\WP_Mock::setUp();
+		WP_Mock::setUp();
 	}
 
 	/**
 	 * End test
 	 */
 	public function tearDown(): void {
-		\WP_Mock::tearDown();
+		WP_Mock::tearDown();
 		Mockery::close();
 		parent::tearDown();
 		FunctionMocker::tearDown();
@@ -43,7 +43,7 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 	 * @throws ReflectionException Reflection exception.
 	 */
 	protected function get_protected_property( $object, $property_name ) {
-		$reflection_class = new \ReflectionClass( $object );
+		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
 		$property->setAccessible( true );
@@ -63,7 +63,7 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 	 * @throws ReflectionException Reflection exception.
 	 */
 	protected function set_protected_property( $object, $property_name, $value ) {
-		$reflection_class = new \ReflectionClass( $object );
+		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
 		$property->setAccessible( true );
@@ -83,7 +83,7 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 	 * @throws ReflectionException Reflection exception.
 	 */
 	protected function set_method_accessibility( $object, $method_name, $accessible = true ) {
-		$reflection_class = new \ReflectionClass( $object );
+		$reflection_class = new ReflectionClass( $object );
 
 		$method = $reflection_class->getMethod( $method_name );
 		$method->setAccessible( $accessible );
