@@ -82,11 +82,43 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 
 		require PLUGIN_MAIN_FILE;
 
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_VERSION', '2.14' ] );
+		$expected    = [
+			'version' => WOOF_BY_CATEGORY_TEST_VERSION,
+		];
+		$plugin_file = PLUGIN_MAIN_FILE;
+
+		$plugin_headers = $this->get_file_data(
+			$plugin_file,
+			[ 'version' => 'Version' ],
+			'plugin'
+		);
+
+		self::assertSame( $expected, $plugin_headers );
+
+		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_VERSION', WOOF_BY_CATEGORY_TEST_VERSION ] );
 		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_PATH', dirname( PLUGIN_MAIN_FILE ) ] );
 		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_URL', PLUGIN_MAIN_FILE ] );
 		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_FILE', PLUGIN_MAIN_FILE ] );
 
 		self::assertInstanceOf( Woof_By_Category::class, $woof_by_category_plugin );
+	}
+
+
+	/**
+	 * Test that readme.txt contains proper stable tag.
+	 */
+	public function test_readme_txt() {
+		$expected    = [
+			'stable_tag' => WOOF_BY_CATEGORY_TEST_VERSION,
+		];
+		$readme_file = PLUGIN_PATH . '/readme.txt';
+
+		$readme_headers = $this->get_file_data(
+			$readme_file,
+			[ 'stable_tag' => 'Stable tag' ],
+			'plugin'
+		);
+
+		self::assertSame( $expected, $readme_headers );
 	}
 }

@@ -1,27 +1,29 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 bootstrap="./tests/bootstrap.php" backupGlobals="false"
+		 bootstrap="tests/phpunit/bootstrap.php"
 		 colors="true"
 		 convertErrorsToExceptions="true"
 		 convertNoticesToExceptions="true"
 		 convertWarningsToExceptions="true"
+		 beStrictAboutTestsThatDoNotTestAnything="false"
 		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
 	<coverage>
 		<include>
-			<directory suffix=".php">./</directory>
+			<directory suffix=".php">.</directory>
 		</include>
 		<exclude>
-			<directory>./build</directory>
-			<directory>./locale</directory>
-			<directory>./tests</directory>
-			<directory>./vendor</directory>
-			<directory>./wordpress</directory>
-			<directory>./wordpress-tests-lib</directory>
+			<directory>.github</directory>
+			<directory>.make</directory>
+			<directory>assets</directory>
+			<directory>css</directory>
+			<directory>languages</directory>
+			<directory>tests</directory>
+			<directory>vendor</directory>
 		</exclude>
 	</coverage>
 	<testsuites>
 		<testsuite name="woof-by-category-tests">
-			<directory prefix="test-" suffix=".php">./tests/tests/</directory>
+			<directory suffix=".php">tests/phpunit</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>

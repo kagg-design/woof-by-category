@@ -22,6 +22,16 @@ define( 'PLUGIN_MAIN_FILE', realpath( __DIR__ . '/../../woof-by-category.php' ) 
  */
 define( 'PLUGIN_PATH', realpath( dirname( PLUGIN_MAIN_FILE ) ) );
 
+/**
+ * Kilobytes in bytes.
+ */
+define( 'KB_IN_BYTES', 1024 );
+
+/**
+ * Plugin version.
+ */
+define( 'WOOF_BY_CATEGORY_TEST_VERSION', '2.15' );
+
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 
 FunctionMocker::init(
