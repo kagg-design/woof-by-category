@@ -6,7 +6,7 @@
 		 convertNoticesToExceptions="true"
 		 convertWarningsToExceptions="true"
 		 beStrictAboutTestsThatDoNotTestAnything="false"
-		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd">
 	<coverage>
 		<include>
 			<directory suffix=".php">.</directory>
