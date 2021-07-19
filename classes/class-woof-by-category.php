@@ -1036,6 +1036,7 @@ class Woof_By_Category {
 
 	/**
 	 * Show required plugins not found message.
+	 *
 	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	public function show_plugin_not_found_notice() {
