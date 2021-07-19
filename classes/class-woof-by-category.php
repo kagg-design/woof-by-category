@@ -294,6 +294,7 @@ class Woof_By_Category {
 	 * @param array $options Plugin options.
 	 *
 	 * @return array
+	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	private function translate_options( $options ) {
 		if ( ! $options ) {
@@ -508,7 +509,7 @@ class Woof_By_Category {
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		$swoof = isset( $_GET['swoof'] ) ? (bool) sanitize_text_field( wp_unslash( $_GET['swoof'] ) ) : false;
+		$swoof = isset( $_GET['swoof'] ) && sanitize_text_field( wp_unslash( $_GET['swoof'] ) );
 		if ( $swoof ) {
 			$cat = isset( $_GET['product_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['product_cat'] ) ) : false;
 
@@ -602,6 +603,7 @@ class Woof_By_Category {
 	 * Get category filters.
 	 *
 	 * @return array
+	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	protected function get_category_filters() {
 		$category_filters = wp_cache_get( __METHOD__, self::CACHE_GROUP );
@@ -1014,6 +1016,7 @@ class Woof_By_Category {
 	 * Check if plugin requirements met.
 	 *
 	 * @return bool Requirements met.
+	 * @noinspection PhpIncludeInspection
 	 */
 	private function requirements_met() {
 		$all_active = true;
@@ -1033,6 +1036,8 @@ class Woof_By_Category {
 
 	/**
 	 * Show required plugins not found message.
+	 *
+	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	public function show_plugin_not_found_notice() {
 		$message = __( 'WOOF by Category plugin requires the following plugins installed and activated: ', 'woof-by-category' );
@@ -1095,6 +1100,7 @@ class Woof_By_Category {
 	 * @param int $cat_id Top product category id.
 	 *
 	 * @return array
+	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	private function get_product_categories( $cat_id = 0 ) {
 		$cat_list = [];
@@ -1264,7 +1270,7 @@ class Woof_By_Category {
 	 *
 	 * @param array $links Plugin links.
 	 *
-	 * @return array|mixed Plugin links
+	 * @return array Plugin links
 	 */
 	public function add_settings_link( $links ) {
 		$action_links = [

@@ -10,17 +10,27 @@ use tad\FunctionMocker\FunctionMocker;
 /**
  * Plugin test dir.
  */
-define( 'PLUGIN_TESTS_DIR', __DIR__ );
+const PLUGIN_TESTS_DIR = __DIR__;
 
 /**
  * Plugin main file.
  */
-define( 'PLUGIN_MAIN_FILE', realpath( __DIR__ . '/../../woof-by-category.php' ) );
+define( 'PLUGIN_MAIN_FILE', realpath( dirname( dirname( __DIR__ ) ) . '/woof-by-category.php' ) );
 
 /**
  * Path to the plugin dir.
  */
 define( 'PLUGIN_PATH', realpath( dirname( PLUGIN_MAIN_FILE ) ) );
+
+/**
+ * Kilobytes in bytes.
+ */
+const KB_IN_BYTES = 1024;
+
+/**
+ * Plugin version.
+ */
+define( 'WOOF_BY_CATEGORY_TEST_VERSION', '2.15' );
 
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 

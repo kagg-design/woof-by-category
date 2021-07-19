@@ -24,6 +24,8 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 
 	/**
 	 * Test main plugin file when woof by category version defined.
+	 *
+	 * @noinspection PhpIncludeInspection
 	 */
 	public function test_when_woof_by_category_version_defined() {
 		FunctionMocker::replace(
@@ -58,35 +60,59 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
+	 * @noinspection        PhpIncludeInspection
 	 */
 	public function test_plugin_file_at_first_time() {
 		global $woof_by_category_plugin;
 
 		$mock = Mockery::mock( 'overload:' . Woof_By_Category::class );
-		$mock->shouldReceive( 'init' );
+		$mock->shouldReceive( 'init' )->once();
 
-		$define = FunctionMocker::replace( 'define', null );
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				if ( 'WOOF_BY_CATEGORY_PATH' === $name ) {
-					return PLUGIN_PATH;
-				}
-
-				return null;
-			}
-		);
-
-		\WP_Mock::passthruFunction( 'plugin_dir_url' );
-		\WP_Mock::passthruFunction( 'untrailingslashit' );
+		WP_Mock::passthruFunction( 'plugin_dir_url' );
+		WP_Mock::passthruFunction( 'untrailingslashit' );
 
 		require PLUGIN_MAIN_FILE;
 
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_VERSION', '2.14' ] );
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_PATH', dirname( PLUGIN_MAIN_FILE ) ] );
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_URL', PLUGIN_MAIN_FILE ] );
-		$define->wasCalledWithOnce( [ 'WOOF_BY_CATEGORY_FILE', PLUGIN_MAIN_FILE ] );
+		// Include main file the second time to make sure that plugin is not activated again.
+		include PLUGIN_MAIN_FILE;
+
+		$expected    = [
+			'version' => WOOF_BY_CATEGORY_TEST_VERSION,
+		];
+		$plugin_file = PLUGIN_MAIN_FILE;
+
+		$plugin_headers = $this->get_file_data(
+			$plugin_file,
+			[ 'version' => 'Version' ],
+			'plugin'
+		);
+
+		self::assertSame( $expected, $plugin_headers );
+
+		self::assertSame( WOOF_BY_CATEGORY_TEST_VERSION, constant( 'WOOF_BY_CATEGORY_VERSION' ) );
+		self::assertSame( WOOF_BY_CATEGORY_PATH, dirname( PLUGIN_MAIN_FILE ) );
+		self::assertSame( WOOF_BY_CATEGORY_FILE, PLUGIN_MAIN_FILE );
+		self::assertSame( WOOF_BY_CATEGORY_URL, PLUGIN_MAIN_FILE );
 
 		self::assertInstanceOf( Woof_By_Category::class, $woof_by_category_plugin );
+	}
+
+
+	/**
+	 * Test that readme.txt contains proper stable tag.
+	 */
+	public function test_readme_txt() {
+		$expected    = [
+			'stable_tag' => WOOF_BY_CATEGORY_TEST_VERSION,
+		];
+		$readme_file = PLUGIN_PATH . '/readme.txt';
+
+		$readme_headers = $this->get_file_data(
+			$readme_file,
+			[ 'stable_tag' => 'Stable tag' ],
+			'plugin'
+		);
+
+		self::assertSame( $expected, $readme_headers );
 	}
 }

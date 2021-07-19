@@ -59,56 +59,49 @@ if [[ $PHP_UNIT == '' ]]; then
   exit 1
 fi
 
+# Restore test files to the current branch version.
+git checkout -- tests
+
+if [[ $PHP_UNIT == '5.7' || $PHP_UNIT == '6.5' || $PHP_UNIT == '7.5' ]]; then
+  find tests -type f -exec sed -i "s/: void / /g" {} \;
+fi
+
 if [[ $CURRENT_PHP_UNIT == "$PHP_UNIT" ]]; then
   # Do nothing if current version of phpunit is the same as required. Important on CI.
-  # Anytime force update available specifying first argument like 'update-phpunit.sh 7.4'
+  # Anytime force update available specifying first argument like 'composer-update.sh 7'
   exit 0
 fi
 
 echo "Building with phpunit-$PHP_UNIT"
 
-# Restore test files to the current branch version.
-git checkout -- tests
-
 if [[ $PHP_UNIT == '5.7' ]]; then
   composer config platform.php 5.6
-
-  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker symfony/console phpunit/php-timer
-  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-test-on-windows symfony/console phpunit/php-timer
-
-  find tests -type f -exec sed -i "s/: void / /g" {} \;
+  composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
 
 if [[ $PHP_UNIT == '6.5' ]]; then
   composer config platform.php 7.0
-
-  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
-  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-test-on-windows symfony/console phpunit/php-timer
-
-  find tests -type f -exec sed -i "s/: void / /g" {} \;
+  composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock symfony/config php-coveralls/php-coveralls
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock symfony/config php-coveralls/php-coveralls
 fi
 
 if [[ $PHP_UNIT == '7.5' ]]; then
   composer config platform.php 7.1
-
-  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
-  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-test-on-windows symfony/console phpunit/php-timer
-
-  find tests -type f -exec sed -i "s/: void / /g" {} \;
+  composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
 
 if [[ $PHP_UNIT == '8.5' ]]; then
   composer config platform.php 7.2
-
-  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
-  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-php8 symfony/console phpunit/php-timer
+  composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
 
 if [[ $PHP_UNIT == '9.5' ]]; then
   composer config platform.php 7.3
-
-  composer remove --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker phpunit/php-timer
-  composer require --dev phpunit/phpunit 10up/wp_mock lucatume/function-mocker:dev-php8 symfony/console phpunit/php-timer
+  composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
 
 RESULT=$?
