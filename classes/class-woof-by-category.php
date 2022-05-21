@@ -820,7 +820,7 @@ class Woof_By_Category {
 		}
 
 		// Sort settings array in same order as product_cat_order array,
-		// i.e. in hierarchial order.
+		// i.e. in hierarchical order.
 		uksort( $this->options, [ $this, 'compare_cat' ] );
 
 		// Reindex settings array.
@@ -905,7 +905,7 @@ class Woof_By_Category {
 	/**
 	 * Output field.
 	 *
-	 * @param array $arguments Field list in array.
+	 * @param array $arguments The list of fields.
 	 */
 	public function field_callback( $arguments ) {
 		$value = get_option( self::OPTION_NAME ); // Get current settings.
