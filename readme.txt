@@ -3,9 +3,9 @@ Contributors: kaggdesign
 Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.16
+Stable tag: 2.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,11 +70,15 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 == Changelog ==
 
+= 2.17 =
+* Tested with WordPress 6.1
+* Tested with WooCommerce 7.1
+
 = 2.16 =
 * Tested with WordPress 6.0
 * Tested with WooCommerce 6.5
 
-* = 2.15 =
+= 2.15 =
 * Tested with WordPress 5.8
 * Tested with WooCommerce 5.5
 
