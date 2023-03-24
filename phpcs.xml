@@ -4,6 +4,9 @@
 
 	<!-- What to scan -->
 	<file>.</file>
+	<exclude-pattern>*/\.git/*</exclude-pattern>
+	<exclude-pattern>*/\.github/*</exclude-pattern>
+	<exclude-pattern>*/\.idea/*</exclude-pattern>
 	<exclude-pattern>*/\.make/*</exclude-pattern>
 	<exclude-pattern>*/assets/*</exclude-pattern>
 	<exclude-pattern>*/css/*</exclude-pattern>
@@ -13,7 +16,6 @@
 	<exclude-pattern>*\.js</exclude-pattern>
 	<exclude-pattern>*\.mo</exclude-pattern>
 	<exclude-pattern>*\.po</exclude-pattern>
-	<exclude-pattern>*\.twig</exclude-pattern>
 	<exclude-pattern>*\.css</exclude-pattern>
 	<exclude-pattern>*\.scss</exclude-pattern>
 
