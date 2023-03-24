@@ -71,9 +71,10 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 == Changelog ==
 
 = 2.18 =
-* Tested with WordPress 6.2
-* Tested with WooCommerce 7.5
-* Tested with PHP 8.2
+* Tested with WordPress 6.2.
+* Tested with WooCommerce 7.5.
+* Tested with PHP 8.2.
+* Added compatibility with WC High-Performance order storage (COT) feature.
 
 = 2.17 =
 * Tested with WordPress 6.1

@@ -5,6 +5,8 @@
  * @package woof-by-category
  */
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
+
 /**
  * Woof_By_Category class.
  *
@@ -127,6 +129,8 @@ class Woof_By_Category {
 			[ $this, 'woof_sort_terms_before_out_filter' ],
 			- PHP_INT_MAX
 		);
+
+		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );
 	}
 
 	/**
@@ -1295,5 +1299,20 @@ class Woof_By_Category {
 			[],
 			constant( 'WOOF_BY_CATEGORY_VERSION' )
 		);
+	}
+
+	/**
+	 * Declare compatibility with custom order tables for WooCommerce.
+	 *
+	 * @return void
+	 */
+	public function declare_wc_compatibility() {
+		if ( class_exists( FeaturesUtil::class ) ) {
+			FeaturesUtil::declare_compatibility(
+				'custom_order_tables',
+				constant( 'WOOF_BY_CATEGORY_FILE' ),
+				true
+			);
+		}
 	}
 }
