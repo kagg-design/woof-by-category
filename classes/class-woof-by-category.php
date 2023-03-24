@@ -254,6 +254,7 @@ class Woof_By_Category {
 	 * Get default language.
 	 *
 	 * @return bool|mixed|string|null
+	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	protected function get_default_language() {
 		if ( class_exists( 'SitePress' ) ) {
@@ -273,6 +274,7 @@ class Woof_By_Category {
 	 * Get current language.
 	 *
 	 * @return bool|mixed|string|null
+	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	protected function get_current_language() {
 		if ( class_exists( 'SitePress' ) ) {
