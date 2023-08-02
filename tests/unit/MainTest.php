@@ -118,6 +118,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::expectActionNotAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 
 		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
+
 		FunctionMocker::replace(
 			'constant',
 			static function ( $name ) use ( $woof_by_category_file ) {
@@ -175,6 +176,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 
 		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
+
 		FunctionMocker::replace(
 			'constant',
 			static function ( $name ) use ( $woof_by_category_file ) {
@@ -238,6 +240,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 
 		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
+
 		FunctionMocker::replace(
 			'constant',
 			static function ( $name ) use ( $woof_by_category_file ) {
@@ -290,7 +293,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
-				'args'   => [ 'Main::get_category_filters', $subject::CACHE_GROUP ],
+				'args'   => [ Main::class . '::get_category_filters', $subject::CACHE_GROUP ],
 				'return' => $category_filters,
 				'times'  => 1,
 			]
@@ -319,7 +322,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
-				'args'   => [ 'Main::get_category_filters', $subject::CACHE_GROUP ],
+				'args'   => [ Main::class . '::get_category_filters', $subject::CACHE_GROUP ],
 				'return' => false,
 				'times'  => 1,
 			]
@@ -337,7 +340,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::userFunction(
 			'wp_cache_set',
 			[
-				'args'  => [ 'Main::get_category_filters', $expected, $subject::CACHE_GROUP ],
+				'args'  => [ Main::class . '::get_category_filters', $expected, $subject::CACHE_GROUP ],
 				'times' => 1,
 			]
 		);
@@ -407,6 +410,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::passthruFunction( 'plugin_basename' );
 
 		$woof_by_category_file = PLUGIN_PATH . '/woof-by-category.php';
+
 		FunctionMocker::replace(
 			'constant',
 			static function ( $name ) use ( $woof_by_category_file ) {

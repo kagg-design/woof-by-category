@@ -28,34 +28,6 @@ class PluginFileTest extends WoofByCategoryTestCase {
 	}
 
 	/**
-	 * Test main plugin file when woof by category version defined.
-	 *
-	 * @noinspection PhpIncludeInspection
-	 */
-	public function test_when_woof_by_category_version_defined() {
-		FunctionMocker::replace(
-			'defined',
-			static function ( $name ) {
-				if ( 'ABSPATH' === $name ) {
-					return true;
-				}
-
-				if ( 'WOOF_BY_CATEGORY_VERSION' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
-		$define = FunctionMocker::replace( 'define', null );
-
-		require PLUGIN_MAIN_FILE;
-
-		$define->wasNotCalled();
-	}
-
-	/**
 	 * Test loading of main plugin file.
 	 *
 	 * Does not work with php 5.6 due to the bug in Reflection class prior php 7.0,
@@ -77,9 +49,6 @@ class PluginFileTest extends WoofByCategoryTestCase {
 		WP_Mock::passthruFunction( 'untrailingslashit' );
 
 		require PLUGIN_MAIN_FILE;
-
-		// Include main file the second time to make sure that plugin is not activated again.
-		include PLUGIN_MAIN_FILE;
 
 		$expected    = [
 			'version' => WOOF_BY_CATEGORY_TEST_VERSION,
