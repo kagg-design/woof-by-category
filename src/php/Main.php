@@ -1,18 +1,21 @@
 <?php
 /**
- * Woof_By_Category class file.
+ * Main class file.
  *
  * @package woof-by-category
  */
 
+namespace KAGG\WoofByCategory;
+
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use WP_Term;
 
 /**
- * Woof_By_Category class.
+ * Main class.
  *
- * @class Woof_By_Category
+ * @class Main
  */
-class Woof_By_Category {
+class Main {
 	/**
 	 * Plugin base option name.
 	 *
@@ -297,9 +300,9 @@ class Woof_By_Category {
 	/**
 	 * Translate options for a new language.
 	 *
-	 * @param array $options Plugin options.
+	 * @param array|mixed $options Plugin options.
 	 *
-	 * @return array
+	 * @return array|mixed
 	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	private function translate_options( $options ) {
@@ -412,7 +415,7 @@ class Woof_By_Category {
 	 *
 	 * @return array
 	 */
-	protected function get_default_filters() {
+	protected function get_default_filters(): array {
 		// Get current settings.
 		$options = get_option( self::OPTION_NAME );
 
@@ -468,18 +471,21 @@ class Woof_By_Category {
 	 *
 	 * @return string
 	 */
-	private function get_current_taxonomy_slug() {
+	private function get_current_taxonomy_slug(): string {
 		$queried_object = get_queried_object();
+
 		if ( null === $queried_object || ! isset( $queried_object->taxonomy ) ) {
 			return '';
 		}
 
 		$current_taxonomy = get_taxonomy( $queried_object->taxonomy );
+
 		if ( false === $current_taxonomy ) {
 			return '';
 		}
 
 		$object_types = $current_taxonomy->object_type;
+
 		if ( ! empty( $object_types ) && in_array( 'product', $object_types, true ) ) {
 			return $queried_object->slug;
 		}
@@ -499,7 +505,7 @@ class Woof_By_Category {
 		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
 			$link = isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '';
 			parse_str( wp_parse_url( $link, PHP_URL_QUERY ), $query_arr );
-			$cat = isset( $query_arr['product_cat'] ) ? $query_arr['product_cat'] : false;
+			$cat = $query_arr['product_cat'] ?? false;
 
 			if ( $cat ) {
 				return $cat;
@@ -611,7 +617,7 @@ class Woof_By_Category {
 	 * @return array
 	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
-	protected function get_category_filters() {
+	protected function get_category_filters(): array {
 		$category_filters = wp_cache_get( __METHOD__, self::CACHE_GROUP );
 
 		if ( false !== $category_filters ) {
@@ -677,9 +683,9 @@ class Woof_By_Category {
 	/**
 	 * Filter terms before output.
 	 *
-	 * @param array $terms Terms.
+	 * @param array|mixed $terms Terms.
 	 *
-	 * @return array
+	 * @return array|mixed
 	 */
 	public function woof_sort_terms_before_out_filter( $terms ) {
 		$allowed_filters = $this->get_allowed_filters();
@@ -781,7 +787,7 @@ class Woof_By_Category {
 	 *
 	 * @return bool
 	 */
-	private function is_wbc_options_screen() {
+	private function is_wbc_options_screen(): bool {
 		$current_screen = get_current_screen();
 
 		return $current_screen && ( 'options' === $current_screen->id || self::SCREEN_ID === $current_screen->id );
@@ -892,7 +898,7 @@ class Woof_By_Category {
 	 *
 	 * @return int Result of comparison.
 	 */
-	public function compare_cat( $a, $b ) {
+	public function compare_cat( $a, $b ): int {
 		$cat_a   = $this->options[ $a ]['category'];
 		$index_a = array_search( $cat_a, $this->product_cat_order, true );
 		$cat_b   = $this->options[ $b ]['category'];
@@ -916,8 +922,7 @@ class Woof_By_Category {
 	public function field_callback( $arguments ) {
 		$value = get_option( self::OPTION_NAME ); // Get current settings.
 		if ( $value ) {
-			$value = isset( $value[ $arguments['group'] ] [ $arguments['uid'] ] ) ?
-				$value[ $arguments['group'] ] [ $arguments['uid'] ] : null;
+			$value = $value[ $arguments['group'] ] [ $arguments['uid'] ] ?? null;
 		} else { // If no value exists.
 			$value = $arguments['default']; // Set to our default.
 		}
@@ -988,13 +993,15 @@ class Woof_By_Category {
 		}
 
 		// If there is help text.
-		$helper = isset( $arguments['helper'] ) ? $arguments['helper'] : '';
+		$helper = $arguments['helper'] ?? '';
+
 		if ( $helper ) {
 			printf( '<span class="helper"> %s</span>', esc_html( $helper ) ); // Show it.
 		}
 
 		// If there is supplemental text.
-		$supplemental = isset( $arguments['supplemental'] ) ? $arguments['supplemental'] : '';
+		$supplemental = $arguments['supplemental'] ?? '';
+
 		if ( $supplemental ) {
 			printf( '<p class="description">%s</p>', esc_html( $supplemental ) ); // Show it.
 		}
@@ -1024,7 +1031,7 @@ class Woof_By_Category {
 	 * @return bool Requirements met.
 	 * @noinspection PhpIncludeInspection
 	 */
-	private function requirements_met() {
+	private function requirements_met(): bool {
 		$all_active = true;
 
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -1108,7 +1115,7 @@ class Woof_By_Category {
 	 * @return array
 	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
-	private function get_product_categories( $cat_id = 0 ) {
+	private function get_product_categories( $cat_id = 0 ): array {
 		$cat_list = [];
 
 		$crumbs = $this->get_product_term_crumbs( $cat_id );
@@ -1155,7 +1162,7 @@ class Woof_By_Category {
 	 *
 	 * @return array
 	 */
-	private function get_product_term_crumbs( $term_id ) {
+	private function get_product_term_crumbs( $term_id ): array {
 		$crumbs = [];
 
 		$term = get_term( $term_id );
@@ -1176,11 +1183,13 @@ class Woof_By_Category {
 	/**
 	 * Get WOOF filters in array.
 	 */
-	private function get_woof_filters() {
+	private function get_woof_filters(): array {
 		$filters = [];
 
 		remove_filter( 'option_woof_settings', [ $this, 'wbc_option_woof_settings' ] );
+
 		$woof_settings = get_option( 'woof_settings' );
+
 		add_filter( 'option_woof_settings', [ $this, 'wbc_option_woof_settings' ] );
 
 		if ( isset( $woof_settings['tax'] ) ) {
@@ -1201,7 +1210,7 @@ class Woof_By_Category {
 	 *
 	 * @return int Distance to parent in levels or -1 if parent is not found.
 	 */
-	protected function has_parent( $filter_cat, $current_cat ) {
+	protected function has_parent( $filter_cat, $current_cat ): int {
 		if ( null === $current_cat ) {
 			return - 1;
 		}
@@ -1262,23 +1271,23 @@ class Woof_By_Category {
 	 *
 	 * @return array
 	 */
-	private function get_taxonomies() {
+	private function get_taxonomies(): array {
 		/**
 		 * Filters the product taxonomies to use.
 		 *
 		 * @param array $categories Product categories.
 		 */
-		return apply_filters( 'wbc_product_categories', [ 'product_cat' ] );
+		return (array) apply_filters( 'wbc_product_categories', [ 'product_cat' ] );
 	}
 
 	/**
 	 * Add link to plugin setting page on plugins page.
 	 *
-	 * @param array $links Plugin links.
+	 * @param array|mixed $links Plugin links.
 	 *
 	 * @return array Plugin links
 	 */
-	public function add_settings_link( $links ) {
+	public function add_settings_link( $links ): array {
 		$action_links = [
 			'settings' =>
 				'<a href="' . admin_url( 'admin.php?page=woof-by-category' ) . '" aria-label="' .
@@ -1286,7 +1295,7 @@ class Woof_By_Category {
 				esc_html__( 'Settings', 'woof-by-category' ) . '</a>',
 		];
 
-		return array_merge( $action_links, $links );
+		return array_merge( $action_links, (array) $links );
 	}
 
 	/**

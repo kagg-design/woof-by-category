@@ -15,7 +15,7 @@ const PLUGIN_TESTS_DIR = __DIR__;
 /**
  * Plugin main file.
  */
-define( 'PLUGIN_MAIN_FILE', realpath( dirname( dirname( __DIR__ ) ) . '/woof-by-category.php' ) );
+define( 'PLUGIN_MAIN_FILE', realpath( dirname( __DIR__, 2 ) . '/woof-by-category.php' ) );
 
 /**
  * Path to the plugin dir.
@@ -30,7 +30,7 @@ const KB_IN_BYTES = 1024;
 /**
  * Plugin version.
  */
-const WOOF_BY_CATEGORY_TEST_VERSION = '2.18';
+const WOOF_BY_CATEGORY_TEST_VERSION = '3.0';
 
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 
@@ -41,7 +41,7 @@ FunctionMocker::init(
 		],
 		'whitelist'             => [
 			realpath( PLUGIN_PATH . '/woof-by-category.php' ),
-			realpath( PLUGIN_PATH . '/classes' ),
+			realpath( PLUGIN_PATH . '/src/php' ),
 		],
 		'redefinable-internals' => [
 			'define',
@@ -52,4 +52,4 @@ FunctionMocker::init(
 	]
 );
 
-\WP_Mock::bootstrap();
+WP_Mock::bootstrap();

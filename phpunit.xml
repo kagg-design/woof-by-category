@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 bootstrap="tests/phpunit/bootstrap.php"
+		 bootstrap="tests/unit/bootstrap.php"
 		 colors="true"
 		 convertErrorsToExceptions="true"
 		 convertNoticesToExceptions="true"
@@ -13,7 +13,6 @@
 		</include>
 		<exclude>
 			<directory>.github</directory>
-			<directory>.make</directory>
 			<directory>assets</directory>
 			<directory>css</directory>
 			<directory>languages</directory>
@@ -23,7 +22,7 @@
 	</coverage>
 	<testsuites>
 		<testsuite name="woof-by-category-tests">
-			<directory suffix=".php">tests/phpunit</directory>
+			<directory suffix=".php">tests/unit</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>
