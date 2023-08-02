@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0
+* Dropped support for PHP 5.6. Minimum required PHP version is now 7.0.
+* Tested with WordPress 6.3.
+* Tested with WooCommerce 7.9.
+
+## 2.18
+* Tested with WordPress 6.2.
+* Tested with WooCommerce 7.5.
+* Tested with PHP 8.2.
+* Added compatibility with WC High-Performance order storage (COT) feature.
+
+## 2.17
+* Tested with WordPress 6.1
+* Tested with WooCommerce 7.1
+
+## 2.16
+* Tested with WordPress 6.0
+* Tested with WooCommerce 6.5
+
+## 2.15
+* Tested with WordPress 5.8
+* Tested with WooCommerce 5.5
+
 ## [2.14]
 * Tested with WordPress 5.7
 

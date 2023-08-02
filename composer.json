@@ -28,30 +28,36 @@
   ],
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "config": {
-    "platform": {
-      "php": "5.6"
-    }
-  },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "10up/wp_mock": "0.2.0 - 0.5.0",
+    "10up/wp_mock": "0.2 - 0.5",
     "lucatume/function-mocker": "dev-master",
-    "phpunit/phpunit": "5.7 - 9.5",
+    "phpunit/phpunit": "6.5 - 9.6",
     "squizlabs/php_codesniffer": "^3.7.2",
     "phpcompatibility/php-compatibility": "^9.3.5",
     "phpcompatibility/phpcompatibility-wp": "^2.1.4",
-    "wp-coding-standards/wpcs": "^2.3.0"
+    "wp-coding-standards/wpcs": "^2.3.0",
+    "ext-json": "*"
   },
   "autoload": {
-    "classmap": [
-      "classes"
-    ]
+    "psr-4": {
+      "KAGG\\WoofByCategory\\": "src/php"
+    }
   },
   "autoload-dev": {
-    "classmap": [
-      "classes",
-      "tests/phpunit/classes"
-    ]
+    "psr-4": {
+      "KAGG\\WoofByCategory\\": "src/php",
+      "KAGG\\WoofByCategory\\Tests\\Unit\\": "tests/unit"
+    }
+  },
+  "bin": [
+    "bin/update-tests"
+  ],
+  "scripts": {
+    "pre-update-cmd": "update-tests",
+    "update-tests": "update-tests",
+    "revert-tests": "update-tests revert",
+    "phpcs": "vendor/bin/phpcs --colors --standard=phpcs.xml",
+    "unit": "vendor/bin/phpunit"
   }
 }

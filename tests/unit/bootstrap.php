@@ -15,7 +15,7 @@ const PLUGIN_TESTS_DIR = __DIR__;
 /**
  * Plugin main file.
  */
-define( 'PLUGIN_MAIN_FILE', realpath( dirname( dirname( __DIR__ ) ) . '/woof-by-category.php' ) );
+define( 'PLUGIN_MAIN_FILE', realpath( dirname( __DIR__, 2 ) . '/woof-by-category.php' ) );
 
 /**
  * Path to the plugin dir.
@@ -52,4 +52,4 @@ FunctionMocker::init(
 	]
 );
 
-\WP_Mock::bootstrap();
+WP_Mock::bootstrap();

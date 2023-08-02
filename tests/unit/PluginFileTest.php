@@ -1,18 +1,23 @@
 <?php
 /**
- * Test_Woof_By_Category_Plugin_File class file
+ * PluginFileTest class file
  *
  * @package woof-by-category
  */
 
+namespace KAGG\WoofByCategory\Tests\Unit;
+
+use KAGG\WoofByCategory\Main;
+use Mockery;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 
 /**
- * Class Test_Woof_By_Category_Plugin_File
+ * Class PluginFileTest
  *
  * @group plugin-file
  */
-class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
+class PluginFileTest extends WoofByCategoryTestCase {
 
 	/**
 	 * Tear down.
@@ -30,7 +35,7 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 	public function test_when_woof_by_category_version_defined() {
 		FunctionMocker::replace(
 			'defined',
-			function ( $name ) {
+			static function ( $name ) {
 				if ( 'ABSPATH' === $name ) {
 					return true;
 				}
@@ -65,7 +70,7 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 	public function test_plugin_file_at_first_time() {
 		global $woof_by_category_plugin;
 
-		$mock = Mockery::mock( 'overload:' . Woof_By_Category::class );
+		$mock = Mockery::mock( 'overload:' . Main::class );
 		$mock->shouldReceive( 'init' )->once();
 
 		WP_Mock::passthruFunction( 'plugin_dir_url' );
@@ -94,7 +99,7 @@ class Test_Woof_By_Category_Plugin_File extends Woof_By_Category_TestCase {
 		self::assertSame( WOOF_BY_CATEGORY_FILE, PLUGIN_MAIN_FILE );
 		self::assertSame( WOOF_BY_CATEGORY_URL, PLUGIN_MAIN_FILE );
 
-		self::assertInstanceOf( Woof_By_Category::class, $woof_by_category_plugin );
+		self::assertInstanceOf( Main::class, $woof_by_category_plugin );
 	}
 
 

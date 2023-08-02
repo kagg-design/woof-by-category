@@ -5,13 +5,20 @@
  * @package woof-by-category
  */
 
+namespace KAGG\WoofByCategory\Tests\Unit;
+
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 
 /**
  * Class Woof_By_Category_TestCase
  */
-abstract class Woof_By_Category_TestCase extends TestCase {
+abstract class WoofByCategoryTestCase extends TestCase {
 
 	/**
 	 * Setup test
@@ -82,7 +89,7 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_method_accessibility( $object, $method_name, $accessible = true ) {
+	protected function set_method_accessibility( $object, $method_name, $accessible = true ): ReflectionMethod {
 		$reflection_class = new ReflectionClass( $object );
 
 		$method = $reflection_class->getMethod( $method_name );
@@ -112,7 +119,7 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 	 *
 	 * @return string[] Array of file header values keyed by header name.
 	 */
-	protected function get_file_data( $file, $default_headers, $context = '' ) {
+	protected function get_file_data( $file, $default_headers, $context = '' ): array {
 		// We don't need to write to the file, so just open for reading.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
 		$fp = fopen( $file, 'rb' );
@@ -172,7 +179,7 @@ abstract class Woof_By_Category_TestCase extends TestCase {
 	 * @param string $str Header comment to clean up.
 	 * @return string
 	 */
-	private function cleanup_header_comment( $str ) {
+	private function cleanup_header_comment( $str ): string {
 		return trim( preg_replace( '/\s*(?:\*\/|\?>).*/', '', $str ) );
 	}
 }
