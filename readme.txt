@@ -5,7 +5,7 @@ Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 4.4
 Tested up to: 6.3
 Requires PHP: 7.0
-Stable tag: 3.0
+Stable tag: 3.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,7 +70,7 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 == Changelog ==
 
-= 3.0 =
+= 3.0.1 =
 * Dropped support for PHP 5.6. Minimum required PHP version is now 7.0.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
