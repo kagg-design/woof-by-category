@@ -13,8 +13,8 @@
 		</include>
 		<exclude>
 			<directory>.github</directory>
+			<directory>.wordpress-org</directory>
 			<directory>assets</directory>
-			<directory>css</directory>
 			<directory>languages</directory>
 			<directory>tests</directory>
 			<directory>vendor</directory>
