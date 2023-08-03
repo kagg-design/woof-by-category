@@ -8,9 +8,9 @@
 /.gitignore
 /CHANGELOG.md
 /README.md
+/auth.json
 /composer.json
 /composer.lock
-/Makefile
 /phpcs.xml
 /phpunit.xml
 /Thumbs.db
@@ -19,6 +19,5 @@
 /.git
 /.github
 /.idea
-/.make
 /.wordpress-org
 /tests
