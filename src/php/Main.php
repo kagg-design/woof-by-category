@@ -28,7 +28,7 @@ class Main {
 	 *
 	 * @var string
 	 */
-	const SCREEN_ID = 'toplevel_page_woof-by-category';
+	const SCREEN_ID = 'settings_page_woof-by-category';
 
 	/**
 	 * Plugin cache group.
@@ -721,13 +721,14 @@ class Main {
 	 * Add settings page to the menu.
 	 */
 	public function add_settings_page() {
-		$page_title = __( 'WOOF by Category', 'woof-by-category' );
-		$menu_title = __( 'WOOF by Category', 'woof-by-category' );
-		$capability = 'manage_options';
-		$slug       = 'woof-by-category';
-		$callback   = [ $this, 'woof_by_category_settings_page' ];
-		$icon       = 'dashicons-filter';
-		add_menu_page( $page_title, $menu_title, $capability, $slug, $callback, $icon );
+		$parent_slug = 'options-general.php';
+		$page_title  = __( 'WOOF by Category', 'woof-by-category' );
+		$menu_title  = __( 'WOOF by Category', 'woof-by-category' );
+		$capability  = 'manage_options';
+		$menu_slug   = 'woof-by-category';
+		$callback    = [ $this, 'woof_by_category_settings_page' ];
+
+		add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback );
 	}
 
 	/**
@@ -760,9 +761,19 @@ class Main {
 	 * @return bool
 	 */
 	private function is_wbc_options_screen(): bool {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
 		$current_screen = get_current_screen();
 
-		return $current_screen && ( 'options' === $current_screen->id || self::SCREEN_ID === $current_screen->id );
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		$screen_id = self::SCREEN_ID;
+
+		return 'options' === $current_screen->id || $screen_id === $current_screen->id;
 	}
 
 	/**
