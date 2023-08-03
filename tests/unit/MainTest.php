@@ -1841,7 +1841,7 @@ class MainTest extends WoofByCategoryTestCase {
 			[
 				'args'  => [
 					'woof-by-category-admin',
-					$woof_by_category_url . '/css/woof-by-category-admin.css',
+					$woof_by_category_url . '/assets/css/woof-by-category-admin.css',
 					[],
 					$woof_by_category_version,
 				],
