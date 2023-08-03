@@ -438,13 +438,13 @@ class MainTest extends WoofByCategoryTestCase {
 		$subject = new Main();
 
 		WP_Mock::passthruFunction( '__' );
-		WP_Mock::userFunction( 'add_menu_page' )->with(
+		WP_Mock::userFunction( 'add_submenu_page' )->with(
+			'options-general.php',
 			'WOOF by Category',
 			'WOOF by Category',
 			'manage_options',
 			'woof-by-category',
-			[ $subject, 'woof_by_category_settings_page' ],
-			'dashicons-filter'
+			[ $subject, 'woof_by_category_settings_page' ]
 		);
 
 		$subject->add_settings_page();
