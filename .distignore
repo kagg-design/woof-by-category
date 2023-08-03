@@ -21,6 +21,4 @@
 /.idea
 /.make
 /.wordpress-org
-/assets
-/src
 /tests
