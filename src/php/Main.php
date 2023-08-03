@@ -134,6 +134,8 @@ class Main {
 		);
 
 		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );
+		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
+		add_filter( 'update_footer', [ $this, 'update_footer' ], PHP_INT_MAX );
 	}
 
 	/**
@@ -741,43 +743,13 @@ class Main {
 				?>
 			</h2>
 
-			<div class="wbc-col left">
-				<form id="wbc-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="POST">
-					<?php
-					settings_fields( 'woof_by_category_group' ); // Hidden protection fields.
-					do_settings_sections( 'woof-by-category' ); // Sections with options.
-					submit_button();
-					?>
-				</form>
-			</div>
-			<div class="wbc-col right">
-				<h2 id="donate">
-					<?php echo esc_html( __( 'Donate', 'woof-by-category' ) ); ?>
-				</h2>
-				<p>
-					<?php echo esc_html( __( 'Would you like to support the advancement of this plugin?', 'woof-by-category' ) ); ?>
-				</p>
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-					<input type="hidden" name="cmd" value="_s-xclick">
-					<input type="hidden" name="hosted_button_id" value="S9UXRBU2ZKK68">
-					<input
-						type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
-						name="submit" alt="PayPal - The safer, easier way to pay online!">
-					<img
-						alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
-						height="1">
-				</form>
-
-				<h2 id="appreciation">
-					<?php echo esc_html( __( 'Your appreciation', 'woof-by-category' ) ); ?>
-				</h2>
-				<a
-					target="_blank"
-					href="https://wordpress.org/support/view/plugin-reviews/woof-by-category?rate=5#postform">
-					<?php echo esc_html( __( 'Leave a ★★★★★ plugin review on WordPress.org', 'woof-by-category' ) ); ?>
-				</a>
-			</div>
-
+			<form id="wbc-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="POST">
+				<?php
+				settings_fields( 'woof_by_category_group' ); // Hidden protection fields.
+				do_settings_sections( 'woof-by-category' ); // Sections with options.
+				submit_button();
+				?>
+			</form>
 		</div>
 		<?php
 	}
@@ -1323,5 +1295,62 @@ class Main {
 				true
 			);
 		}
+	}
+
+	/**
+	 * When user is on the plugin admin page, display footer text that graciously asks them to rate us.
+	 *
+	 * @param string|mixed $text Footer text.
+	 *
+	 * @return string|mixed
+	 */
+	public function admin_footer_text( $text ) {
+		if ( ! $this->is_wbc_options_screen() ) {
+			return $text;
+		}
+
+		$url = 'https://wordpress.org/support/plugin/woof-by-category/reviews/?filter=5#new-post';
+
+		return wp_kses(
+			sprintf(
+			/* translators: 1: plugin name, 2: wp.org review link with stars, 3: wp.org review link with text. */
+				__( 'Please rate %1$s %2$s on %3$s. Thank you!', 'woof-by-category' ),
+				'<strong>Woof by Category</strong>',
+				sprintf(
+					'<a href="%s" target="_blank" rel="noopener noreferrer">★★★★★</a>',
+					$url
+				),
+				sprintf(
+					'<a href="%s" target="_blank" rel="noopener noreferrer">WordPress.org</a>',
+					$url
+				)
+			),
+			[
+				'a' => [
+					'href'   => [],
+					'target' => [],
+					'rel'    => [],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Show plugin version in the update footer.
+	 *
+	 * @param string|mixed $content The content that will be printed.
+	 *
+	 * @return string|mixed
+	 */
+	public function update_footer( $content ) {
+		if ( ! $this->is_wbc_options_screen() ) {
+			return $content;
+		}
+
+		return sprintf(
+		/* translators: 1: plugin version. */
+			__( 'Version %s', 'woof-by-category' ),
+			WOOF_BY_CATEGORY_VERSION
+		);
 	}
 }
