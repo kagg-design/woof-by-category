@@ -2,7 +2,7 @@
 
 WooCommerce Product Filter (WOOF) extension to display set of filters depending on current product category page.
 
-![](./.wordpress-org/banner-772x250.png)
+![Banner](./.wordpress-org/banner-772x250.png)
 
 ## Contents
 
