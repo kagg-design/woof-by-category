@@ -1304,7 +1304,7 @@ class Main {
 	public function admin_enqueue_scripts() {
 		wp_enqueue_style(
 			'woof-by-category-admin',
-			constant( 'WOOF_BY_CATEGORY_URL' ) . '/css/woof-by-category-admin.css',
+			constant( 'WOOF_BY_CATEGORY_URL' ) . '/assets/css/woof-by-category-admin.css',
 			[],
 			constant( 'WOOF_BY_CATEGORY_VERSION' )
 		);
