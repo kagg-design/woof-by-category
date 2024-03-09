@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 3.0
-* Dropped support for PHP 5.6. Minimum required PHP version is now 7.0.
+## 3.1.0 ##
+* Tested with WordPress 6.2.
+* Tested with WooCommerce 8.6.
+* The minimum required WordPress version is now 5.0
+
+## 3.0.1 ##
+* Dropped support for PHP 5.6. The minimum required PHP version is now 7.0.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
 
@@ -65,7 +70,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.7]
 ### Fixed
-* Fixed the bug with not showing filters on single product page.
+* Fixed the bug with not showing filters on a single product page.
 
 ## [2.6.1]
 ### Fixed
@@ -146,13 +151,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.6.3]
 ### Fixed
-* 2 php warnings upon first activation.
+* Two php warnings upon first activation.
 * Php notice on array_pop().
 
 ## [1.6.2]
 ### Fixed
-* Filter disappearing in widget on category page during attributes selection clearing.
-* Filtering of main WordPress request in admin.
+* Filter disappearing in the widget on category page during attribute selection clearing.
+* Filtering of the main WordPress request in admin.
 
 ## [1.6]
 ### Fixed
@@ -178,7 +183,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.1]
 ### Added
-* Auto ordering of category-filter pairs on plugin options page.
+* Auto ordering of category-filter pairs on the plugin options page.
 
 ## [1.3]
 ### Fixed
@@ -197,7 +202,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Added settings link on plugin page.
 
 ### Fixed
-* Fixed wrong behaviour when selected filters did not cover the whole set.
+* Fixed wrong behavior when selected filters did not cover the whole set.
 * Fixed crash when WooCommerce plugin is not activated.
 
 ## [1.1]

@@ -2,20 +2,20 @@
 Contributors: kaggdesign
 Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
-Requires at least: 4.4
+Requires at least: 5.0
 Tested up to: 6.3
 Requires PHP: 7.0
-Stable tag: 3.0.1
+Stable tag: 3.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-WooCommerce Product Filter (WOOF) extension to display set of filters depending on current product category page.
+WooCommerce Product Filter (WOOF) extension to display a set of filters depending on the current product category page.
 
 == Description ==
 
-WOOF by Category is a WooCommerce Product Filter (WOOF) extension, which allows user to set up different WOOF filters in different categories.
+WOOF by Category is a WooCommerce Product Filter (WOOF) extension, which allows users to set up different WOOF filters in different categories.
 
-Plugin has options page on the backend, to setup relationships between any WooCommerce product category and any set of WOOF filters. Only selected filters will be shown on the selected category page and its children. Please see screenshots.
+Plugin has Options page on the backend, to set up relationships between any WooCommerce product category and any set of WOOF filters. Only selected filters will be shown on the selected category page and its children. Please see screenshots.
 
 It is possible to set up any number of category->filters pairs.
 
@@ -30,9 +30,9 @@ It is possible to set up any number of category->filters pairs.
 
 = Automatic installation =
 
-Automatic installation is the easiest option as WordPress handles the file transfers itself, and you don’t need to leave your web browser. To do an automatic install of WOOF by Category, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
+Automatic installation is the easiest option as WordPress handles the file transfers itself, and you don’t need to leave your web browser. To do an automatic installation of WOOF by Category, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
 
-In the search field type “WOOF by Category” and click Search Plugins. Once you’ve found our plugin you can view details about it such as the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
+In the search field, type “WOOF by Category” and click Search Plugins. Once you’ve found our plugin, you can view details about it such as the point release, rating and description. Most importantly, you can install it by simply clicking “Install Now”.
 
 = Manual installation =
 
@@ -40,7 +40,7 @@ The manual installation method involves downloading our plugin and uploading it 
 
 = Updating =
 
-Automatic updates should work like a charm; as always though, ensure you backup your site just in case.
+Automatic updates should work like a charm; as always though, ensure you back up your site just in case.
 
 == Frequently Asked Questions ==
 
@@ -70,8 +70,13 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 == Changelog ==
 
-= 3.0.1 =
-* Dropped support for PHP 5.6. Minimum required PHP version is now 7.0.
+= 3.1.0 =
+* Tested with WordPress 6.2.
+* Tested with WooCommerce 8.6.
+* The minimum required WordPress version is now 5.0
+
+* = 3.0.1 =
+* Dropped support for PHP 5.6. The minimum required PHP version is now 7.0.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
 
@@ -124,7 +129,7 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 * Tested with WordPress 5.5 and WooCommerce 4.4
 
 = 2.7 =
-* Fixed the bug with not showing filters on single product page.
+* Fixed the bug with not showing filters on a single product page.
 
 = 2.6.1 =
 * Fixed the bug with disappearing filters on shop page with ajax.
@@ -189,18 +194,18 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 * Fixed php notice on array_pop().
 
 = 1.6.2 =
-* Fixed filter disappearing in widget on category page during attributes selection clearing.
-* Fixed filtering of main WordPress request in admin.
+* Fixed filter disappearing in the widget on category page during attribute selection clearing.
+* Fixed filtering of the main WordPress request in admin.
 
 = 1.6 =
-* Fixed filter disappearing in widget on category page.
+* Fixed filter disappearing in the widget on the category page.
 
 = 1.5 =
 * Added automatic plugin deactivation if WooCommerce or WooCommerce Product Filter plugins are not activated.
 * Tested with WooCommerce 3.3.
 
 = 1.4 =
-* Fixed setting of proper filters in AJAX mode.
+* Fixed the setting of proper filters in AJAX mode.
 
 = 1.3.3 =
 * Fixed php warning during execution.
@@ -209,7 +214,7 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 * Fixed blocking of all filters when "Try to ajaxify the shop" in WOOF is selected.
 
 = 1.3.1 =
-* Added auto ordering of category-filter pairs on plugin options page.
+* Added auto ordering of category-filter pairs on the plugin options page.
 
 = 1.3 =
 * Fixed sub-category overrides.
@@ -222,7 +227,7 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 = 1.2 =
 * Added selection of filters for top shop page.
 * Added settings link on plugin page.
-* Fixed wrong behaviour when selected filters did not cover the whole set.
+* Fixed wrong behavior when selected filters did not cover the whole set.
 * Fixed crash when WooCommerce plugin is not activated.
 
 = 1.1 =
