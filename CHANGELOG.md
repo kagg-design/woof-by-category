@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 3.0
-* Dropped support for PHP 5.6. Minimum required PHP version is now 7.0.
+## 3.1.0 ##
+* Tested with WordPress 6.2.
+* Tested with WooCommerce 8.6.
+* The minimum required WordPress version is now 5.0
+
+## 3.0.1 ##
+* Dropped support for PHP 5.6. The minimum required PHP version is now 7.0.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
 
