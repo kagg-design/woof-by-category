@@ -70,7 +70,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.7]
 ### Fixed
-* Fixed the bug with not showing filters on single product page.
+* Fixed the bug with not showing filters on a single product page.
 
 ## [2.6.1]
 ### Fixed
@@ -151,13 +151,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.6.3]
 ### Fixed
-* 2 php warnings upon first activation.
+* Two php warnings upon first activation.
 * Php notice on array_pop().
 
 ## [1.6.2]
 ### Fixed
-* Filter disappearing in widget on category page during attributes selection clearing.
-* Filtering of main WordPress request in admin.
+* Filter disappearing in the widget on category page during attribute selection clearing.
+* Filtering of the main WordPress request in admin.
 
 ## [1.6]
 ### Fixed
@@ -183,7 +183,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.1]
 ### Added
-* Auto ordering of category-filter pairs on plugin options page.
+* Auto ordering of category-filter pairs on the plugin options page.
 
 ## [1.3]
 ### Fixed
@@ -202,7 +202,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Added settings link on plugin page.
 
 ### Fixed
-* Fixed wrong behaviour when selected filters did not cover the whole set.
+* Fixed wrong behavior when selected filters did not cover the whole set.
 * Fixed crash when WooCommerce plugin is not activated.
 
 ## [1.1]
