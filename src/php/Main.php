@@ -1214,15 +1214,20 @@ class Main {
 
 		$parent_id          = $current_cat_object->parent;
 		$distance_to_parent = 0;
+
 		while ( 0 !== $parent_id ) {
-			$distance_to_parent ++;
+			++$distance_to_parent;
+
 			$current_cat_object = get_term( $parent_id );
+
 			if ( ! $current_cat_object || is_wp_error( $current_cat_object ) ) {
 				return - 1;
 			}
+
 			if ( $filter_cat === $current_cat_object->slug ) {
 				return $distance_to_parent;
 			}
+
 			$parent_id = $current_cat_object->parent;
 		}
 
