@@ -827,12 +827,12 @@ class Main {
 			'category' => '',
 			'filters'  => [],
 		];
-		$count ++;
+		++$count;
 
 		// Save settings.
 		update_option( self::OPTION_NAME, $this->options );
 
-		for ( $i = 0; $i < $count; $i ++ ) {
+		for ( $i = 0; $i < $count; $i++ ) {
 			$fields = [
 				[
 					'group'   => $i,
@@ -1076,13 +1076,13 @@ class Main {
 	/**
 	 * Show admin notice.
 	 *
-	 * @param string $message Message to show.
-	 * @param string $class   Message class: notice notice-success notice-error notice-warning notice-info
-	 *                        is-dismissible.
+	 * @param string $message    Message to show.
+	 * @param string $class_name Message class: notice notice-success notice-error notice-warning notice-info
+	 *                           is-dismissible.
 	 */
-	private function admin_notice( $message, $class ) {
+	private function admin_notice( $message, $class_name ) {
 		?>
-		<div class="<?php echo esc_attr( $class ); ?>">
+		<div class="<?php echo esc_attr( $class_name ); ?>">
 			<p>
 				<?php echo wp_kses_post( $message ); ?>
 			</p>
