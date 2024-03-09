@@ -139,9 +139,9 @@ class Main {
 	}
 
 	/**
-	 * Filter get_option( 'woof_settings' ) to unset WOOF filters not related to current category.
+	 * Filter get_option( 'woof_settings' ) to unset WOOF filters not related to the current category.
 	 *
-	 * @param mixed $value 'woof_settings' option value read from database.
+	 * @param mixed $value 'woof_settings' option value read from a database.
 	 *
 	 * @return mixed Modified 'woof_settings'.
 	 */
@@ -217,10 +217,10 @@ class Main {
 	}
 
 	/**
-	 * Filter get_option() of plugin settings to get value for current language.
+	 * Filter get_option() of plugin settings to get value for the current language.
 	 * Pass through if WPML or Polylang is not active.
 	 *
-	 * @return mixed Settings for current WPML language.
+	 * @return mixed Settings for the current WPML language.
 	 */
 	public function wbc_pre_option_woof_by_category_settings() {
 		$lang       = $this->get_current_language();
@@ -238,13 +238,13 @@ class Main {
 	}
 
 	/**
-	 * Filter update_option() of plugin settings to store value for current language.
+	 * Filter update_option() of plugin settings to store value for the current language.
 	 * Pass through if WPML or Polylang is not active.
 	 *
 	 * @param mixed $value     The new, unserialized option value.
 	 * @param mixed $old_value The old option value.
 	 *
-	 * @return mixed Settings for current WPML language.
+	 * @return mixed Settings for the current WPML language.
 	 */
 	public function wbc_pre_update_option_woof_by_category_settings( $value, $old_value ) {
 		$lang = $this->get_current_language();
@@ -260,10 +260,10 @@ class Main {
 	}
 
 	/**
-	 * Get default language.
+	 * Get the default language.
 	 *
 	 * @return bool|mixed|string|null
-	 * @noinspection PhpUndefinedMethodInspection
+	 * @noinspection PhpUndefinedMethodInspection PhpUndefinedMethodInspection.
 	 */
 	protected function get_default_language() {
 		if ( class_exists( 'SitePress' ) ) {
@@ -280,10 +280,10 @@ class Main {
 	}
 
 	/**
-	 * Get current language.
+	 * Get the current language.
 	 *
 	 * @return bool|mixed|string|null
-	 * @noinspection PhpUndefinedMethodInspection
+	 * @noinspection PhpUndefinedMethodInspection PhpUndefinedMethodInspection.
 	 */
 	protected function get_current_language() {
 		if ( class_exists( 'SitePress' ) ) {
@@ -305,7 +305,7 @@ class Main {
 	 * @param array|mixed $options Plugin options.
 	 *
 	 * @return array|mixed
-	 * @noinspection PhpUnusedLocalVariableInspection
+	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
 	private function translate_options( $options ) {
 		if ( ! $options ) {
@@ -340,7 +340,7 @@ class Main {
 		 * In theory, there could be a number of product_cat arguments.
 		 * But request like
 		 * http://test.kagg.eu/?post_type=product&product_cat=assumenda&product_cat=quisquam
-		 * returns only 1 product-category: quisquam (the last one).
+		 * returns only one product-category: quisquam (the last one).
 		 * It redirects to
 		 * http://test.kagg.eu/product-category/quisquam/?post_type=product
 		 * Conclusion: WooCommerce can show only one product category on the category page.
@@ -388,7 +388,7 @@ class Main {
 	}
 
 	/**
-	 * Get allowed filters for current single category.
+	 * Get allowed filters for the current single category.
 	 *
 	 * @param array  $category_filters Filters.
 	 * @param string $current_cat      Current single category.
@@ -499,8 +499,8 @@ class Main {
 	 * Get product_cat from WOOF POST/GET variables.
 	 *
 	 * @return string|false|null
-	 * false indicates that no category from WOOF was found.
-	 * null indicates that we should not change WOOF filters.
+	 * False indicates that no category from WOOF was found.
+	 * Null indicates that we should not change WOOF filters.
 	 */
 	protected function get_category_from_woof() {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
@@ -556,12 +556,12 @@ class Main {
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( isset( $_REQUEST['woof_shortcode_txt'] ) ) {
 			if ( false !== strpos( $_REQUEST['woof_shortcode_txt'], "sid='widget'" ) ) {
-				// Allow to work widget as usual.
+				// Allow working widget as usual.
 				return false;
 			}
 
 			if ( false !== strpos( $_REQUEST['woof_shortcode_txt'], "sid='auto_shortcode'" ) ) {
-				// Allow to work auto_shortcode as usual.
+				// Allow working auto_shortcode as usual.
 				return false;
 			}
 
@@ -578,7 +578,7 @@ class Main {
 	}
 
 	/**
-	 * Expand additional taxes and return first tax from it.
+	 * Expand additional taxes and return the first tax from it.
 	 *
 	 * @todo Allow to return several taxes, and merge filters for them.
 	 *
@@ -617,7 +617,7 @@ class Main {
 	 * Get category filters.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedLocalVariableInspection
+	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
 	protected function get_category_filters(): array {
 		$category_filters = wp_cache_get( __METHOD__, self::CACHE_GROUP );
@@ -718,7 +718,7 @@ class Main {
 	}
 
 	/**
-	 * Add settings page to the menu.
+	 * Add the settings page to the menu.
 	 */
 	public function add_settings_page() {
 		$parent_slug = 'options-general.php';
@@ -806,7 +806,7 @@ class Main {
 		if ( $this->options ) {
 			foreach ( $this->options as $key => $group ) {
 				if ( ! ( isset( $group['category'] ) && $group['category'] ) ) {
-					// Remove group with empty categories.
+					// Remove a group with empty categories.
 					unset( $this->options[ $key ] );
 				}
 			}
@@ -814,14 +814,14 @@ class Main {
 			$this->options = [];
 		}
 
-		// Sort settings array in same order as product_cat_order array,
-		// i.e. in hierarchical order.
+		// Sort settings array in the same order as a product_cat_order array,
+		// i.e., in hierarchical order.
 		uksort( $this->options, [ $this, 'compare_cat' ] );
 
 		// Reindex settings array.
 		$this->options = array_values( $this->options );
 
-		// Add empty group to the end.
+		// Add an empty group to the end.
 		$count                   = count( $this->options );
 		$this->options[ $count ] = [
 			'category' => '',
@@ -919,7 +919,7 @@ class Main {
 						/**
 						 * %s is not an attribute
 						 *
-						 * @noinspection HtmlUnknownAttribute
+						 * @noinspection HtmlUnknownAttribute HtmlUnknownAttribute.
 						 */
 						$options_markup .= sprintf(
 							'<option value="%s" %s>%s</option>',
@@ -952,7 +952,7 @@ class Main {
 						/**
 						 * %s is not an attribute
 						 *
-						 * @noinspection HtmlUnknownAttribute
+						 * @noinspection HtmlUnknownAttribute HtmlUnknownAttribute.
 						 */
 						$options_markup .= sprintf(
 							'<option value="%s" %s>%s</option>',
@@ -975,14 +975,14 @@ class Main {
 				break;
 		}
 
-		// If there is help text.
+		// If there is a help text.
 		$helper = $arguments['helper'] ?? '';
 
 		if ( $helper ) {
 			printf( '<span class="helper"> %s</span>', esc_html( $helper ) ); // Show it.
 		}
 
-		// If there is supplemental text.
+		// If there is a supplemental text.
 		$supplemental = $arguments['supplemental'] ?? '';
 
 		if ( $supplemental ) {
@@ -991,7 +991,7 @@ class Main {
 	}
 
 	/**
-	 * Check plugin requirements. If not met, show message and deactivate plugin.
+	 * Check plugin requirements. If not met, show message and deactivate the plugin.
 	 */
 	public function check_requirements() {
 		if ( ! $this->requirements_met() ) {
@@ -1012,7 +1012,7 @@ class Main {
 	 * Check if plugin requirements met.
 	 *
 	 * @return bool Requirements met.
-	 * @noinspection PhpIncludeInspection
+	 * @noinspection PhpIncludeInspection PhpIncludeInspection.
 	 */
 	private function requirements_met(): bool {
 		$all_active = true;
@@ -1031,9 +1031,9 @@ class Main {
 	}
 
 	/**
-	 * Show required plugins not found message.
+	 * Show required plugins not found a message.
 	 *
-	 * @noinspection PhpUnusedLocalVariableInspection
+	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
 	public function show_plugin_not_found_notice() {
 		$message = __( 'WOOF by Category plugin requires the following plugins installed and activated: ', 'woof-by-category' );
@@ -1091,12 +1091,12 @@ class Main {
 	}
 
 	/**
-	 * Get hierarchy of product categories in array.
+	 * Get hierarchy of product categories in an array.
 	 *
 	 * @param int $cat_id Top product category id.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedLocalVariableInspection
+	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
 	private function get_product_categories( $cat_id = 0 ): array {
 		$cat_list = [];
@@ -1164,7 +1164,7 @@ class Main {
 	}
 
 	/**
-	 * Get WOOF filters in array.
+	 * Get WOOF filters in an array.
 	 */
 	private function get_woof_filters(): array {
 		$filters = [];
@@ -1309,7 +1309,7 @@ class Main {
 	}
 
 	/**
-	 * When user is on the plugin admin page, display footer text that graciously asks them to rate us.
+	 * When a user is on the plugin admin page, display footer text that graciously asks them to rate us.
 	 *
 	 * @param string|mixed $text Footer text.
 	 *
@@ -1347,7 +1347,7 @@ class Main {
 	}
 
 	/**
-	 * Show plugin version in the update footer.
+	 * Show a plugin version in the update footer.
 	 *
 	 * @param string|mixed $content The content that will be printed.
 	 *
