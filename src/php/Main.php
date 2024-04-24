@@ -660,7 +660,7 @@ class Main {
 		$keys_to_delete = [];
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		foreach ( $_GET as $key => $value ) {
-			$key = filter_var( $key, FILTER_SANITIZE_STRING );
+			$key = filter_var( $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 			if (
 				false !== strpos( $key, 'pa_' ) &&
 				! in_array( $key, $allowed_filters, true )
