@@ -1319,6 +1319,7 @@ class Main {
 	 * @param string|mixed $text Footer text.
 	 *
 	 * @return string|mixed
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function admin_footer_text( $text ) {
 		if ( ! $this->is_wbc_options_screen() ) {
