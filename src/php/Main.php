@@ -152,6 +152,7 @@ class Main {
 		}
 
 		$allowed_filters = $this->get_allowed_filters();
+
 		if ( null === $allowed_filters ) {
 			return $value;
 		}
@@ -226,12 +227,15 @@ class Main {
 	public function wbc_pre_option_woof_by_category_settings() {
 		$lang       = $this->get_current_language();
 		$lang_value = get_option( self::OPTION_NAME . '_' . $lang );
+
 		if ( ! $lang_value ) {
 			$this->remove_pre_option_filter();
 			$value = get_option( self::OPTION_NAME );
+
 			$this->add_pre_option_filter();
 
 			$lang_value = $this->translate_options( $value );
+
 			update_option( self::OPTION_NAME . '_' . $lang, $lang_value );
 		}
 
@@ -249,6 +253,7 @@ class Main {
 	 */
 	public function wbc_pre_update_option_woof_by_category_settings( $value, $old_value ) {
 		$lang = $this->get_current_language();
+
 		update_option( self::OPTION_NAME . '_' . $lang, $value );
 
 		if ( $this->get_default_language() === $lang ) {
@@ -314,16 +319,22 @@ class Main {
 		}
 
 		$translated_options = [];
+
 		foreach ( $options as $key => $group ) {
-			if ( isset( $group['category'] ) && $group['category'] ) {
-				if ( '/' === $group['category'] ) {
+			$category = $group['category'] ?? '';
+
+			if ( ! $category ) {
+				continue;
+			}
+
+			if ( '/' === $category ) {
+				$translated_options[] = $group;
+			} else {
+				$translated_category = $this->get_term_by_slug( $category );
+
+				if ( $translated_category ) {
+					$group['category']    = $translated_category->slug;
 					$translated_options[] = $group;
-				} else {
-					$translated_category = $this->get_term_by_slug( $group['category'] );
-					if ( $translated_category ) {
-						$group['category']    = $translated_category->slug;
-						$translated_options[] = $group;
-					}
 				}
 			}
 		}
@@ -347,28 +358,28 @@ class Main {
 		 * Conclusion: WooCommerce can show only one product category on the category page.
 		 */
 		$product_cat = $this->get_product_cat();
+
 		if ( null === $product_cat ) {
 			// Return null to indicate that we should not change WOOF filters.
 			return null;
 		}
 
-		$cats = explode( ',', $product_cat );
-
+		$cats             = explode( ',', $product_cat );
 		$category_filters = $this->get_category_filters();
-
-		$cache_key       = md5( wp_json_encode( [ $category_filters, $cats ] ) );
-		$allowed_filters = wp_cache_get( $cache_key, self::CACHE_GROUP );
+		$cache_key        = md5( wp_json_encode( [ $category_filters, $cats ] ) );
+		$allowed_filters  = wp_cache_get( $cache_key, self::CACHE_GROUP );
 
 		if ( false !== $allowed_filters ) {
 			return $allowed_filters;
 		}
 
 		$allowed_filters = [];
+
 		foreach ( $cats as $current_cat ) {
 			$allowed_filters[] = $this->get_allowed_filters_for_single_category( $category_filters, $current_cat );
 		}
-		$allowed_filters = array_merge( [], ...$allowed_filters );
 
+		$allowed_filters = array_merge( [], ...$allowed_filters );
 		$allowed_filters = array_values( array_unique( $allowed_filters ) );
 
 		/**
@@ -399,8 +410,10 @@ class Main {
 	protected function get_allowed_filters_for_single_category( $category_filters, $current_cat ) {
 		$allowed_filters        = [];
 		$max_distance_to_parent = PHP_INT_MAX;
+
 		foreach ( $category_filters as $filter_cat => $filters ) {
 			$distance_to_parent = $this->has_parent( $filter_cat, $current_cat );
+
 			if (
 				0 <= $distance_to_parent &&
 				$distance_to_parent < $max_distance_to_parent
@@ -447,6 +460,7 @@ class Main {
 		global $wp_query;
 
 		$product_cat = $this->get_category_from_woof();
+
 		if ( null === $product_cat || $product_cat ) {
 			return $product_cat;
 		}
@@ -457,6 +471,7 @@ class Main {
 
 		if ( is_tax() ) {
 			$slug = $this->get_current_taxonomy_slug();
+
 			if ( $slug ) {
 				return $slug;
 			}
@@ -525,6 +540,7 @@ class Main {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$swoof = isset( $_GET['swoof'] ) && sanitize_text_field( wp_unslash( $_GET['swoof'] ) );
+
 		if ( $swoof ) {
 			$cat = isset( $_GET['product_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['product_cat'] ) ) : false;
 
@@ -536,6 +552,7 @@ class Main {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$really_curr_tax = isset( $_GET['really_curr_tax'] ) ? sanitize_text_field( wp_unslash( $_GET['really_curr_tax'] ) ) : '';
+
 		if ( $really_curr_tax ) {
 			// Works for widget and subcategory.
 			$really_curr_tax = explode( '-', $really_curr_tax, 2 );
@@ -598,13 +615,17 @@ class Main {
 
 		foreach ( $additional_taxes_array as $taxes ) {
 			$taxes = explode( ':', $taxes );
+
 			if ( 2 !== count( $taxes ) ) {
 				continue;
 			}
+
 			$tax_slug  = $taxes[0];
 			$tax_terms = explode( ',', $taxes[1] );
+
 			foreach ( $tax_terms as $term_id ) {
 				$term = get_term( (int) $term_id, $tax_slug );
+
 				if ( ! is_wp_error( $term ) ) {
 					$slugs[] = $term->slug;
 				}
@@ -634,13 +655,14 @@ class Main {
 
 		if ( $options ) {
 			foreach ( $options as $key => $group ) {
-				if ( isset( $group['category'] ) && $group['category'] ) { // Ignore empty groups.
-					if ( isset( $group['filters'] ) ) {
-						$category_filters[ $group['category'] ] = array_values( $group['filters'] );
-					} else {
-						$category_filters[ $group['category'] ] = null;
-					}
+				$category = $group['category'] ?? '';
+
+				if ( ! $category ) {
+					// Ignore empty groups.
+					continue;
 				}
+
+				$category_filters[ $category ] = isset( $group['filters'] ) ? array_values( $group['filters'] ) : null;
 			}
 		}
 
@@ -698,9 +720,10 @@ class Main {
 	 *
 	 * @param array|mixed $terms Terms.
 	 *
-	 * @return array|mixed
+	 * @return array
 	 */
-	public function woof_sort_terms_before_out_filter( $terms ) {
+	public function woof_sort_terms_before_out_filter( $terms ): array {
+		$terms           = (array) $terms;
 		$allowed_filters = $this->get_allowed_filters();
 
 		if ( null === $allowed_filters ) {
@@ -708,8 +731,11 @@ class Main {
 		}
 
 		$allowed_filters = $allowed_filters ?: [];
+
 		foreach ( $terms as $id => $term ) {
-			if ( ! in_array( $term['taxonomy'], $allowed_filters, true ) ) {
+			$taxonomy = $term['taxonomy'] ?? '';
+
+			if ( ! in_array( $taxonomy, $allowed_filters, true ) ) {
 				unset( $terms[ $id ] );
 			}
 		}
@@ -812,17 +838,13 @@ class Main {
 		);
 
 		// Get current settings.
-		$this->options = get_option( self::OPTION_NAME );
+		$this->options = (array) get_option( self::OPTION_NAME, [] );
 
-		if ( $this->options ) {
-			foreach ( $this->options as $key => $group ) {
-				if ( ! ( isset( $group['category'] ) && $group['category'] ) ) {
-					// Remove a group with empty categories.
-					unset( $this->options[ $key ] );
-				}
+		foreach ( $this->options as $key => $group ) {
+			if ( ! ( isset( $group['category'] ) && $group['category'] ) ) {
+				// Remove a group with empty categories.
+				unset( $this->options[ $key ] );
 			}
-		} else {
-			$this->options = [];
 		}
 
 		// Sort settings array in the same order as a product_cat_order array,
@@ -838,6 +860,7 @@ class Main {
 			'category' => '',
 			'filters'  => [],
 		];
+
 		++$count;
 
 		// Save settings.
@@ -864,12 +887,14 @@ class Main {
 					'default' => '',
 				],
 			];
+
 			add_settings_section(
 				'first_section',
 				__( 'Categories and Filters', 'woof-by-category' ),
 				'',
 				'woof-by-category'
 			);
+
 			foreach ( $fields as $field ) {
 				register_setting( 'woof_by_category_group', self::OPTION_NAME );
 				add_settings_field(
@@ -901,6 +926,7 @@ class Main {
 		if ( $index_a < $index_b ) {
 			return - 1;
 		}
+
 		if ( $index_a > $index_b ) {
 			return 1;
 		}
@@ -915,6 +941,7 @@ class Main {
 	 */
 	public function field_callback( $arguments ) {
 		$value = get_option( self::OPTION_NAME ); // Get current settings.
+
 		if ( $value ) {
 			$value = $value[ $arguments['group'] ] [ $arguments['uid'] ] ?? null;
 		} else { // If no value exists.
@@ -926,6 +953,7 @@ class Main {
 			case 'select': // If it is a select dropdown.
 				if ( ! empty( $arguments['options'] ) && is_array( $arguments['options'] ) ) {
 					$options_markup = '';
+
 					foreach ( $arguments['options'] as $key => $label ) {
 						/**
 						 * %s is not an attribute
@@ -939,6 +967,7 @@ class Main {
 							esc_html( $label )
 						);
 					}
+
 					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 					printf(
 						'<select name="woof_by_category_settings[%1$s][%2$s]">%3$s</select>',
@@ -952,6 +981,7 @@ class Main {
 			case 'multiple': // If it is a multiple select dropdown.
 				if ( ! empty( $arguments['options'] ) && is_array( $arguments['options'] ) ) {
 					$options_markup = '';
+
 					foreach ( $arguments['options'] as $key => $label ) {
 						$selected = '';
 						if (
@@ -972,6 +1002,7 @@ class Main {
 							esc_html( $label )
 						);
 					}
+
 					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 					printf(
 						'<select multiple="multiple" name="woof_by_category_settings[%1$s][%2$s][]">%3$s</select>',
@@ -1007,13 +1038,16 @@ class Main {
 	public function check_requirements() {
 		if ( ! $this->requirements_met() ) {
 			add_action( 'admin_notices', [ $this, 'show_plugin_not_found_notice' ] );
+
 			if ( is_plugin_active( plugin_basename( constant( 'WOOF_BY_CATEGORY_FILE' ) ) ) ) {
 				deactivate_plugins( plugin_basename( constant( 'WOOF_BY_CATEGORY_FILE' ) ) );
+
 				// phpcs:disable WordPress.Security.NonceVerification.Recommended
 				if ( isset( $_GET['activate'] ) ) {
 					unset( $_GET['activate'] );
 				}
 				// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
 				add_action( 'admin_notices', [ $this, 'show_deactivate_notice' ] );
 			}
 		}
@@ -1047,9 +1081,9 @@ class Main {
 	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
 	public function show_plugin_not_found_notice() {
-		$message = __( 'WOOF by Category plugin requires the following plugins installed and activated: ', 'woof-by-category' );
-
+		$message       = __( 'WOOF by Category plugin requires the following plugins installed and activated: ', 'woof-by-category' );
 		$message_parts = [];
+
 		foreach ( $this->required_plugins as $key => $required_plugin ) {
 			if ( ! $required_plugin['active'] ) {
 				$href = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=';
@@ -1061,6 +1095,7 @@ class Main {
 		}
 
 		$count = count( $message_parts );
+
 		foreach ( $message_parts as $key => $message_part ) {
 			if ( 0 !== $key ) {
 				if ( ( ( $count - 1 ) === $key ) ) {
@@ -1069,6 +1104,7 @@ class Main {
 					$message .= ', ';
 				}
 			}
+
 			$message .= $message_part;
 		}
 
@@ -1110,12 +1146,11 @@ class Main {
 	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
 	private function get_product_categories( $cat_id = 0 ): array {
-		$cat_list = [];
-
-		$crumbs = $this->get_product_term_crumbs( $cat_id );
-		$level  = count( $crumbs );
-
+		$cat_list      = [];
+		$crumbs        = $this->get_product_term_crumbs( $cat_id );
+		$level         = count( $crumbs );
 		$crumbs_string = '';
+
 		foreach ( $crumbs as $key => $crumb ) {
 			$crumbs_string .= ' < ' . $crumb['name'] . ' (' . $crumb['count'] . ')';
 		}
@@ -1139,6 +1174,7 @@ class Main {
 		foreach ( $categories as $cat ) {
 			$cat_list[ $cat->slug ] = str_repeat( '&nbsp;', $level * 2 ) . $cat->name . ' (' . $cat->count . ')' . $crumbs_string;
 			$child_categories       = $this->get_product_categories( $cat->term_id );
+
 			if ( ! empty( $child_categories ) ) {
 				foreach ( $child_categories as $key => $value ) {
 					$cat_list[ $key ] = $value;
@@ -1158,8 +1194,8 @@ class Main {
 	 */
 	private function get_product_term_crumbs( $term_id ): array {
 		$crumbs = [];
+		$term   = get_term( $term_id );
 
-		$term = get_term( $term_id );
 		if ( ! $term || is_wp_error( $term ) ) {
 			return $crumbs;
 		}
@@ -1257,6 +1293,7 @@ class Main {
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$current_cat_object = get_term_by( 'slug', $slug, $taxonomy );
+
 			if ( $current_cat_object ) {
 				return $current_cat_object;
 			}
