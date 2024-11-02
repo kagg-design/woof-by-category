@@ -10,7 +10,7 @@
  * Plugin Name:          WOOF by Category
  * Plugin URI:           https://wordpress.org/plugins/woof-by-category/
  * Description:          WooCommerce Product Filter (WOOF) extension to display a set of filters depending on the current product category page.
- * Version:              3.1.1
+ * Version:              3.2.0
  * Requires at least:    5.0
  * Requires PHP:         7.0
  * Author:               KAGG Design
@@ -21,7 +21,7 @@
  * Domain Path:          /languages/
  *
  * WC requires at least: 3.0
- * WC tested up to:      8.8
+ * WC tested up to:      9.3
  */
 
 // phpcs:ignore Generic.Commenting.DocComment.MissingShort
@@ -42,7 +42,7 @@ if ( defined( 'WOOF_BY_CATEGORY_VERSION' ) ) {
 /**
  * Plugin version.
  */
-const WOOF_BY_CATEGORY_VERSION = '3.1.1';
+const WOOF_BY_CATEGORY_VERSION = '3.2.0';
 
 /**
  * Path to the plugin dir.
