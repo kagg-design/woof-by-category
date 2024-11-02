@@ -197,7 +197,8 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
 		WP_Mock::expectFilterAdded(
 			'woof_print_content_before_search_form',
-			[ $subject, 'woof_print_content_before_search_form_filter' ]
+			[ $subject, 'woof_print_content_before_search_form_filter' ],
+			- PHP_INT_MAX
 		);
 
 		$method = $this->set_method_accessibility( $subject, 'init_hooks' );
@@ -261,7 +262,8 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
 		WP_Mock::expectFilterAdded(
 			'woof_print_content_before_search_form',
-			[ $subject, 'woof_print_content_before_search_form_filter' ]
+			[ $subject, 'woof_print_content_before_search_form_filter' ],
+			- PHP_INT_MAX
 		);
 
 		$method = $this->set_method_accessibility( $subject, 'init_hooks' );
