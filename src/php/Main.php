@@ -124,7 +124,8 @@ class Main {
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 		add_filter(
 			'woof_print_content_before_search_form',
-			[ $this, 'woof_print_content_before_search_form_filter' ]
+			[ $this, 'woof_print_content_before_search_form_filter' ],
+			- PHP_INT_MAX
 		);
 
 		add_filter(
@@ -650,17 +651,23 @@ class Main {
 
 	/**
 	 * Print script before WOOF form filter to change js object 'woof_current_values'.
+	 *
+	 * @param string|mixed $content Content.
 	 */
-	public function woof_print_content_before_search_form_filter() {
+	public function woof_print_content_before_search_form_filter( $content ): string {
+		$content         = (string) $content;
 		$allowed_filters = $this->get_allowed_filters();
+
 		if ( null === $allowed_filters ) {
-			return;
+			return $content;
 		}
 
 		$keys_to_delete = [];
+
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		foreach ( $_GET as $key => $value ) {
 			$key = filter_var( $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
 			if (
 				false !== strpos( $key, 'pa_' ) &&
 				! in_array( $key, $allowed_filters, true )
@@ -671,15 +678,19 @@ class Main {
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		if ( ! $keys_to_delete ) {
-			return;
+			return $content;
 		}
 
-		echo '<script>';
+		$wbf_script = '<script>';
+
 		foreach ( $keys_to_delete as $key ) {
-			echo 'delete woof_current_values["' . esc_html( $key ) . '"]; ';
+			$wbf_script .= 'delete woof_current_values["' . esc_html( $key ) . '"]; ';
 		}
-		echo 'jQuery(document).ready(function($){ woof_get_submit_link(); })';
-		echo '</script>';
+
+		$wbf_script .= 'jQuery(document).ready(function($){ woof_get_submit_link(); })';
+		$wbf_script .= '</script>';
+
+		return $wbf_script . $content;
 	}
 
 	/**
