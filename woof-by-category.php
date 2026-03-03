@@ -65,7 +65,7 @@ const WOOF_BY_CATEGORY_FILE = __FILE__;
 require_once WOOF_BY_CATEGORY_PATH . '/vendor/autoload.php';
 
 /**
- * Get main class instance.
+ * Get a main class instance.
  *
  * @return Main
  */

@@ -295,7 +295,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
-				'args'   => [ Main::class . '::get_category_filters', $subject::CACHE_GROUP ],
+				'args'   => [ Main::class . '::get_category_filters', Main::class ],
 				'return' => $category_filters,
 				'times'  => 1,
 			]
@@ -324,7 +324,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
-				'args'   => [ Main::class . '::get_category_filters', $subject::CACHE_GROUP ],
+				'args'   => [ Main::class . '::get_category_filters', Main::class ],
 				'return' => false,
 				'times'  => 1,
 			]
@@ -342,7 +342,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::userFunction(
 			'wp_cache_set',
 			[
-				'args'  => [ Main::class . '::get_category_filters', $expected, $subject::CACHE_GROUP ],
+				'args'  => [ Main::class . '::get_category_filters', $expected, Main::class ],
 				'times' => 1,
 			]
 		);
@@ -998,7 +998,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
-				'args'   => [ $key, $mock::CACHE_GROUP ],
+				'args'   => [ $key, Main::class ],
 				'return' => $expected,
 			]
 		);
@@ -1038,7 +1038,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::userFunction(
 			'wp_cache_get',
 			[
-				'args'   => [ $key, $mock::CACHE_GROUP ],
+				'args'   => [ $key, Main::class ],
 				'return' => false,
 			]
 		);
@@ -1060,7 +1060,7 @@ class MainTest extends WoofByCategoryTestCase {
 			WP_Mock::userFunction(
 				'wp_cache_set',
 				[
-					'args' => [ $key, $filtered, $mock::CACHE_GROUP ],
+					'args' => [ $key, $filtered, Main::class ],
 				]
 			);
 			self::assertSame( $filtered, $mock->get_allowed_filters() );

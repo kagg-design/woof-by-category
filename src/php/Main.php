@@ -5,6 +5,11 @@
  * @package woof-by-category
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedClassInspection */
+/** @noinspection PhpUndefinedNamespaceInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace KAGG\WoofByCategory;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
@@ -21,49 +26,49 @@ class Main {
 	 *
 	 * @var string
 	 */
-	const OPTION_NAME = 'woof_by_category_settings';
+	public const OPTION_NAME = 'woof_by_category_settings';
 
 	/**
 	 * Admin screen id.
 	 *
 	 * @var string
 	 */
-	const SCREEN_ID = 'settings_page_woof-by-category';
+	private const SCREEN_ID = 'settings_page_woof-by-category';
 
 	/**
 	 * Plugin cache group.
 	 *
 	 * @var string
 	 */
-	const CACHE_GROUP = __CLASS__;
+	private const CACHE_GROUP = __CLASS__;
 
 	/**
 	 * Default filters key.
 	 *
 	 * @var string
 	 */
-	const DEFAULT_FILTERS_KEY = '*';
+	private const DEFAULT_FILTERS_KEY = '*';
 
 	/**
 	 * Required plugins.
 	 *
 	 * @var array
 	 */
-	protected $required_plugins = [];
+	protected array $required_plugins = [];
 
 	/**
 	 * Plugin options.
 	 *
 	 * @var array
 	 */
-	private $options;
+	private array $options;
 
 	/**
 	 * Order of product categories.
 	 *
 	 * @var array
 	 */
-	private $product_cat_order;
+	private array $product_cat_order;
 
 	/**
 	 * Woof_By_Category constructor.
@@ -90,7 +95,7 @@ class Main {
 	/**
 	 * Init plugin.
 	 */
-	public function init() {
+	public function init(): void {
 		wp_cache_add_non_persistent_groups( [ self::CACHE_GROUP ] );
 
 		$this->init_hooks();
@@ -99,7 +104,7 @@ class Main {
 	/**
 	 * Init hooks.
 	 */
-	protected function init_hooks() {
+	protected function init_hooks(): void {
 		add_action( 'admin_init', [ $this, 'check_requirements' ] );
 
 		foreach ( $this->required_plugins as $required_plugin ) {
@@ -167,16 +172,16 @@ class Main {
 	}
 
 	/**
-	 * Add pre_option filter for plugin options.
+	 * Add a pre_option filter for plugin options.
 	 */
-	private function add_pre_option_filter() {
+	private function add_pre_option_filter(): void {
 		add_filter( 'pre_option_' . self::OPTION_NAME, [ $this, 'wbc_pre_option_woof_by_category_settings' ] );
 	}
 
 	/**
-	 * Add pre_update_option filter for plugin options.
+	 * Add a pre_update_option filter for plugin options.
 	 */
-	private function add_pre_update_option_filter() {
+	private function add_pre_update_option_filter(): void {
 		add_filter(
 			'pre_update_option_' . self::OPTION_NAME,
 			[ $this, 'wbc_pre_update_option_woof_by_category_settings' ],
@@ -188,7 +193,7 @@ class Main {
 	/**
 	 * Add filters to get and update plugin options.
 	 */
-	private function add_option_filters() {
+	private function add_option_filters(): void {
 		$this->add_pre_option_filter();
 		$this->add_pre_update_option_filter();
 	}
@@ -196,14 +201,14 @@ class Main {
 	/**
 	 * Remove pre_option filter for plugin options.
 	 */
-	private function remove_pre_option_filter() {
+	private function remove_pre_option_filter(): void {
 		remove_filter( 'pre_option_' . self::OPTION_NAME, [ $this, 'wbc_pre_option_woof_by_category_settings' ] );
 	}
 
 	/**
 	 * Remove pre_update_option filter for plugin options.
 	 */
-	private function remove_pre_update_option_filter() {
+	private function remove_pre_update_option_filter(): void {
 		remove_filter(
 			'pre_update_option_' . self::OPTION_NAME,
 			[ $this, 'wbc_pre_update_option_woof_by_category_settings' ]
@@ -213,7 +218,7 @@ class Main {
 	/**
 	 * Remove filters to get and update plugin options.
 	 */
-	private function remove_option_filters() {
+	private function remove_option_filters(): void {
 		$this->remove_pre_option_filter();
 		$this->remove_pre_update_option_filter();
 	}
@@ -269,7 +274,7 @@ class Main {
 	 * Get the default language.
 	 *
 	 * @return bool|mixed|string|null
-	 * @noinspection PhpUndefinedMethodInspection PhpUndefinedMethodInspection.
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function get_default_language() {
 		if ( class_exists( 'SitePress' ) ) {
@@ -289,7 +294,7 @@ class Main {
 	 * Get the current language.
 	 *
 	 * @return bool|mixed|string|null
-	 * @noinspection PhpUndefinedMethodInspection PhpUndefinedMethodInspection.
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function get_current_language() {
 		if ( class_exists( 'SitePress' ) ) {
@@ -347,10 +352,10 @@ class Main {
 	 *
 	 * @return array|null null indicates that we should not change WOOF filters.
 	 */
-	protected function get_allowed_filters() {
+	protected function get_allowed_filters(): ?array {
 		/**
 		 * In theory, there could be a number of product_cat arguments.
-		 * But request like
+		 * But a request like
 		 * http://test.kagg.eu/?post_type=product&product_cat=assumenda&product_cat=quisquam
 		 * returns only one product-category: quisquam (the last one).
 		 * It redirects to
@@ -407,7 +412,7 @@ class Main {
 	 *
 	 * @return array|mixed
 	 */
-	protected function get_allowed_filters_for_single_category( $category_filters, $current_cat ) {
+	protected function get_allowed_filters_for_single_category( array $category_filters, string $current_cat ) {
 		$allowed_filters        = [];
 		$max_distance_to_parent = PHP_INT_MAX;
 
@@ -452,9 +457,10 @@ class Main {
 	}
 
 	/**
-	 * Get product category string.
+	 * Get a product category string.
 	 *
 	 * @return string|null null indicates that we should not change WOOF filters.
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function get_product_cat() {
 		global $wp_query;
@@ -517,6 +523,7 @@ class Main {
 	 * @return string|false|null
 	 * False indicates that no category from WOOF was found.
 	 * Null indicates that we should not change WOOF filters.
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function get_category_from_woof() {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
@@ -585,7 +592,7 @@ class Main {
 
 			if ( isset( $_REQUEST['additional_taxes'] ) ) {
 				// Process additional taxes in the shortcode.
-				return $this->expand_additional_taxes( $_REQUEST['additional_taxes'] );
+				return $this->expand_additional_taxes( (string) $_REQUEST['additional_taxes'] );
 			}
 		}
 		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -604,7 +611,7 @@ class Main {
 	 *
 	 * @return array|mixed
 	 */
-	protected function expand_additional_taxes( $additional_taxes ) {
+	protected function expand_additional_taxes( string $additional_taxes ) {
 		if ( ! $additional_taxes ) {
 			return false;
 		}
@@ -746,7 +753,7 @@ class Main {
 	/**
 	 * Load plugin text domain.
 	 */
-	public function wbc_load_textdomain() {
+	public function wbc_load_textdomain(): void {
 		load_plugin_textdomain(
 			'woof-by-category',
 			false,
@@ -757,7 +764,7 @@ class Main {
 	/**
 	 * Add the settings page to the menu.
 	 */
-	public function add_settings_page() {
+	public function add_settings_page(): void {
 		$parent_slug = 'options-general.php';
 		$page_title  = __( 'WOOF by Category', 'woof-by-category' );
 		$menu_title  = __( 'WOOF by Category', 'woof-by-category' );
@@ -771,21 +778,24 @@ class Main {
 	/**
 	 * Options page.
 	 */
-	public function woof_by_category_settings_page() {
+	public function woof_by_category_settings_page(): void {
 		?>
 		<div class="wrap">
 			<h2 id="title">
 				<?php
+
 				// Admin panel title.
 				echo( esc_html( __( 'WOOF by Category Plugin Options', 'woof-by-category' ) ) );
+
 				?>
 			</h2>
-
 			<form id="wbc-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="POST">
 				<?php
+
 				settings_fields( 'woof_by_category_group' ); // Hidden protection fields.
 				do_settings_sections( 'woof-by-category' ); // Sections with options.
 				submit_button();
+
 				?>
 			</form>
 		</div>
@@ -816,7 +826,7 @@ class Main {
 	/**
 	 * Setup options fields.
 	 */
-	public function setup_fields() {
+	public function setup_fields(): void {
 		if ( ! $this->is_wbc_options_screen() ) {
 			return;
 		}
@@ -917,7 +927,7 @@ class Main {
 	 *
 	 * @return int Result of comparison.
 	 */
-	public function compare_cat( $a, $b ): int {
+	public function compare_cat( int $a, int $b ): int {
 		$cat_a   = $this->options[ $a ]['category'];
 		$index_a = array_search( $cat_a, $this->product_cat_order, true );
 		$cat_b   = $this->options[ $b ]['category'];
@@ -939,7 +949,7 @@ class Main {
 	 *
 	 * @param array $arguments The list of fields.
 	 */
-	public function field_callback( $arguments ) {
+	public function field_callback( array $arguments ): void {
 		$value = get_option( self::OPTION_NAME ); // Get current settings.
 
 		if ( $value ) {
@@ -1033,9 +1043,9 @@ class Main {
 	}
 
 	/**
-	 * Check plugin requirements. If not met, show message and deactivate the plugin.
+	 * Check plugin requirements. If not met, show a message and deactivate the plugin.
 	 */
-	public function check_requirements() {
+	public function check_requirements(): void {
 		if ( ! $this->requirements_met() ) {
 			add_action( 'admin_notices', [ $this, 'show_plugin_not_found_notice' ] );
 
@@ -1057,7 +1067,6 @@ class Main {
 	 * Check if plugin requirements met.
 	 *
 	 * @return bool Requirements met.
-	 * @noinspection PhpIncludeInspection PhpIncludeInspection.
 	 */
 	private function requirements_met(): bool {
 		$all_active = true;
@@ -1080,7 +1089,7 @@ class Main {
 	 *
 	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
-	public function show_plugin_not_found_notice() {
+	public function show_plugin_not_found_notice(): void {
 		$message       = __( 'WOOF by Category plugin requires the following plugins installed and activated: ', 'woof-by-category' );
 		$message_parts = [];
 
@@ -1116,7 +1125,7 @@ class Main {
 	/**
 	 * Show a notice to inform the user that the plugin has been deactivated.
 	 */
-	public function show_deactivate_notice() {
+	public function show_deactivate_notice(): void {
 		$this->admin_notice( __( 'WOOF by Category plugin has been deactivated.', 'woof-by-category' ), 'notice notice-info is-dismissible' );
 	}
 
@@ -1127,7 +1136,7 @@ class Main {
 	 * @param string $class_name Message class: notice notice-success notice-error notice-warning notice-info
 	 *                           is-dismissible.
 	 */
-	private function admin_notice( $message, $class_name ) {
+	private function admin_notice( string $message, string $class_name ): void {
 		?>
 		<div class="<?php echo esc_attr( $class_name ); ?>">
 			<p>
@@ -1138,14 +1147,14 @@ class Main {
 	}
 
 	/**
-	 * Get hierarchy of product categories in an array.
+	 * Get a hierarchy of product categories in an array.
 	 *
 	 * @param int $cat_id Top product category id.
 	 *
 	 * @return array
 	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
-	private function get_product_categories( $cat_id = 0 ): array {
+	private function get_product_categories( int $cat_id = 0 ): array {
 		$cat_list      = [];
 		$crumbs        = $this->get_product_term_crumbs( $cat_id );
 		$level         = count( $crumbs );
@@ -1192,7 +1201,7 @@ class Main {
 	 *
 	 * @return array
 	 */
-	private function get_product_term_crumbs( $term_id ): array {
+	private function get_product_term_crumbs( int $term_id ): array {
 		$crumbs = [];
 		$term   = get_term( $term_id );
 
@@ -1240,7 +1249,7 @@ class Main {
 	 *
 	 * @return int Distance to parent in levels or -1 if parent is not found.
 	 */
-	protected function has_parent( $filter_cat, $current_cat ): int {
+	protected function has_parent( string $filter_cat, ?string $current_cat ): int {
 		if ( null === $current_cat ) {
 			return - 1;
 		}
@@ -1288,7 +1297,7 @@ class Main {
 	 *
 	 * @return WP_Term|false
 	 */
-	private function get_term_by_slug( $slug ) {
+	private function get_term_by_slug( string $slug ) {
 		$taxonomies = $this->get_taxonomies();
 
 		foreach ( $taxonomies as $taxonomy ) {
@@ -1317,7 +1326,7 @@ class Main {
 	}
 
 	/**
-	 * Add link to plugin setting page on plugins page.
+	 * Add a link to the plugin setting page on the plugins page.
 	 *
 	 * @param array|mixed $links Plugin links.
 	 *
@@ -1337,7 +1346,7 @@ class Main {
 	/**
 	 * Enqueue plugin scripts.
 	 */
-	public function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts(): void {
 		wp_enqueue_style(
 			'woof-by-category-admin',
 			constant( 'WOOF_BY_CATEGORY_URL' ) . '/assets/css/woof-by-category-admin.css',
@@ -1351,7 +1360,7 @@ class Main {
 	 *
 	 * @return void
 	 */
-	public function declare_wc_compatibility() {
+	public function declare_wc_compatibility(): void {
 		if ( class_exists( FeaturesUtil::class ) ) {
 			FeaturesUtil::declare_compatibility(
 				'custom_order_tables',
