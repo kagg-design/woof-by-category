@@ -2,9 +2,9 @@
 Contributors: kaggdesign
 Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
-Requires at least: 5.0
-Tested up to: 6.7
-Requires PHP: 7.0
+Requires at least: 6.0
+Tested up to: 6.9
+Requires PHP: 7.4
 Stable tag: 3.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -15,7 +15,7 @@ WooCommerce Product Filter (WOOF) extension to display a set of filters dependin
 
 WOOF by Category is a WooCommerce Product Filter (WOOF) extension, which allows users to set up different WOOF filters in different categories.
 
-Plugin has Options page on the backend, to set up relationships between any WooCommerce product category and any set of WOOF filters. Only selected filters will be shown on the selected category page and its children. Please see screenshots.
+Plugin has an Options page on the backend to set up relationships between any WooCommerce product category and any set of WOOF filters. Only selected filters will be shown on the selected category page and its children. Please see screenshots.
 
 It is possible to set up any number of category->filters pairs.
 
@@ -40,7 +40,7 @@ The manual installation method involves downloading our plugin and uploading it 
 
 = Updating =
 
-Automatic updates should work like a charm; as always though, ensure you back up your site just in case.
+Automatic updates should work like a charm; as always, though, ensure you back up your site just in case.
 
 == Frequently Asked Questions ==
 
@@ -56,7 +56,7 @@ function wbc_product_categories_filter( $categories ) {
 add_filter( 'wbc_product_categories', 'wbc_product_categories_filter' );
 `
 
-where `tax-1`, `tax-2`, are additional product taxonomies to use with the plugin.
+where `tax-1`, `tax-2` are additional product taxonomies to use with the plugin.
 
 = Where can I get support or talk to other users? =
 
@@ -69,6 +69,11 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 3. Plugin filters (Size and Weight) on a "Quisquam" category page.
 
 == Changelog ==
+
+= 3.3.0 =
+* Minimal PHP version is now 7.4.
+* Minimal WordPress version is now 6.0.
+* Tested with WooCommerce 10.5.
 
 = 3.2.0 =
 * Tested with WordPress 6.7.
