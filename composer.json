@@ -1,14 +1,14 @@
 {
   "name": "kagg-design/woof-by-category",
   "description": "WooCommerce Product Filter (WOOF) extension to display set of filters depending on current product category page.",
-  "license": "GPL-2.0",
+  "license": "GPL-2.0-or-later",
   "keywords": [
     "woocommerce",
     "filter",
     "woocommerce product filter",
     "filter category"
   ],
-  "homepage": "https://kagg.eu/en/",
+  "homepage": "https://wordpress.org/plugins/woof-by-category/",
   "type": "wordpress-plugin",
   "authors": [
     {
@@ -20,24 +20,24 @@
   "support": {
     "issues": "https://wordpress.org/support/plugin/woof-by-category"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/PHPCompatibility/PHPCompatibilityWP.git"
-    }
-  ],
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "kylekatarnls/update-helper": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
   "require-dev": {
+    "ext-json": "*",
     "roave/security-advisories": "dev-latest",
-    "10up/wp_mock": "0.2 - 0.5",
-    "lucatume/function-mocker": "dev-master",
-    "phpunit/phpunit": "6.5 - 9.6",
-    "squizlabs/php_codesniffer": "^3.9.0",
+    "10up/wp_mock": "^1.1.0",
+    "lucatume/function-mocker": "^2.0.0",
+    "phpunit/phpunit": "9.6.34 - 13.0.0",
+    "squizlabs/php_codesniffer": "^3.13.5",
     "phpcompatibility/php-compatibility": "^9.3.5",
-    "phpcompatibility/phpcompatibility-wp": "^2.1.4",
-    "wp-coding-standards/wpcs": "^3.0.1",
-    "ext-json": "*"
+    "phpcompatibility/phpcompatibility-wp": "^2.1.8",
+    "wp-coding-standards/wpcs": "^3.3.0"
   },
   "autoload": {
     "psr-4": {
@@ -50,19 +50,8 @@
       "KAGG\\WoofByCategory\\Tests\\Unit\\": "tests/unit"
     }
   },
-  "bin": [
-    "bin/update-tests"
-  ],
   "scripts": {
-    "pre-update-cmd": "update-tests",
-    "update-tests": "update-tests",
-    "revert-tests": "update-tests revert",
     "phpcs": "vendor/bin/phpcs --colors --standard=phpcs.xml",
     "unit": "vendor/bin/phpunit"
-  },
-  "config": {
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
   }
 }
