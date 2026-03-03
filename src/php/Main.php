@@ -522,11 +522,43 @@ class Main {
 	 * Get product_cat from WOOF POST/GET variables.
 	 *
 	 * @return string|false|null
+	 *
 	 * False indicates that no category from WOOF was found.
 	 * Null indicates that we should not change WOOF filters.
+	 *
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function get_category_from_woof() {
+		$cat = $this->get_category_from_action();
+
+		if ( null !== $cat ) {
+			return $cat;
+		}
+
+		$cat = $this->get_category_from_swoof();
+
+		if ( null !== $cat ) {
+			return $cat;
+		}
+
+		$cat = $this->get_category_from_really_cur_tax();
+
+		if ( null !== $cat ) {
+			return $cat;
+		}
+
+		$cat = $this->get_category_from_shortcode();
+
+		return $cat ?? false;
+	}
+
+	/**
+	 * Get category from action.
+	 *
+	 * @return array|string|null
+	 * @noinspection PhpUndefinedFunctionInspection
+	 */
+	private function get_category_from_action() {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
 			$link = isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '';
@@ -548,6 +580,15 @@ class Main {
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
+		return null;
+	}
+
+	/**
+	 * Get category from swoof variable.
+	 *
+	 * @return string|null
+	 */
+	private function get_category_from_swoof(): ?string {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$swoof = isset( $_GET['swoof'] ) && sanitize_text_field( wp_unslash( $_GET['swoof'] ) );
 
@@ -560,6 +601,15 @@ class Main {
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
+		return null;
+	}
+
+	/**
+	 * Get category from really_curr_tax variable.
+	 *
+	 * @return false|string|null
+	 */
+	private function get_category_from_really_cur_tax() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$really_curr_tax = isset( $_GET['really_curr_tax'] ) ? sanitize_text_field( wp_unslash( $_GET['really_curr_tax'] ) ) : '';
 
@@ -579,6 +629,15 @@ class Main {
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
+		return null;
+	}
+
+	/**
+	 * Get category from the shortcode.
+	 *
+	 * @return array|false|mixed|null
+	 */
+	private function get_category_from_shortcode() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( isset( $_REQUEST['woof_shortcode_txt'] ) ) {
 			if ( false !== strpos( $_REQUEST['woof_shortcode_txt'], "sid='widget'" ) ) {
@@ -598,7 +657,7 @@ class Main {
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
-		return false;
+		return null;
 	}
 
 	/**
@@ -949,13 +1008,7 @@ class Main {
 	 * @param array $arguments The list of fields.
 	 */
 	public function field_callback( array $arguments ): void {
-		$value = get_option( self::OPTION_NAME ); // Get current settings.
-
-		if ( $value ) {
-			$value = $value[ $arguments['group'] ] [ $arguments['uid'] ] ?? null;
-		} else { // If no value exists.
-			$value = $arguments['default']; // Set to our default.
-		}
+		$value = $this->get_value( $arguments );
 
 		// Check which type of field we want.
 		switch ( $arguments['type'] ) {
@@ -1026,19 +1079,7 @@ class Main {
 				break;
 		}
 
-		// If there is a help text.
-		$helper = $arguments['helper'] ?? '';
-
-		if ( $helper ) {
-			printf( '<span class="helper"> %s</span>', esc_html( $helper ) ); // Show it.
-		}
-
-		// If there is a supplemental text.
-		$supplemental = $arguments['supplemental'] ?? '';
-
-		if ( $supplemental ) {
-			printf( '<p class="description">%s</p>', esc_html( $supplemental ) ); // Show it.
-		}
+		$this->print_helpers( $arguments );
 	}
 
 	/**
@@ -1425,5 +1466,47 @@ class Main {
 			__( 'Version %s', 'woof-by-category' ),
 			WOOF_BY_CATEGORY_VERSION
 		);
+	}
+
+	/**
+	 * Get value.
+	 *
+	 * @param array $arguments Arguments.
+	 *
+	 * @return mixed|null
+	 */
+	public function get_value( array $arguments ) {
+		$value = get_option( self::OPTION_NAME ); // Get current settings.
+
+		if ( $value ) {
+			$value = $value[ $arguments['group'] ] [ $arguments['uid'] ] ?? null;
+		} else { // If no value exists.
+			$value = $arguments['default']; // Set to our default.
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Print helpers.
+	 *
+	 * @param array $arguments Arguments.
+	 *
+	 * @return void
+	 */
+	private function print_helpers( array $arguments ): void {
+		// If there is a help text.
+		$helper = $arguments['helper'] ?? '';
+
+		if ( $helper ) {
+			printf( '<span class="helper"> %s</span>', esc_html( $helper ) ); // Show it.
+		}
+
+		// If there is a supplemental text.
+		$supplemental = $arguments['supplemental'] ?? '';
+
+		if ( $supplemental ) {
+			printf( '<p class="description">%s</p>', esc_html( $supplemental ) ); // Show it.
+		}
 	}
 }
