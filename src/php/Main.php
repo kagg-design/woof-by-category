@@ -529,7 +529,7 @@ class Main {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
 			$link = isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '';
-			parse_str( wp_parse_url( $link, PHP_URL_QUERY ), $query_arr );
+			parse_str( (string) wp_parse_url( $link, PHP_URL_QUERY ), $query_arr );
 			$cat = $query_arr['product_cat'] ?? false;
 
 			if ( $cat ) {

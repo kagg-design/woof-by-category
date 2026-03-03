@@ -1024,7 +1024,7 @@ class MainTest extends WoofByCategoryTestCase {
 		$mock->shouldAllowMockingProtectedMethods();
 
 		$mock->shouldReceive( 'get_product_cat' )->andReturn( $product_cat );
-		$cats = explode( ',', $product_cat );
+		$cats = explode( ',', (string) $product_cat );
 
 		$mock->shouldReceive( 'get_category_filters' )->andReturn( $category_filters );
 
