@@ -275,6 +275,7 @@ class Main {
 	 *
 	 * @return bool|mixed|string|null
 	 * @noinspection PhpUndefinedFunctionInspection
+	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	protected function get_default_language() {
 		if ( class_exists( 'SitePress' ) ) {
@@ -295,6 +296,7 @@ class Main {
 	 *
 	 * @return bool|mixed|string|null
 	 * @noinspection PhpUndefinedFunctionInspection
+	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	protected function get_current_language() {
 		if ( class_exists( 'SitePress' ) ) {
@@ -316,7 +318,6 @@ class Main {
 	 * @param array|mixed $options Plugin options.
 	 *
 	 * @return array|mixed
-	 * @noinspection PhpUnusedLocalVariableInspection PhpUnusedLocalVariableInspection.
 	 */
 	private function translate_options( $options ) {
 		if ( ! $options ) {
@@ -325,7 +326,7 @@ class Main {
 
 		$translated_options = [];
 
-		foreach ( $options as $key => $group ) {
+		foreach ( $options as $group ) {
 			$category = $group['category'] ?? '';
 
 			if ( ! $category ) {
@@ -529,7 +530,9 @@ class Main {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['action'] ) && ( 'woof_draw_products' === $_POST['action'] ) ) {
 			$link = isset( $_POST['link'] ) ? sanitize_text_field( wp_unslash( $_POST['link'] ) ) : '';
+
 			parse_str( (string) wp_parse_url( $link, PHP_URL_QUERY ), $query_arr );
+
 			$cat = $query_arr['product_cat'] ?? false;
 
 			if ( $cat ) {
@@ -576,9 +579,7 @@ class Main {
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( isset( $_REQUEST['woof_shortcode_txt'] ) ) {
 			if ( false !== strpos( $_REQUEST['woof_shortcode_txt'], "sid='widget'" ) ) {
 				// Allow working widget as usual.
@@ -595,9 +596,7 @@ class Main {
 				return $this->expand_additional_taxes( (string) $_REQUEST['additional_taxes'] );
 			}
 		}
-		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		return false;
 	}
