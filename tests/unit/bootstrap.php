@@ -8,11 +8,6 @@
 use tad\FunctionMocker\FunctionMocker;
 
 /**
- * Plugin test dir.
- */
-const PLUGIN_TESTS_DIR = __DIR__;
-
-/**
  * Plugin main file.
  */
 define( 'PLUGIN_MAIN_FILE', realpath( dirname( __DIR__, 2 ) . '/woof-by-category.php' ) );

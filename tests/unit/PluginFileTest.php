@@ -9,7 +9,6 @@ namespace KAGG\WoofByCategory\Tests\Unit;
 
 use KAGG\WoofByCategory\Main;
 use Mockery;
-use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
 /**
@@ -28,18 +27,17 @@ class PluginFileTest extends WoofByCategoryTestCase {
 	}
 
 	/**
-	 * Test loading of main plugin file.
+	 * Test loading of a main plugin file.
 	 *
-	 * Does not work with php 5.6 due to the bug in Reflection class prior php 7.0,
+	 * Does not work with php 5.6 due to the bug in the Reflection class prior to php 7.0,
 	 * and relevant problem in Patchwork.
 	 *
 	 * @requires            PHP >= 7.0
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
-	 * @noinspection        PhpIncludeInspection
 	 */
-	public function test_plugin_file_at_first_time() {
+	public function test_plugin_file_at_first_time(): void {
 		global $woof_by_category_plugin;
 
 		$mock = Mockery::mock( 'overload:' . Main::class );
@@ -73,9 +71,9 @@ class PluginFileTest extends WoofByCategoryTestCase {
 
 
 	/**
-	 * Test that readme.txt contains proper stable tag.
+	 * Test that readme.txt contains a proper stable tag.
 	 */
-	public function test_readme_txt() {
+	public function test_readme_txt(): void {
 		$expected    = [
 			'stable_tag' => WOOF_BY_CATEGORY_TEST_VERSION,
 		];

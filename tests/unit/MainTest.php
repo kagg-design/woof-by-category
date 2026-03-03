@@ -41,7 +41,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_constructor() {
+	public function test_constructor(): void {
 		$classname = Main::class;
 		$mock      = Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
 
@@ -72,7 +72,7 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test init().
 	 */
-	public function test_init() {
+	public function test_init(): void {
 		$classname = Main::class;
 
 		/**
@@ -96,7 +96,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks_when_no_required_plugins_activated() {
+	public function test_init_hooks_when_no_required_plugins_activated(): void {
 		$basename = 'woof-by-category/woof-by-category.php';
 		WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
 
@@ -151,7 +151,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks_when_required_plugins_are_activated() {
+	public function test_init_hooks_when_required_plugins_are_activated(): void {
 		$basename = 'woof-by-category/woof-by-category.php';
 		WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
 
@@ -213,7 +213,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 * @dataProvider dp_test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated( $multilingual_plugin ) {
+	public function test_init_hooks_when_required_plugins_and_multilingual_plugin_are_activated( string $multilingual_plugin ): void {
 		$basename = 'woof-by-category/woof-by-category.php';
 		WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
 
@@ -287,7 +287,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_category_filters_from_cache() {
+	public function test_get_category_filters_from_cache(): void {
 		$subject = new Main();
 
 		$category_filters = [ 'some_array' ];
@@ -315,7 +315,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_category_filters( $options, $expected ) {
+	public function test_get_category_filters( $options, array $expected ): void {
 		global $test_expected;
 		$test_expected = $expected;
 
@@ -406,7 +406,7 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test wbc_load_textdomain().
 	 */
-	public function test_wbc_load_textdomain() {
+	public function test_wbc_load_textdomain(): void {
 		$subject = new Main();
 
 		WP_Mock::passthruFunction( 'plugin_basename' );
@@ -436,7 +436,7 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test add_settings_page().
 	 */
-	public function test_add_settings_page() {
+	public function test_add_settings_page(): void {
 		$subject = new Main();
 
 		WP_Mock::passthruFunction( '__' );
@@ -456,13 +456,13 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test wbc_option_woof_settings().
 	 *
-	 * @param array $value           Value.
-	 * @param array $allowed_filters Allowed filters.
-	 * @param array $expected        Expected.
+	 * @param array      $value           Value.
+	 * @param array|null $allowed_filters Allowed filters.
+	 * @param array      $expected        Expected.
 	 *
 	 * @dataProvider dp_test_wbc_option_woof_settings
 	 */
-	public function test_wbc_option_woof_settings( $value, $allowed_filters, $expected ) {
+	public function test_wbc_option_woof_settings( array $value, ?array $allowed_filters, array $expected ): void {
 		/**
 		 * Mock.
 		 *
@@ -720,14 +720,14 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test wbc_pre_option_woof_by_category_settings().
 	 *
-	 * @param string|null $lang       Language.
-	 * @param bool|array  $lang_value Option for this language.
-	 * @param null|array  $value      Option.
-	 * @param bool|array  $expected   Expected.
+	 * @param string|null      $lang       Language.
+	 * @param bool|array       $lang_value Option for this language.
+	 * @param array|null|false $value      Option.
+	 * @param bool|array       $expected   Expected.
 	 *
 	 * @dataProvider dp_test_wbc_pre_option_woof_by_category_settings
 	 */
-	public function test_wbc_pre_option_woof_by_category_settings( $lang, $lang_value, $value, $expected ) {
+	public function test_wbc_pre_option_woof_by_category_settings( ?string $lang, $lang_value, $value, $expected ): void {
 		/**
 		 * Mock.
 		 *
@@ -761,7 +761,7 @@ class MainTest extends WoofByCategoryTestCase {
 			);
 
 			if ( is_array( $value ) ) {
-				array_pop( $value ); // Remove last element, which is empty.
+				array_pop( $value ); // Remove the last element, which is empty.
 			}
 
 			WP_Mock::userFunction( 'update_option' )
@@ -795,15 +795,15 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test wbc_pre_update_option_woof_by_category_settings().
 	 *
-	 * @param string|null $lang         Language.
-	 * @param string|null $default_lang Default language.
-	 * @param null|array  $value        Option.
-	 * @param null|array  $old_value    Old option.
-	 * @param bool|array  $expected     Expected.
+	 * @param string|null      $lang         Language.
+	 * @param string|null      $default_lang Default language.
+	 * @param array|null|false $value        Option.
+	 * @param array|null|false $old_value    Old option.
+	 * @param bool|array       $expected     Expected.
 	 *
 	 * @dataProvider dp_wbc_pre_update_option_woof_by_category_settings
 	 */
-	public function test_wbc_pre_update_option_woof_by_category_settings( $lang, $default_lang, $value, $old_value, $expected ) {
+	public function test_wbc_pre_update_option_woof_by_category_settings( ?string $lang, ?string $default_lang, $value, $old_value, $expected ): void {
 		/**
 		 * Mock.
 		 *
@@ -879,7 +879,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_default_language() {
+	public function test_get_default_language(): void {
 		$sitepress_exists = false;
 		$polylang_exists  = false;
 
@@ -926,7 +926,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_current_language() {
+	public function test_get_current_language(): void {
 		$sitepress_exists = false;
 		$polylang_exists  = false;
 
@@ -970,8 +970,10 @@ class MainTest extends WoofByCategoryTestCase {
 
 	/**
 	 * Test get_allowed_filters_from_cache().
+	 *
+	 * @noinspection JsonEncodingApiUsageInspection
 	 */
-	public function test_get_allowed_filters_from_cache() {
+	public function test_get_allowed_filters_from_cache(): void {
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
 
@@ -1009,14 +1011,15 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test get_allowed_filters().
 	 *
-	 * @param string $product_cat      Product category.
-	 * @param array  $category_filters Category filters.
-	 * @param array  $allowed_filters  Allowed filters.
-	 * @param array  $expected         Expected.
+	 * @param string|null $product_cat      Product category.
+	 * @param array       $category_filters Category filters.
+	 * @param array       $allowed_filters  Allowed filters.
+	 * @param array|null  $expected         Expected.
 	 *
 	 * @dataProvider dp_test_get_allowed_filters
+	 * @noinspection JsonEncodingApiUsageInspection
 	 */
-	public function test_get_allowed_filters( $product_cat, $category_filters, $allowed_filters, $expected ) {
+	public function test_get_allowed_filters( ?string $product_cat, array $category_filters, array $allowed_filters, ?array $expected ): void {
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
 
@@ -1142,7 +1145,7 @@ class MainTest extends WoofByCategoryTestCase {
 	}
 
 	/**
-	 * Tests get_allowed_filters() for single category.
+	 * Tests get_allowed_filters() for a single category.
 	 *
 	 * @param array  $category_filters Category filters.
 	 * @param string $current_cat      Current category.
@@ -1151,7 +1154,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @dataProvider dp_test_get_allowed_filters_for_single_category
 	 */
-	public function test_get_allowed_filters_for_single_category( $category_filters, $current_cat, $distances, $expected ) {
+	public function test_get_allowed_filters_for_single_category( array $category_filters, string $current_cat, array $distances, array $expected ): void {
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
 
@@ -1242,7 +1245,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @dataProvider dp_test_get_default_filters
 	 */
-	public function test_get_default_filters( $options, $expected ) {
+	public function test_get_default_filters( array $options, array $expected ): void {
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
 
@@ -1283,17 +1286,17 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test get_product_cat().
 	 *
-	 * @param string $category_from_woof Category from WOOF.
-	 * @param array  $query_vars         Query vars.
-	 * @param bool   $is_tax             Is tax.
-	 * @param array  $object_types       Object types.
-	 * @param bool   $is_shop            Is shop.
-	 * @param bool   $is_product         Is product.
-	 * @param string $expected           Expected.
+	 * @param string|false $category_from_woof Category from WOOF.
+	 * @param array        $query_vars         Query vars.
+	 * @param bool|null    $is_tax             Is tax.
+	 * @param array|null   $object_types       Object types.
+	 * @param bool|null    $is_shop            Is shop.
+	 * @param bool|null    $is_product         Is product.
+	 * @param string|null  $expected           Expected.
 	 *
 	 * @dataProvider dp_test_get_product_cat
 	 */
-	public function test_get_product_cat( $category_from_woof, $query_vars, $is_tax, $object_types, $is_shop, $is_product, $expected ) {
+	public function test_get_product_cat( $category_from_woof, array $query_vars, ?bool $is_tax, ?array $object_types, ?bool $is_shop, ?bool $is_product, ?string $expected ): void {
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
 
@@ -1366,19 +1369,19 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Tests get_category_from_woof().
 	 *
-	 * @param array  $post               POST.
-	 * @param array  $get                GET.
-	 * @param bool   $is_wp_error        Is WP_Error.
-	 * @param string $woof_shortcode_txt WOOF shortcode text.
-	 * @param string $additional_taxes   Additional taxes.
-	 * @param string $expected           Expected.
+	 * @param array|null   $post               POST.
+	 * @param array|null   $get                GET.
+	 * @param bool|null    $is_wp_error        Is WP_Error.
+	 * @param string       $woof_shortcode_txt WOOF shortcode text.
+	 * @param string|null  $additional_taxes   Additional taxes.
+	 * @param string|false $expected           Expected.
 	 *
 	 * @dataProvider dp_test_get_category_from_woof
 	 * @noinspection HttpUrlsUsage
 	 */
 	public function test_get_category_from_woof(
-		$post, $get, $is_wp_error, $woof_shortcode_txt, $additional_taxes, $expected
-	) {
+		?array $post, ?array $get, ?bool $is_wp_error, string $woof_shortcode_txt, ?string $additional_taxes, $expected
+	): void {
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
 		$mock->shouldReceive( 'expand_additional_taxes' )->andReturn( $additional_taxes );
@@ -1606,7 +1609,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @dataProvider dp_test_expand_additional_taxes
 	 */
-	public function test_expand_additional_taxes( $additional_taxes, $terms, $expected ) {
+	public function test_expand_additional_taxes( string $additional_taxes, array $terms, $expected ): void {
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
 
@@ -1663,7 +1666,7 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test woof_sort_terms_before_out_filter().
 	 */
-	public function test_woof_sort_terms_before_out_filter() {
+	public function test_woof_sort_terms_before_out_filter(): void {
 		$allowed_filters = [
 			0 => 'product_cat',
 			1 => 'pa_color',
@@ -1708,14 +1711,14 @@ class MainTest extends WoofByCategoryTestCase {
 	/**
 	 * Test has_parent().
 	 *
-	 * @param string $filter_cat  Filter category.
-	 * @param string $current_cat Current category.
-	 * @param int    $expected    Expected.
+	 * @param string      $filter_cat  Filter category.
+	 * @param string|null $current_cat Current category.
+	 * @param int         $expected    Expected.
 	 *
 	 * @dataProvider dp_test_has_parent
 	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
-	public function test_has_parent( $filter_cat, $current_cat, $expected ) {
+	public function test_has_parent( string $filter_cat, ?string $current_cat, int $expected ): void {
 		$assumenda         = (object) [
 			'id'     => 101,
 			'parent' => 0,
@@ -1797,7 +1800,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @noinspection HtmlUnknownTarget
 	 */
-	public function test_add_settings_link() {
+	public function test_add_settings_link(): void {
 		$links        = [ 'some_link' => '<a href="#">Some link</a>' ];
 		$action_links = [
 			'settings' =>
@@ -1820,7 +1823,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 *
 	 * @noinspection HttpUrlsUsage
 	 */
-	public function test_admin_enqueue_scripts() {
+	public function test_admin_enqueue_scripts(): void {
 		$woof_by_category_url     = 'http://site.org/wp-content/plugins/woof-by-category';
 		$woof_by_category_version = 'test-version';
 		FunctionMocker::replace(
@@ -1926,7 +1929,7 @@ class MainTest extends WoofByCategoryTestCase {
 	}
 
 	/**
-	 * Get test options ru.
+	 * Get test options `ru`.
 	 *
 	 * @return array
 	 */
@@ -1959,7 +1962,7 @@ class MainTest extends WoofByCategoryTestCase {
 	}
 
 	/**
-	 * Get test options en.
+	 * Get test options `en`.
 	 *
 	 * @return array
 	 */

@@ -49,7 +49,7 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function get_protected_property( $object, $property_name ) {
+	protected function get_protected_property( object $object, string $property_name ) {
 		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
@@ -69,7 +69,7 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_protected_property( $object, $property_name, $value ) {
+	protected function set_protected_property( object $object, string $property_name, $value ): void {
 		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
@@ -89,7 +89,7 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_method_accessibility( $object, $method_name, $accessible = true ): ReflectionMethod {
+	protected function set_method_accessibility( object $object, string $method_name, bool $accessible = true ): ReflectionMethod {
 		$reflection_class = new ReflectionClass( $object );
 
 		$method = $reflection_class->getMethod( $method_name );
@@ -117,9 +117,9 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	 * @param string $context         Optional. If specified adds filter hook {@see 'extra_$context_headers'}.
 	 *                                Default empty.
 	 *
-	 * @return string[] Array of file header values keyed by header name.
+	 * @return string[] Array of file header values keyed by the header name.
 	 */
-	protected function get_file_data( $file, $default_headers, $context = '' ): array {
+	protected function get_file_data( string $file, array $default_headers, string $context = '' ): array {
 		// We don't need to write to the file, so just open for reading.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
 		$fp = fopen( $file, 'rb' );
@@ -129,7 +129,7 @@ abstract class WoofByCategoryTestCase extends TestCase {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fread
 			$file_data = fread( $fp, 8 * KB_IN_BYTES );
 
-			// PHP will close file handle, but we are good citizens.
+			// PHP will close a file handle, but we are good citizens.
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
 			fclose( $fp );
 		} else {
@@ -152,7 +152,7 @@ abstract class WoofByCategoryTestCase extends TestCase {
 		$extra_headers = $context ? apply_filters( "extra_{$context}_headers", [] ) : [];
 		if ( $extra_headers ) {
 			$extra_headers = array_combine( $extra_headers, $extra_headers ); // Keys equal values.
-			$all_headers   = array_merge( $extra_headers, (array) $default_headers );
+			$all_headers   = array_merge( $extra_headers, $default_headers );
 		} else {
 			$all_headers = $default_headers;
 		}
@@ -177,9 +177,10 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	 * @see https://core.trac.wordpress.org/ticket/8497
 	 *
 	 * @param string $str Header comment to clean up.
+	 *
 	 * @return string
 	 */
-	private function cleanup_header_comment( $str ): string {
+	private function cleanup_header_comment( string $str ): string {
 		return trim( preg_replace( '/\s*(?:\*\/|\?>).*/', '', $str ) );
 	}
 }
