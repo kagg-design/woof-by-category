@@ -35,10 +35,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // @codeCoverageIgnoreEnd
 
-if ( defined( 'WOOF_BY_CATEGORY_VERSION' ) ) {
-	return;
-}
-
 /**
  * Plugin version.
  */
