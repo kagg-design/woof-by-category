@@ -53,9 +53,10 @@ abstract class WoofByCategoryTestCase extends TestCase {
 		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
-		$property->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$property->setAccessible( true );
+		}
 		$value = $property->getValue( $object );
-		$property->setAccessible( false );
 
 		return $value;
 	}
@@ -73,9 +74,10 @@ abstract class WoofByCategoryTestCase extends TestCase {
 		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
-		$property->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$property->setAccessible( true );
+		}
 		$property->setValue( $object, $value );
-		$property->setAccessible( false );
 	}
 
 	/**
@@ -93,7 +95,9 @@ abstract class WoofByCategoryTestCase extends TestCase {
 		$reflection_class = new ReflectionClass( $object );
 
 		$method = $reflection_class->getMethod( $method_name );
-		$method->setAccessible( $accessible );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$method->setAccessible( $accessible );
+		}
 
 		return $method;
 	}

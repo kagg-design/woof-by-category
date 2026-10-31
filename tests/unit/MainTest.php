@@ -1750,7 +1750,7 @@ class MainTest extends WoofByCategoryTestCase {
 			'get_term_by',
 			[
 				'args'   => [ 'slug', $current_cat, 'product_cat' ],
-				'return' => $cat_objects[ $current_cat ] ?? false,
+				'return' => null === $current_cat ? false : ( $cat_objects[ $current_cat ] ?? false ),
 			]
 		);
 

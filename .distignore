@@ -6,6 +6,7 @@
 /.distignore
 /.editorconfig
 /.gitignore
+/.phpunit.result.cache
 /CHANGELOG.md
 /README.md
 /auth.json

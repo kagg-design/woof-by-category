@@ -29,11 +29,6 @@ class PluginFileTest extends WoofByCategoryTestCase {
 	/**
 	 * Test loading of a main plugin file.
 	 *
-	 * Does not work with php 5.6 due to the bug in the Reflection class prior to php 7.0,
-	 * and relevant problem in Patchwork.
-	 *
-	 * @requires            PHP >= 7.0
-	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
@@ -76,15 +71,33 @@ class PluginFileTest extends WoofByCategoryTestCase {
 	public function test_readme_txt(): void {
 		$expected    = [
 			'stable_tag' => WOOF_BY_CATEGORY_TEST_VERSION,
+			'requires_wp' => '6.0',
+			'requires_php' => '7.4',
 		];
 		$readme_file = PLUGIN_PATH . '/readme.txt';
 
 		$readme_headers = $this->get_file_data(
 			$readme_file,
-			[ 'stable_tag' => 'Stable tag' ],
+			[
+				'stable_tag'  => 'Stable tag',
+				'requires_wp' => 'Requires at least',
+				'requires_php' => 'Requires PHP',
+			],
 			'plugin'
 		);
 
 		self::assertSame( $expected, $readme_headers );
+
+		$plugin_headers = $this->get_file_data(
+			PLUGIN_MAIN_FILE,
+			[
+				'requires_wp'  => 'Requires at least',
+				'requires_php' => 'Requires PHP',
+			]
+		);
+
+		self::assertSame( '6.0', $plugin_headers['requires_wp'] );
+		self::assertSame( '7.4', $plugin_headers['requires_php'] );
+		self::assertStringContainsString( "= " . WOOF_BY_CATEGORY_TEST_VERSION . " =", file_get_contents( $readme_file ) );
 	}
 }
