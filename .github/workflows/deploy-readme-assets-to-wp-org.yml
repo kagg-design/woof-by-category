@@ -18,12 +18,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: WordPress.org plugin asset/readme update
-        uses: 10up/action-wordpress-plugin-asset-update@2480306f6f693672726d08b5917ea114cb2825f7 # stable
+        uses: 10up/action-wordpress-plugin-asset-update@stable
         env:
           SLUG: ${{ env.SLUG }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
