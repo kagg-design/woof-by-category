@@ -68,15 +68,30 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 3. Plugin filters (Size and Weight) on a "Quisquam" category page.
 
 == Changelog ==
+
 = 3.3.0 =
 * Minimal PHP version is now 7.4.
 * Minimal WordPress version is now 6.0.
 * Tested with WooCommerce 11.2.1.
-* Updated the test and release infrastructure.
+
+= 3.2.0 =
+* Tested with WordPress 6.7.
+* Tested with WooCommerce 9.3.
+* Fixed deprecation error in wp_kses.
+
+= 3.1.1 =
+* Tested with WordPress 6.5.
+* Tested with WooCommerce 8.8.
+* Fixed deprecation message caused by FILTER_SANITIZE_STRING constant.
+
+= 3.1.0 =
+* Tested with WordPress 6.2.
+* Tested with WooCommerce 8.6.
+* The minimum required WordPress version is now 5.0
+
+= 3.0.1 =
+* Dropped support for PHP 5.6. The minimum required PHP version is now 7.0.
+* Tested with WordPress 6.3.
+* Tested with WooCommerce 7.9.
 
 [See changelog for all versions](https://plugins.svn.wordpress.org/woof-by-category/trunk/changelog.txt).
-
-== Upgrade Notice ==
-
-= 1.1 =
-1.1 is a description and translation update mostly.

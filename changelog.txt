@@ -2,7 +2,6 @@
 * Minimal PHP version is now 7.4.
 * Minimal WordPress version is now 6.0.
 * Tested with WooCommerce 11.2.1.
-* Updated the test and release infrastructure.
 
 = 3.2.0 =
 * Tested with WordPress 6.7.
