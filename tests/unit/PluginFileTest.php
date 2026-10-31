@@ -9,7 +9,6 @@ namespace KAGG\WoofByCategory\Tests\Unit;
 
 use KAGG\WoofByCategory\Main;
 use Mockery;
-use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
 /**
@@ -28,18 +27,12 @@ class PluginFileTest extends WoofByCategoryTestCase {
 	}
 
 	/**
-	 * Test loading of main plugin file.
-	 *
-	 * Does not work with php 5.6 due to the bug in Reflection class prior php 7.0,
-	 * and relevant problem in Patchwork.
-	 *
-	 * @requires            PHP >= 7.0
+	 * Test loading of a main plugin file.
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
-	 * @noinspection        PhpIncludeInspection
 	 */
-	public function test_plugin_file_at_first_time() {
+	public function test_plugin_file_at_first_time(): void {
 		global $woof_by_category_plugin;
 
 		$mock = Mockery::mock( 'overload:' . Main::class );
@@ -73,20 +66,38 @@ class PluginFileTest extends WoofByCategoryTestCase {
 
 
 	/**
-	 * Test that readme.txt contains proper stable tag.
+	 * Test that readme.txt contains a proper stable tag.
 	 */
-	public function test_readme_txt() {
+	public function test_readme_txt(): void {
 		$expected    = [
 			'stable_tag' => WOOF_BY_CATEGORY_TEST_VERSION,
+			'requires_wp' => '6.0',
+			'requires_php' => '7.4',
 		];
 		$readme_file = PLUGIN_PATH . '/readme.txt';
 
 		$readme_headers = $this->get_file_data(
 			$readme_file,
-			[ 'stable_tag' => 'Stable tag' ],
+			[
+				'stable_tag'  => 'Stable tag',
+				'requires_wp' => 'Requires at least',
+				'requires_php' => 'Requires PHP',
+			],
 			'plugin'
 		);
 
 		self::assertSame( $expected, $readme_headers );
+
+		$plugin_headers = $this->get_file_data(
+			PLUGIN_MAIN_FILE,
+			[
+				'requires_wp'  => 'Requires at least',
+				'requires_php' => 'Requires PHP',
+			]
+		);
+
+		self::assertSame( '6.0', $plugin_headers['requires_wp'] );
+		self::assertSame( '7.4', $plugin_headers['requires_php'] );
+		self::assertStringContainsString( "= " . WOOF_BY_CATEGORY_TEST_VERSION . " =", file_get_contents( $readme_file ) );
 	}
 }

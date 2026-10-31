@@ -1,5 +1,5 @@
-!composer.lock
 *.lock
+!composer.lock
 *.opt
 *.sql
 *.tar.gz

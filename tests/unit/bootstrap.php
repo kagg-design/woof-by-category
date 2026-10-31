@@ -8,11 +8,6 @@
 use tad\FunctionMocker\FunctionMocker;
 
 /**
- * Plugin test dir.
- */
-const PLUGIN_TESTS_DIR = __DIR__;
-
-/**
  * Plugin main file.
  */
 define( 'PLUGIN_MAIN_FILE', realpath( dirname( __DIR__, 2 ) . '/woof-by-category.php' ) );
@@ -30,7 +25,7 @@ const KB_IN_BYTES = 1024;
 /**
  * Plugin version.
  */
-const WOOF_BY_CATEGORY_TEST_VERSION = '3.2.0';
+const WOOF_BY_CATEGORY_TEST_VERSION = '3.3.0';
 
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 

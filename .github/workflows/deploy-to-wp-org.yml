@@ -2,6 +2,10 @@ name: Deploy to WordPress.org
 on:
   release:
     types: [published]
+
+permissions:
+  contents: write
+
 jobs:
   tag:
     name: New release
@@ -12,8 +16,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
       - name: Install dependencies with caching
-        uses: kagg-design/composer-install@v2
+        uses: ramsey/composer-install@v4
         with:
           composer-options: "--no-dev --optimize-autoloader --classmap-authoritative"
 
@@ -23,12 +30,13 @@ jobs:
         with:
           generate-zip: true
         env:
+          SLUG: woof-by-category
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{github.workspace}}/${{ github.event.repository.name }}.zip
+          files: ${{ github.workspace }}/woof-by-category.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

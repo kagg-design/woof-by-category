@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - trunk
+
+permissions:
+  contents: read
+
 jobs:
   trunk:
     name: Push to trunk
@@ -11,9 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
       - name: WordPress.org plugin asset/readme update
         uses: 10up/action-wordpress-plugin-asset-update@stable
         env:
+          SLUG: woof-by-category
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           IGNORE_OTHER_FILES: true
