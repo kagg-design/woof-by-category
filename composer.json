@@ -56,6 +56,11 @@
     }
   },
   "scripts": {
+    "post-install-cmd": "@hooks:install",
+    "post-update-cmd": "@hooks:install",
+    "hooks:install": "@php .githooks/setup.php",
+    "changelog": "@php .github/scripts/update-changelog.php",
+    "changelog:check": "@php .github/scripts/update-changelog.php --check",
     "phpcs": "vendor/bin/phpcs --colors --standard=phpcs.xml",
     "unit": "vendor/bin/phpunit"
   }

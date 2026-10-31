@@ -18,6 +18,7 @@
 
 # Directories
 /.git
+/.githooks
 /.github
 /.idea
 /.wordpress-org
