@@ -74,7 +74,7 @@ jobs:
       matrix: ${{ steps.resolve.outputs.matrix }}
 
     env:
-      FULL_PHP_MATRIX: ${{ github.event_name == 'push' }}
+      FULL_PHP_MATRIX: ${{ github.event_name == 'pull_request' }}
 
     steps:
       - name: Resolve PHP versions
@@ -83,7 +83,7 @@ jobs:
           if [ "$FULL_PHP_MATRIX" = "true" ]; then
             echo 'matrix=["7.4","8.0","8.1","8.2","8.3","8.4","8.5"]' >> "$GITHUB_OUTPUT"
           else
-            echo 'matrix=["7.4","8.5"]' >> "$GITHUB_OUTPUT"
+            echo 'matrix=["8.5"]' >> "$GITHUB_OUTPUT"
           fi
 
   unit:
