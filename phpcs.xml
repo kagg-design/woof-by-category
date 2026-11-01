@@ -7,6 +7,7 @@
 	<!-- Exclude all dirs except needed -->
 	<exclude-pattern>^(?!.*/woof-by-category).*</exclude-pattern>
 	<exclude-pattern>*/\.git/*</exclude-pattern>
+	<exclude-pattern>*/\.githooks/*</exclude-pattern>
 	<exclude-pattern>*/\.github/*</exclude-pattern>
 	<exclude-pattern>*/\.idea/*</exclude-pattern>
 	<exclude-pattern>*/\.wordpress-org/*</exclude-pattern>

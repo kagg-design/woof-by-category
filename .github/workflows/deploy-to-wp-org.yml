@@ -4,6 +4,7 @@ on:
     types: [published]
 
 permissions:
+  actions: read
   contents: write
 
 jobs:
@@ -12,12 +13,16 @@ jobs:
 
     runs-on: ubuntu-24.04
 
+    if: contains(fromJson('["kagg-design", "e271828-"]'), github.actor)
+
+    env:
+      SLUG: woof-by-category
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
-
-      - name: Install SVN
-        run: sudo apt-get update && sudo apt-get install -y subversion
+        with:
+          persist-credentials: false
 
       - name: Install dependencies with caching
         uses: ramsey/composer-install@v4
@@ -30,13 +35,13 @@ jobs:
         with:
           generate-zip: true
         env:
-          SLUG: woof-by-category
+          SLUG: ${{ env.SLUG }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v3
         with:
-          files: ${{ github.workspace }}/woof-by-category.zip
+          files: ${{ github.workspace }}/${{ env.SLUG }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

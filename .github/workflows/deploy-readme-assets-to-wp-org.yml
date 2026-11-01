@@ -5,23 +5,27 @@ on:
       - trunk
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
   trunk:
     name: Push to trunk
     runs-on: ubuntu-24.04
+
+    env:
+      SLUG: woof-by-category
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
-
-      - name: Install SVN
-        run: sudo apt-get update && sudo apt-get install -y subversion
+        with:
+          persist-credentials: false
 
       - name: WordPress.org plugin asset/readme update
         uses: 10up/action-wordpress-plugin-asset-update@stable
         env:
-          SLUG: woof-by-category
+          SLUG: ${{ env.SLUG }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           IGNORE_OTHER_FILES: true

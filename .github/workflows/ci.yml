@@ -1,7 +1,38 @@
 name: WOOF by Category CI
-on: [push, pull_request]
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**/*.php'
+      - 'composer.*'
+      - 'phpcs.xml'
+      - 'phpunit.xml'
+      - 'src/**'
+      - 'tests/**'
+      - 'readme.txt'
+      - 'changelog.txt'
+      - '.distignore'
+      - '.github/workflows/**'
+      - '.github/scripts/**'
+      - '.githooks/**'
+  pull_request:
+    paths:
+      - '**/*.php'
+      - 'composer.*'
+      - 'phpcs.xml'
+      - 'phpunit.xml'
+      - 'src/**'
+      - 'tests/**'
+      - 'readme.txt'
+      - 'changelog.txt'
+      - '.distignore'
+      - '.github/workflows/**'
+      - '.github/scripts/**'
+      - '.githooks/**'
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -9,30 +40,77 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  cs_and_tests:
-    strategy:
-      matrix:
-        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
-
+  phpcs:
+    name: PHPCS and changelog
     runs-on: ubuntu-24.04
-
-    name: PHP ${{ matrix.php-version }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
-      - name: Setup PHP
+      - name: Setup PHP 8.5
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: '8.5'
           extensions: json, mysqli, mbstring, zip
+          ini-values: register_argc_argv=On
 
       - name: Install dependencies with caching
         uses: ramsey/composer-install@v4
 
       - name: Run code sniffer
         run: composer phpcs
+
+      - name: Check changelog
+        run: composer changelog:check
+
+  php_versions:
+    name: Resolve PHP versions
+    runs-on: ubuntu-24.04
+
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+
+    env:
+      FULL_PHP_MATRIX: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Resolve PHP versions
+        id: resolve
+        run: |
+          if [ "$FULL_PHP_MATRIX" = "true" ]; then
+            echo 'matrix=["7.4","8.0","8.1","8.2","8.3","8.4","8.5"]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'matrix=["8.5"]' >> "$GITHUB_OUTPUT"
+          fi
+
+  unit:
+    name: Unit tests on PHP ${{ matrix.php-version }}
+    runs-on: ubuntu-24.04
+    needs: php_versions
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ${{ fromJSON(needs.php_versions.outputs.matrix) }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: json, mysqli, mbstring, zip
+          ini-values: register_argc_argv=On
+
+      - name: Install dependencies with caching
+        uses: ramsey/composer-install@v4
 
       - name: Run unit tests
         run: composer unit
