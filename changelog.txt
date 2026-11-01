@@ -1,3 +1,6 @@
+= 3.3.1 =
+* Tested with WordPress 7.1.
+
 = 3.3.0 =
 * Minimal PHP version is now 7.4.
 * Minimal WordPress version is now 6.0.
