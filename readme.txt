@@ -69,6 +69,9 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 == Changelog ==
 
+= 3.3.3 =
+* Fixed category-specific filters on the shop page when WOOF reads settings before WooCommerce registers the product_cat taxonomy.
+
 = 3.3.2 =
 * Fixed fatal error caused by deployment on wp.org.
 * Tested with WordPress 7.1.

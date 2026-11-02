@@ -1811,6 +1811,8 @@ class MainTest extends WoofByCategoryTestCase {
 				'return' => false,
 			]
 		);
+		WP_Mock::userFunction( 'is_wp_error' )->andReturn( false );
+		WP_Mock::userFunction( 'taxonomy_exists' )->with( 'product_cat' )->andReturn( true );
 
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
@@ -1829,10 +1831,21 @@ class MainTest extends WoofByCategoryTestCase {
 			[ '/', 'wrong_cat', -1 ],
 			[ '/', 'assumenda', -1 ],
 			[ 'assumenda', 'assumenda', 0 ],
+			[ 'missing-category', 'missing-category', -1 ],
 			[ 'assumenda', 'sub-assumenda', 1 ],
 			[ 'assumenda', 'sub-sub-assumenda', 2 ],
 			[ 'assumenda', 'bad', -1 ],
 		];
+	}
+
+	/**
+	 * Test matching slugs before WooCommerce registers the product taxonomy.
+	 */
+	public function test_has_parent_before_product_cat_registration(): void {
+		WP_Mock::userFunction( 'taxonomy_exists' )->with( 'product_cat' )->andReturn( false );
+
+		$mock = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		self::assertSame( 0, $mock->has_parent( 'not-registered-yet', 'not-registered-yet' ) );
 	}
 
 	/**

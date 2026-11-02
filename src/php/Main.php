@@ -1298,6 +1298,11 @@ class Main {
 			return 0;
 		}
 
+		// WOOF can read options before WooCommerce registers product_cat.
+		if ( $filter_cat === $current_cat && ! taxonomy_exists( 'product_cat' ) ) {
+			return 0;
+		}
+
 		$current_cat_object = $this->get_term_by_slug( $current_cat );
 
 		if ( ! $current_cat_object ) {
