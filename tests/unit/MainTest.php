@@ -5,6 +5,11 @@
  * @package woof-by-category
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUnhandledExceptionInspection */
+/** @noinspection PhpDocMissingThrowsInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace KAGG\WoofByCategory\Tests\Unit;
 
 use KAGG\WoofByCategory\Main;
@@ -52,18 +57,18 @@ class MainTest extends WoofByCategoryTestCase {
 
 		$required_plugins = [
 			[
-				'plugin' => 'woocommerce/woocommerce.php',
-				'name'   => 'WooCommerce',
-				'slug'   => 'woocommerce',
-				'class'  => 'WooCommerce',
-				'active' => false,
+				'plugin'  => 'woocommerce/woocommerce.php',
+				'name'    => 'WooCommerce',
+				'slug'    => 'woocommerce',
+				'classes' => [ 'WooCommerce' ],
+				'active'  => false,
 			],
 			[
-				'plugin' => 'woocommerce-products-filter/index.php',
-				'name'   => 'WooCommerce Product Filter',
-				'slug'   => 'woocommerce-products-filter',
-				'class'  => 'WOOF',
-				'active' => false,
+				'plugin'  => 'woocommerce-products-filter/index.php',
+				'name'    => 'WooCommerce Product Filter',
+				'slug'    => 'woocommerce-products-filter',
+				'classes' => [ 'WOOF', 'HUSKY' ],
+				'active'  => false,
 			],
 		];
 		self::assertSame( $required_plugins, $this->get_protected_property( $mock, 'required_plugins' ) );
@@ -147,6 +152,35 @@ class MainTest extends WoofByCategoryTestCase {
 	}
 
 	/**
+	 * HUSKY uses its own class name while retaining the WOOF plugin path.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_init_hooks_when_husky_is_activated(): void {
+		$basename = 'woof-by-category/woof-by-category.php';
+		WP_Mock::userFunction( 'plugin_basename', [ $basename ] );
+		FunctionMocker::replace(
+			'class_exists',
+			static function ( $class_name ) {
+				return in_array( $class_name, [ 'WooCommerce', 'HUSKY' ], true );
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			static function ( $name ) {
+				return 'WOOF_BY_CATEGORY_FILE' === $name ? PLUGIN_MAIN_FILE : null;
+			}
+		);
+
+		$subject = new Main();
+		WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
+
+		$method = $this->set_method_accessibility( $subject, 'init_hooks' );
+		$method->invoke( $subject );
+	}
+
+	/**
 	 * Test init_hooks() when required plugins are activated.
 	 *
 	 * @throws ReflectionException ReflectionException.
@@ -198,7 +232,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::expectFilterAdded(
 			'woof_print_content_before_search_form',
 			[ $subject, 'woof_print_content_before_search_form_filter' ],
-			- PHP_INT_MAX
+			-PHP_INT_MAX
 		);
 
 		$method = $this->set_method_accessibility( $subject, 'init_hooks' );
@@ -263,7 +297,7 @@ class MainTest extends WoofByCategoryTestCase {
 		WP_Mock::expectFilterAdded(
 			'woof_print_content_before_search_form',
 			[ $subject, 'woof_print_content_before_search_form_filter' ],
-			- PHP_INT_MAX
+			-PHP_INT_MAX
 		);
 
 		$method = $this->set_method_accessibility( $subject, 'init_hooks' );
@@ -450,7 +484,6 @@ class MainTest extends WoofByCategoryTestCase {
 		);
 
 		$subject->add_settings_page();
-
 	}
 
 	/**
@@ -1161,7 +1194,7 @@ class MainTest extends WoofByCategoryTestCase {
 		$i = 0;
 		foreach ( $category_filters as $filter_cat => $filters ) {
 			$mock->shouldReceive( 'has_parent' )->with( $filter_cat, $current_cat )->andReturn( $distances[ $i ] );
-			$i ++;
+			++$i;
 		}
 
 		self::assertSame( $expected, $mock->get_allowed_filters_for_single_category( $category_filters, $current_cat ) );
@@ -1207,31 +1240,31 @@ class MainTest extends WoofByCategoryTestCase {
 			'no filters'     => [
 				[],
 				'some_cat',
-				[ - 1, - 1, - 1, - 1, - 1 ],
+				[ -1, -1, -1, -1, -1 ],
 				[],
 			],
 			'not listed cat' => [
 				$category_filters,
 				'some_cat',
-				[ - 1, - 1, - 1, - 1, - 1 ],
+				[ -1, -1, -1, -1, -1 ],
 				[],
 			],
 			'assumenda'      => [
 				$category_filters,
 				'assumenda',
-				[ 1, 0, - 1, - 1, - 1 ],
+				[ 1, 0, -1, -1, -1 ],
 				[ 'product_cat', 'pa_color', 'pa_material' ],
 			],
 			'quisquam'       => [
 				$category_filters,
 				'quisquam',
-				[ 1, - 1, - 1, - 1, 0 ],
+				[ 1, -1, -1, -1, 0 ],
 				[ 'product_cat', 'pa_size', 'pa_weight' ],
 			],
 			'sub-quisquam'   => [
 				$category_filters,
 				'quisquam',
-				[ 2, - 1, - 1, - 1, 1 ],
+				[ 2, -1, -1, -1, 1 ],
 				[ 'product_cat', 'pa_size', 'pa_weight' ],
 			],
 		];
@@ -1380,7 +1413,12 @@ class MainTest extends WoofByCategoryTestCase {
 	 * @noinspection HttpUrlsUsage
 	 */
 	public function test_get_category_from_woof(
-		?array $post, ?array $get, ?bool $is_wp_error, string $woof_shortcode_txt, ?string $additional_taxes, $expected
+		?array $post,
+		?array $get,
+		?bool $is_wp_error,
+		string $woof_shortcode_txt,
+		?string $additional_taxes,
+		$expected
 	): void {
 		$mock = Mockery::mock( Main::class )->makePartial();
 		$mock->shouldAllowMockingProtectedMethods();
@@ -1402,6 +1440,7 @@ class MainTest extends WoofByCategoryTestCase {
 		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url
 		$parse_url = parse_url( $link, PHP_URL_QUERY );
 
 		WP_Mock::userFunction(
@@ -1449,6 +1488,7 @@ class MainTest extends WoofByCategoryTestCase {
 
 		WP_Mock::userFunction( 'wp_parse_url' )->andReturnUsing(
 			function ( $url, $component ) {
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url
 				return parse_url( $url, $component );
 			}
 		);
@@ -1464,7 +1504,7 @@ class MainTest extends WoofByCategoryTestCase {
 	 */
 	public function dp_test_get_category_from_woof(): array {
 		return [
-			'no post, no get'                                              => [
+			'no post, no get'                        => [
 				null,
 				null,
 				null,
@@ -1472,7 +1512,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				false,
 			],
-			'post, no link'                                                => [
+			'post, no link'                          => [
 				[
 					'action' => 'woof_draw_products',
 				],
@@ -1482,7 +1522,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				false,
 			],
-			'post, link w/o product_cat'                                   => [
+			'post, link w/o product_cat'             => [
 				[
 					'action' => 'woof_draw_products',
 					'link'   => 'http://test.test/shop/?swoof=1&paged=1',
@@ -1493,7 +1533,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				'/',
 			],
-			'post, link with product_cat'                                  => [
+			'post, link with product_cat'            => [
 				[
 					'action' => 'woof_draw_products',
 					'link'   => 'http://test.test/shop/?swoof=1&product_cat=assumenda&paged=1',
@@ -1504,7 +1544,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				'assumenda',
 			],
-			'swoof, no product_cat'                                        => [
+			'swoof, no product_cat'                  => [
 				null,
 				[
 					'swoof' => '1',
@@ -1514,7 +1554,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				false,
 			],
-			'swoof, product_cat'                                           => [
+			'swoof, product_cat'                     => [
 				null,
 				[
 					'swoof'       => '1',
@@ -1525,7 +1565,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				'assumenda,quisquam',
 			],
-			'really_curr_tax, wrong'                                       => [
+			'really_curr_tax, wrong'                 => [
 				null,
 				[
 					'really_curr_tax' => 'wrong',
@@ -1535,7 +1575,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				false,
 			],
-			'really_curr_tax, term ok'                                     => [
+			'really_curr_tax, term ok'               => [
 				null,
 				[
 					'really_curr_tax' => '27-product_cat',
@@ -1545,7 +1585,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				'product_cat',
 			],
-			'really_curr_tax, bad term'                                    => [
+			'really_curr_tax, bad term'              => [
 				null,
 				[
 					'really_curr_tax' => '31-bad',
@@ -1555,7 +1595,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				false,
 			],
-			'really_curr_tax, hyphen term ok'                              => [
+			'really_curr_tax, hyphen term ok'        => [
 				null,
 				[
 					'really_curr_tax' => '1044-pwb-brand',
@@ -1565,7 +1605,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				'pwb-brand',
 			],
-			'woof_shortcode_txt from widget'                               => [
+			'woof_shortcode_txt from widget'         => [
 				null,
 				null,
 				null,
@@ -1573,7 +1613,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				false,
 			],
-			'woof_shortcode_txt from auto_shortcode'                       => [
+			'woof_shortcode_txt from auto_shortcode' => [
 				null,
 				null,
 				null,
@@ -1581,7 +1621,7 @@ class MainTest extends WoofByCategoryTestCase {
 				null,
 				false,
 			],
-			'woof_shortcode_txt from page shortcode'                       => [
+			'woof_shortcode_txt from page shortcode' => [
 				null,
 				null,
 				null,
@@ -1784,14 +1824,14 @@ class MainTest extends WoofByCategoryTestCase {
 	 */
 	public function dp_test_has_parent(): array {
 		return [
-			[ 'some_cat', null, - 1 ],
+			[ 'some_cat', null, -1 ],
 			[ '/', '/', 0 ],
-			[ '/', 'wrong_cat', - 1 ],
-			[ '/', 'assumenda', - 1 ],
+			[ '/', 'wrong_cat', -1 ],
+			[ '/', 'assumenda', -1 ],
 			[ 'assumenda', 'assumenda', 0 ],
 			[ 'assumenda', 'sub-assumenda', 1 ],
 			[ 'assumenda', 'sub-sub-assumenda', 2 ],
-			[ 'assumenda', 'bad', - 1 ],
+			[ 'assumenda', 'bad', -1 ],
 		];
 	}
 
@@ -1804,7 +1844,7 @@ class MainTest extends WoofByCategoryTestCase {
 		$links        = [ 'some_link' => '<a href="#">Some link</a>' ];
 		$action_links = [
 			'settings' =>
-				'<a href="admin.php?page=woof-by-category" aria-label="' .
+				'<a href="options-general.php?page=woof-by-category" aria-label="' .
 				'View WOOF by Category settings">' .
 				'Settings</a>',
 		];

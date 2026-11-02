@@ -5,6 +5,11 @@
  * @package woof-by-category
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUnhandledExceptionInspection */
+/** @noinspection PhpDocMissingThrowsInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace KAGG\WoofByCategory\Tests\Unit;
 
 use KAGG\WoofByCategory\Main;
@@ -70,8 +75,8 @@ class PluginFileTest extends WoofByCategoryTestCase {
 	 */
 	public function test_readme_txt(): void {
 		$expected    = [
-			'stable_tag' => WOOF_BY_CATEGORY_TEST_VERSION,
-			'requires_wp' => '6.0',
+			'stable_tag'   => WOOF_BY_CATEGORY_TEST_VERSION,
+			'requires_wp'  => '6.0',
 			'requires_php' => '7.4',
 		];
 		$readme_file = PLUGIN_PATH . '/readme.txt';
@@ -79,8 +84,8 @@ class PluginFileTest extends WoofByCategoryTestCase {
 		$readme_headers = $this->get_file_data(
 			$readme_file,
 			[
-				'stable_tag'  => 'Stable tag',
-				'requires_wp' => 'Requires at least',
+				'stable_tag'   => 'Stable tag',
+				'requires_wp'  => 'Requires at least',
 				'requires_php' => 'Requires PHP',
 			],
 			'plugin'
@@ -98,6 +103,8 @@ class PluginFileTest extends WoofByCategoryTestCase {
 
 		self::assertSame( '6.0', $plugin_headers['requires_wp'] );
 		self::assertSame( '7.4', $plugin_headers['requires_php'] );
-		self::assertStringContainsString( "= " . WOOF_BY_CATEGORY_TEST_VERSION . " =", file_get_contents( $readme_file ) );
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		self::assertStringContainsString( '= ' . WOOF_BY_CATEGORY_TEST_VERSION . ' =', file_get_contents( $readme_file ) );
 	}
 }

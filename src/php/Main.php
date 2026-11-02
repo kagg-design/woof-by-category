@@ -76,18 +76,18 @@ class Main {
 	public function __construct() {
 		$this->required_plugins = [
 			[
-				'plugin' => 'woocommerce/woocommerce.php',
-				'name'   => 'WooCommerce',
-				'slug'   => 'woocommerce',
-				'class'  => 'WooCommerce',
-				'active' => false,
+				'plugin'  => 'woocommerce/woocommerce.php',
+				'name'    => 'WooCommerce',
+				'slug'    => 'woocommerce',
+				'classes' => [ 'WooCommerce' ],
+				'active'  => false,
 			],
 			[
-				'plugin' => 'woocommerce-products-filter/index.php',
-				'name'   => 'WooCommerce Product Filter',
-				'slug'   => 'woocommerce-products-filter',
-				'class'  => 'WOOF',
-				'active' => false,
+				'plugin'  => 'woocommerce-products-filter/index.php',
+				'name'    => 'WooCommerce Product Filter',
+				'slug'    => 'woocommerce-products-filter',
+				'classes' => [ 'WOOF', 'HUSKY' ],
+				'active'  => false,
 			],
 		];
 	}
@@ -108,7 +108,7 @@ class Main {
 		add_action( 'admin_init', [ $this, 'check_requirements' ] );
 
 		foreach ( $this->required_plugins as $required_plugin ) {
-			if ( ! class_exists( $required_plugin['class'] ) ) {
+			if ( ! array_filter( $required_plugin['classes'], 'class_exists' ) ) {
 				return;
 			}
 		}
@@ -1375,7 +1375,7 @@ class Main {
 	public function add_settings_link( $links ): array {
 		$action_links = [
 			'settings' =>
-				'<a href="' . admin_url( 'admin.php?page=woof-by-category' ) . '" aria-label="' .
+				'<a href="' . admin_url( 'options-general.php?page=woof-by-category' ) . '" aria-label="' .
 				esc_attr__( 'View WOOF by Category settings', 'woof-by-category' ) . '">' .
 				esc_html__( 'Settings', 'woof-by-category' ) . '</a>',
 		];
