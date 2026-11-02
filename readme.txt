@@ -70,6 +70,7 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 == Changelog ==
 
 = 3.3.1 =
+* Fixed fatal error caused by deployment on wp.org.
 * Tested with WordPress 7.1.
 
 = 3.3.0 =
