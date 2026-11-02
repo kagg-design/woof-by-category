@@ -5,6 +5,11 @@
  * @package woof-by-category
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUnhandledExceptionInspection */
+/** @noinspection PhpDocMissingThrowsInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace KAGG\WoofByCategory\Tests\Unit;
 
 use Mockery;
@@ -42,48 +47,48 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	/**
 	 * Get an object protected property.
 	 *
-	 * @param object $object        Object.
+	 * @param object $test_object   Object.
 	 * @param string $property_name Property name.
 	 *
 	 * @return mixed
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function get_protected_property( object $object, string $property_name ) {
-		$reflection_class = new ReflectionClass( $object );
+	protected function get_protected_property( object $test_object, string $property_name ) {
+		$reflection_class = new ReflectionClass( $test_object );
 
 		$property = $reflection_class->getProperty( $property_name );
+
 		if ( PHP_VERSION_ID < 80100 ) {
 			$property->setAccessible( true );
 		}
-		$value = $property->getValue( $object );
 
-		return $value;
+		return $property->getValue( $test_object );
 	}
 
 	/**
 	 * Set an object protected property.
 	 *
-	 * @param object $object        Object.
+	 * @param object $test_object   Object.
 	 * @param string $property_name Property name.
 	 * @param mixed  $value         Property vale.
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_protected_property( object $object, string $property_name, $value ): void {
-		$reflection_class = new ReflectionClass( $object );
+	protected function set_protected_property( object $test_object, string $property_name, $value ): void {
+		$reflection_class = new ReflectionClass( $test_object );
 
 		$property = $reflection_class->getProperty( $property_name );
 		if ( PHP_VERSION_ID < 80100 ) {
 			$property->setAccessible( true );
 		}
-		$property->setValue( $object, $value );
+		$property->setValue( $test_object, $value );
 	}
 
 	/**
 	 * Set an object protected method accessibility.
 	 *
-	 * @param object $object      Object.
+	 * @param object $test_object Object.
 	 * @param string $method_name Property name.
 	 * @param bool   $accessible  Property vale.
 	 *
@@ -91,8 +96,8 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_method_accessibility( object $object, string $method_name, bool $accessible = true ): ReflectionMethod {
-		$reflection_class = new ReflectionClass( $object );
+	protected function set_method_accessibility( object $test_object, string $method_name, bool $accessible = true ): ReflectionMethod {
+		$reflection_class = new ReflectionClass( $test_object );
 
 		$method = $reflection_class->getMethod( $method_name );
 		if ( PHP_VERSION_ID < 80100 ) {
@@ -125,16 +130,16 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	 */
 	protected function get_file_data( string $file, array $default_headers, string $context = '' ): array {
 		// We don't need to write to the file, so just open for reading.
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		$fp = fopen( $file, 'rb' );
 
 		if ( $fp ) {
 			// Pull only the first 8 KB of the file in.
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fread
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
 			$file_data = fread( $fp, 8 * KB_IN_BYTES );
 
 			// PHP will close a file handle, but we are good citizens.
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			fclose( $fp );
 		} else {
 			$file_data = '';
@@ -149,9 +154,9 @@ abstract class WoofByCategoryTestCase extends TestCase {
 		 * The dynamic portion of the hook name, `$context`, refers to
 		 * the context where extra headers might be loaded.
 		 *
-		 * @param array $extra_context_headers Empty array by default.
-		 *
 		 * @since 2.9.0
+		 *
+		 * @param array $extra_context_headers Empty array by default.
 		 */
 		$extra_headers = $context ? apply_filters( "extra_{$context}_headers", [] ) : [];
 		if ( $extra_headers ) {
@@ -175,10 +180,10 @@ abstract class WoofByCategoryTestCase extends TestCase {
 	/**
 	 * Strip close comment and close php tags from file headers used by WP.
 	 *
-	 * @since 2.8.0
+	 * @since  2.8.0
 	 * @access private
 	 *
-	 * @see https://core.trac.wordpress.org/ticket/8497
+	 * @see    https://core.trac.wordpress.org/ticket/8497
 	 *
 	 * @param string $str Header comment to clean up.
 	 *

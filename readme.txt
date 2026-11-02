@@ -5,7 +5,7 @@ Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.3.2
+Stable tag: 3.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,11 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 3. Plugin filters (Size and Weight) on a "Quisquam" category page.
 
 == Changelog ==
+
+= 3.3.3 =
+* Added compatibility with HUSKY 1.3.9 and later.
+* The settings page was moved from a top-level admin menu item to Settings > WOOF by Category.
+* Fixed category-specific filters on the shop page when WOOF reads settings before WooCommerce registers the product_cat taxonomy.
 
 = 3.3.2 =
 * Fixed fatal error caused by deployment on wp.org.
