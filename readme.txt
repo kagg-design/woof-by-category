@@ -70,6 +70,8 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 == Changelog ==
 
 = 3.3.3 =
+* Added compatibility with HUSKY 1.3.9 and later.
+* The settings page was moved from a top-level admin menu item to Settings > WOOF by Category.
 * Fixed category-specific filters on the shop page when WOOF reads settings before WooCommerce registers the product_cat taxonomy.
 
 = 3.3.2 =

@@ -1844,7 +1844,10 @@ class MainTest extends WoofByCategoryTestCase {
 	public function test_has_parent_before_product_cat_registration(): void {
 		WP_Mock::userFunction( 'taxonomy_exists' )->with( 'product_cat' )->andReturn( false );
 
-		$mock = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$mock = Mockery::mock( Main::class )->makePartial();
+
+		$mock->shouldAllowMockingProtectedMethods();
+
 		self::assertSame( 0, $mock->has_parent( 'not-registered-yet', 'not-registered-yet' ) );
 	}
 
