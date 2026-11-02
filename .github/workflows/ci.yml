@@ -42,7 +42,7 @@ concurrency:
 jobs:
   phpcs:
     name: PHPCS and changelog
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -54,11 +54,11 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
-          extensions: json, mysqli, mbstring, zip
-          ini-values: register_argc_argv=On
+          extensions: json, mbstring
+          coverage: none
 
       - name: Install dependencies with caching
-        uses: ramsey/composer-install@v4
+        uses: ramsey/composer-install@4.0.0
 
       - name: Run code sniffer
         run: composer phpcs
@@ -68,7 +68,7 @@ jobs:
 
   php_versions:
     name: Resolve PHP versions
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     outputs:
       matrix: ${{ steps.resolve.outputs.matrix }}
@@ -88,7 +88,7 @@ jobs:
 
   unit:
     name: Unit tests on PHP ${{ matrix.php-version }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     needs: php_versions
 
     strategy:
@@ -106,11 +106,11 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: json, mysqli, mbstring, zip
-          ini-values: register_argc_argv=On
+          extensions: json, mbstring
+          coverage: none
 
       - name: Install dependencies with caching
-        uses: ramsey/composer-install@v4
+        uses: ramsey/composer-install@4.0.0
 
       - name: Run unit tests
         run: composer unit
