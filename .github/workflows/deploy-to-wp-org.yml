@@ -10,10 +10,7 @@ permissions:
 jobs:
   tag:
     name: New release
-
-    runs-on: ubuntu-24.04
-
-    if: contains(fromJson('["kagg-design", "e271828-"]'), github.actor)
+    runs-on: ubuntu-latest
 
     env:
       SLUG: woof-by-category
@@ -24,8 +21,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install dependencies with caching
-        uses: ramsey/composer-install@v4
+      - name: Install production dependencies
+        uses: ramsey/composer-install@4.0.0
         with:
           composer-options: "--no-dev --optimize-autoloader --classmap-authoritative"
 

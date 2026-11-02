@@ -11,7 +11,7 @@ permissions:
 jobs:
   trunk:
     name: Push to trunk
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     env:
       SLUG: woof-by-category
