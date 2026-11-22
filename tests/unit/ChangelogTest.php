@@ -18,13 +18,14 @@ require_once PLUGIN_PATH . '/.github/scripts/update-changelog.php';
 class ChangelogTest extends TestCase {
 
 	/**
-	 * The latest notes replace their previous copy and retain older releases.
+	 * Several readme releases merge into the archive without duplicate headings.
 	 */
-	public function test_latest_release_preserves_history(): void {
-		$readme  = "== Changelog ==\n\n= 3.3.0 =\n* Current notes.\n\n[See changelog for all versions](https://example.test/changelog.txt).\n\n== Upgrade Notice ==\n";
-		$history = "= 3.3.0 =\n* Old notes.\n\n= 3.2.0 =\n* Previous notes.\n";
+	public function test_readme_releases_preserve_history(): void {
+		$readme  = "== Changelog ==\n\n= 3.3.0 =\n* Current notes.\n\n= 3.0 =\n* Restored notes.\n\n";
+		$readme .= "[See changelog for all versions](https://example.test/changelog.txt).\n\n== Upgrade Notice ==\n";
+		$history = "= 3.3.0 =\n* Old notes.\n\n= 3.2.0 =\n* Previous notes.\n\n= 2.18 =\n* Legacy notes.\n";
 
-		$expected = "= 3.3.0 =\n* Current notes.\n\n= 3.2.0 =\n* Previous notes.\n";
+		$expected = "= 3.3.0 =\n* Current notes.\n\n= 3.2.0 =\n* Previous notes.\n\n= 3.0 =\n* Restored notes.\n\n= 2.18 =\n* Legacy notes.\n";
 		$actual   = wbc_generate_changelog( $readme, $history );
 
 		self::assertSame( $expected, $actual );

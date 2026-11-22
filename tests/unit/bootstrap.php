@@ -25,7 +25,7 @@ const KB_IN_BYTES = 1024;
 /**
  * Plugin version.
  */
-const WOOF_BY_CATEGORY_TEST_VERSION = '3.3.3';
+const WOOF_BY_CATEGORY_TEST_VERSION = '3.4.0';
 
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 

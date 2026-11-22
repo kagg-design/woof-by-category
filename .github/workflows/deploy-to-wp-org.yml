@@ -5,11 +5,14 @@ on:
 
 permissions:
   actions: read
-  contents: write
+  contents: read
 
 jobs:
   tag:
     name: New release
+    permissions:
+      actions: read
+      contents: write
     runs-on: ubuntu-latest
 
     env:

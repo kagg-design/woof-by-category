@@ -1,12 +1,12 @@
 <?php
 /**
- * Generate changelog.txt from the latest readme.txt release notes.
+ * Generate changelog.txt from the readme.txt release notes.
  *
  * @package woof-by-category
  */
 
 /**
- * Replace the latest release section while preserving the archived history.
+ * Merge readme releases with the archived history by version.
  *
  * @param string $readme    Readme content.
  * @param string $changelog Changelog content.
@@ -22,19 +22,42 @@ function wbc_generate_changelog( string $readme, string $changelog ): string {
 		throw new RuntimeException( 'No Changelog section found in readme.txt.' );
 	}
 
-	$heading = '^= ([0-9]+\.[0-9]+\.[0-9]+(?:-[^\s=]+)?) =[ \t]*$';
+	$notes    = preg_split( '/^\[See changelog for all versions\]/m', $section[1], 2 )[0];
+	$releases = wbc_parse_changelog_releases( $notes );
 
-	if ( ! preg_match( '/' . $heading . '\n(.*?)(?=^= [^=\n]+ =[ \t]*$|^\[See changelog for all versions\]|\z)/ms', $section[1], $release ) ) {
+	if ( ! $releases ) {
 		throw new RuntimeException( 'No release notes found in readme.txt.' );
 	}
 
-	$history = preg_replace(
-		'/^= ' . preg_quote( $release[1], '/' ) . ' =[ \t]*$\n.*?(?=^= [^=\n]+ =[ \t]*$|\z)/ms',
-		'',
-		$changelog
+	$releases += wbc_parse_changelog_releases( $changelog );
+	uksort(
+		$releases,
+		static function ( string $first, string $second ): int {
+			return version_compare( $second, $first );
+		}
 	);
 
-	return rtrim( '= ' . $release[1] . " =\n" . trim( $release[2] ) . "\n\n" . ltrim( $history, "\n" ), "\n" ) . "\n";
+	return implode( "\n\n", $releases ) . "\n";
+}
+
+/**
+ * Extract versioned release sections, including legacy two-part versions.
+ *
+ * @param string $notes Changelog text with normalized line endings.
+ *
+ * @return string[]
+ */
+function wbc_parse_changelog_releases( string $notes ): array {
+	$pattern = '/^= ([0-9]+(?:\.[0-9]+){1,2}(?:-[^\s=]+)?) =[ \t]*\n.*?(?=^= [^=\n]+ =[ \t]*$|\z)/ms';
+	preg_match_all( $pattern, $notes, $matches, PREG_SET_ORDER );
+
+	$releases = [];
+
+	foreach ( $matches as $match ) {
+		$releases[ $match[1] ] = rtrim( $match[0], "\n" );
+	}
+
+	return $releases;
 }
 
 /**

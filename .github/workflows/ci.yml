@@ -50,10 +50,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup PHP 8.5
+      - name: Setup PHP 8.6
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.5'
+          php-version: '8.6'
           extensions: json, mbstring
           coverage: none
 
@@ -81,9 +81,9 @@ jobs:
         id: resolve
         run: |
           if [ "$FULL_PHP_MATRIX" = "true" ]; then
-            echo 'matrix=["7.4","8.0","8.1","8.2","8.3","8.4","8.5"]' >> "$GITHUB_OUTPUT"
+            echo 'matrix=["7.4","8.0","8.1","8.2","8.3","8.4","8.5","8.6"]' >> "$GITHUB_OUTPUT"
           else
-            echo 'matrix=["7.4","8.5"]' >> "$GITHUB_OUTPUT"
+            echo 'matrix=["7.4","8.6"]' >> "$GITHUB_OUTPUT"
           fi
 
   unit:

@@ -3,9 +3,9 @@ Contributors: kaggdesign
 Donate link: https://www.paypal.me/kagg
 Tags: woocommerce, filter, woocommerce products filter, filter category
 Requires at least: 6.0
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 3.3.3
+Stable tag: 3.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,12 +69,20 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 == Changelog ==
 
+= 3.4.0 =
+* Tested with WordPress 7.2.
+* Tested with WooCommerce 11.3.1.
+
 = 3.3.3 =
 * Added compatibility with HUSKY 1.3.9 and later.
 * The settings page was moved from a top-level admin menu item to Settings > WOOF by Category.
 * Fixed category-specific filters on the shop page when WOOF reads settings before WooCommerce registers the product_cat taxonomy.
 
 = 3.3.2 =
+* Fixed fatal error caused by deployment on wp.org.
+* Tested with WordPress 7.1.
+
+= 3.3.1 =
 * Fixed fatal error caused by deployment on wp.org.
 * Tested with WordPress 7.1.
 
@@ -100,6 +108,11 @@ If you get stuck, you can ask for help in the [WOOF by Category Plugin Forum](ht
 
 = 3.0.1 =
 * Dropped support for PHP 5.6. The minimum required PHP version is now 7.0.
+* Tested with WordPress 6.3.
+* Tested with WooCommerce 7.9.
+
+= 3.0 =
+* Dropped support for PHP 5.6. Minimum required PHP version is now 7.0.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
 
